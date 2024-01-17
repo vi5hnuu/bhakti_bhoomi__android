@@ -34,17 +34,11 @@ class UserInfo {
       firstName: userInfo['firstName'],
       lastName: userInfo['lastName'],
       email: userInfo['email'],
-      role: (userInfo['role'] as List)
-          .map((e) => UserRole.fromJson(e))
-          .toList(growable: false),
+      role: (userInfo['role'] as List).map((e) => UserRole.fromJson(e)).toList(growable: false),
       createdAt: DateTime.parse(userInfo['createdAt']),
       updatedAt: DateTime.parse(userInfo['updatedAt']),
-      profileMeta: userInfo['profileMeta'] != null
-          ? UserImageMeta.fromJson(userInfo['profileMeta'])
-          : null,
-      posterMeta: userInfo['posterMeta'] != null
-          ? UserImageMeta.fromJson(userInfo['posterMeta'])
-          : null,
+      profileMeta: userInfo['profileMeta'] != null ? UserImageMeta.fromJson(userInfo['profileMeta']) : null,
+      posterMeta: userInfo['posterMeta'] != null ? UserImageMeta.fromJson(userInfo['posterMeta']) : null,
       enabled: userInfo['enabled'],
       locked: userInfo['locked'],
     );

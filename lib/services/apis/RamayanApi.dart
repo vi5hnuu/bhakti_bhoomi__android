@@ -1,0 +1,70 @@
+import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:dio/dio.dart';
+
+class RamayanApi {
+  static final RamayanApi _instance = RamayanApi._();
+
+  static final String _ramayanInfoUrl = "${ApiConstants.baseUrl}/ramayan/info"; //GET
+  static final String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
+  static final String _ramayanVerseByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
+  static final String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo"; //GET
+  static final String _ramayanShlokasByKandSargaId = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaId/%sargaId%"; //GET
+
+  RamayanApi._();
+  factory RamayanApi() {
+    return _instance;
+  }
+
+  Future<Map<String, dynamic>> getRamayanInfo() async {
+    var res = await Dio().get(_ramayanInfoUrl);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanShlokByKandSargaNoShlokNo({required String kanda, required int sargaNo, required int shlokNo, String? lang}) async {
+    var url = _ramayanShlokByKandSargaNoShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaNo%", '$sargaNo').replaceAll("%shlokNo%", '$shlokNo');
+    if (lang != null) {
+      url += '?lang=$lang';
+    }
+    var res = await Dio().get(url);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanShlokByKandSargaIdShlokNo({required String kanda, required String sargaId, required int shlokNo, String? lang}) async {
+    var url = _ramayanVerseByKandSargaIdShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId').replaceAll("%shlokNo%", '$shlokNo');
+    if (lang != null) {
+      url += '?lang=$lang';
+    }
+    var res = await Dio().get(url);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaNo({required String kanda, required int sargaNo, int? pageNo, int? pageSize, String? lang}) async {
+    var url = _ramayanShlokasByKandSargaNo.replaceAll("%kanda%", '$kanda').replaceAll("%sargaNo%", '$sargaNo');
+    if (pageNo != null) {
+      url += '?pageNo=$pageNo';
+    }
+    if (pageSize != null) {
+      url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
+    }
+    if (lang != null) {
+      url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
+    }
+    var res = await Dio().get(url);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaId({required String kanda, required String sargaId, int? pageNo, int? pageSize, String? lang}) async {
+    var url = _ramayanShlokasByKandSargaId.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId');
+    if (pageNo != null) {
+      url += '?pageNo=$pageNo';
+    }
+    if (pageSize != null) {
+      url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
+    }
+    if (lang != null) {
+      url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
+    }
+    var res = await Dio().get(url);
+    return res.data;
+  }
+}

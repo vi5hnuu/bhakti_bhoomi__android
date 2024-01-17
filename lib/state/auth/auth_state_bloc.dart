@@ -1,52 +1,32 @@
-import 'package:bhakti_bhoomi/constants/ApiUrls.dart';
-import 'package:bhakti_bhoomi/models/LoginResponse.dart';
+import 'package:bhakti_bhoomi/services/AuthRepository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/UserInfo.dart';
+import '../../models/response/ApiResponse.dart';
 
 part 'auth_state.dart';
 part 'auth_state_event.dart';
 
 class AuthStateBloc extends Bloc<AuthStateEvent, AuthState> {
-  LoginResponse? _loginResponse;
-  bool isLoading = false;
+  final AuthRepository authRepository = AuthRepository();
 
   AuthStateBloc() : super(AuthState()) {
     on<LoginEvent>((event, emit) async {
-      isLoading = true;
+      emit(AuthState(isLoading: true));
+      String? error;
       try {
-        LoginResponse loginResponse =
-            await _login(event.usernameEmail, event.password);
-        _loginResponse = loginResponse;
-        emit(AuthState(
-            isLogedIn: loginResponse.success,
-            userInfo: loginResponse.data,
-            error: !loginResponse.success,
-            message: loginResponse.message));
-      } catch (e) {
-        print(e);
+        ApiResponse<UserInfo> res = await authRepository.login(event.usernameEmail, event.password);
+        emit(AuthState(success: res.success, userInfo: res.data, error: !res.success, message: res.message));
+      } on DioException catch (e) {
+        var data = e.response?.data;
+        error = data?['message'] ?? 'something went wrong';
       } finally {
-        isLoading = false;
+        emit(AuthState(
+            isLoading: false, success: error == null || state.success, error: error != null || state.error, message: error ?? state.message, userInfo: error != null ? null : state.userInfo));
       }
     });
-  }
-
-  @override
-  void onTransition(Transition<AuthStateEvent, AuthState> transition) {
-    super.onTransition(transition);
-    print(transition);
-  }
-
-  UserInfo? get userInfo => _loginResponse?.data;
-  bool get isLoggedIn => _loginResponse?.data != null;
-
-  Future<LoginResponse> _login(String usernameEmail, String password) async {
-    var loginResponse = await Dio().post(ApiUrls.getLoginUrl(), data: {
-      "usernameEmail": usernameEmail,
-      "password": password,
-    });
-    return LoginResponse.fromJson(loginResponse.data);
   }
 }

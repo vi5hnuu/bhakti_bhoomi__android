@@ -37,33 +37,26 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         routerConfig: GoRouter(
-            errorBuilder: (context, state) =>
-                const Home(title: 'Spirtual Shakti'),
+            errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti'),
             redirect: (context, state) {
-              print(
-                  "${state.fullPath},${state.error},${state.extra},${state.matchedLocation},${state.path},${state.uri}");
-              if (!['/register', '/login'].contains(state.fullPath) &&
-                  !BlocProvider.of<AuthStateBloc>(context).isLoggedIn) {
+              if (!['/register', '/login'].contains(state.fullPath) && !BlocProvider.of<AuthStateBloc>(context).state.isLoggedIn) {
                 return '/login';
               }
             },
-            initialLocation: '/register',
+            initialLocation: '/home',
             routes: [
               GoRoute(
                 name: Routing.home,
                 path: '/',
-                builder: (context, state) =>
-                    const Home(title: 'Spirtual Shakti'),
+                builder: (context, state) => const Home(title: 'Spirtual Shakti'),
               ),
               GoRoute(
                 name: Routing.login,
                 path: '/login',
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
-                  child: const LoginScreen(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
+                  child: LoginScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),
               GoRoute(
@@ -72,9 +65,7 @@ class MyApp extends StatelessWidget {
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
                   child: const RegisterScreen(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),
               GoRoute(
@@ -85,26 +76,22 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.brahmasutra,
                 path: '/brahmasutra',
-                builder: (context, state) =>
-                    const BrahmasutraHome(title: 'Brahmasutra'),
+                builder: (context, state) => const BrahmasutraHome(title: 'Brahmasutra'),
               ),
               GoRoute(
                 name: Routing.chalisa,
                 path: '/chalisa',
-                builder: (context, state) =>
-                    const ChalisaHome(title: 'Chalisa'),
+                builder: (context, state) => const ChalisaHome(title: 'Chalisa'),
               ),
               GoRoute(
                 name: Routing.chanakyaNiti,
                 path: '/chanakya-niti',
-                builder: (context, state) =>
-                    const ChanakyaNeetiHome(title: 'ChanaKya Niti'),
+                builder: (context, state) => const ChanakyaNeetiHome(title: 'ChanaKya Niti'),
               ),
               GoRoute(
                 name: Routing.mahabharat,
                 path: '/mahabharat',
-                builder: (context, state) =>
-                    const MahabharatHome(title: 'MahaBharat'),
+                builder: (context, state) => const MahabharatHome(title: 'MahaBharat'),
               ),
               GoRoute(
                 name: Routing.mantra,
@@ -114,32 +101,27 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.ramcharitmanas,
                 path: '/ramcharitmanas',
-                builder: (context, state) =>
-                    const RamcharitmanasHome(title: 'RamCharitManas'),
+                builder: (context, state) => const RamcharitmanasHome(title: 'RamCharitManas'),
               ),
               GoRoute(
                 name: Routing.rigveda,
                 path: '/rigveda',
-                builder: (context, state) =>
-                    const RigvedaHome(title: 'RigVeda'),
+                builder: (context, state) => const RigvedaHome(title: 'RigVeda'),
               ),
               GoRoute(
                 name: Routing.valmikiRamayan,
                 path: '/valmiki-ramayan',
-                builder: (context, state) =>
-                    const ValmikiRamayanHome(title: 'Valmiki Ramayan'),
+                builder: (context, state) => const ValmikiRamayanHome(title: 'Valmiki Ramayan'),
               ),
               GoRoute(
                 name: Routing.bhagvadGeeta,
                 path: '/bhagvad-geeta',
-                builder: (context, state) =>
-                    const BhagvadGeetaHome(title: 'BhaGvad Geeta'),
+                builder: (context, state) => const BhagvadGeetaHome(title: 'BhaGvad Geeta'),
               ),
               GoRoute(
                 name: Routing.yogaSutra,
                 path: '/yoga-sutra',
-                builder: (context, state) =>
-                    const YogaSutraHome(title: 'Yoga Sutra'),
+                builder: (context, state) => const YogaSutraHome(title: 'Yoga Sutra'),
               ),
             ]),
       ),
