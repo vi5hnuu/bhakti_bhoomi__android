@@ -24,7 +24,7 @@ class MahabharatApi {
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getMahabharatByShlokNo({required int bookNo, required int chapterNo, required int shlokNo}) async {
+  Future<Map<String, dynamic>> getMahabharatShlokByShlokNo({required int bookNo, required int chapterNo, required int shlokNo}) async {
     var url = _mahabharatShlokByShlokNoUrl.replaceAll("%bookNo%", '$bookNo').replaceAll("%chapterNo%", '$chapterNo').replaceAll("%shlokNo%", '$shlokNo');
     var res = await Dio().get(url);
     return res.data;

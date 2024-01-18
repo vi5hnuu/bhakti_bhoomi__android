@@ -14,7 +14,7 @@ class BrahmasutraApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getbrahmasutraInfo() async {
+  Future<Map<String, dynamic>> getBrahmasutraInfo() async {
     var res = await Dio().get(_brahmasutraInfoUrl);
     return res.data;
   }

@@ -23,12 +23,12 @@ class ChalisaApi {
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getchalisaById({required String id}) async {
+  Future<Map<String, dynamic>> getChalisaById({required String id}) async {
     var res = await Dio().get('$_chalisaByIdOrTitleUrl?id=$id');
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getchalisaByTitle({required String title}) async {
+  Future<Map<String, dynamic>> getChalisaByTitle({required String title}) async {
     var res = await Dio().get('$_chalisaByIdOrTitleUrl?title=$title');
     return res.data;
   }
