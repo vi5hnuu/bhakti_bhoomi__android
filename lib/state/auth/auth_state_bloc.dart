@@ -1,4 +1,4 @@
-import 'package:bhakti_bhoomi/services/AuthRepository.dart';
+import 'package:bhakti_bhoomi/services/auth/AuthRepository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';

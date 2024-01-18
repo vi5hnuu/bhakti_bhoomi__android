@@ -3,7 +3,7 @@ import 'package:bhakti_bhoomi/models/response/ApiResponse.dart';
 import 'package:bhakti_bhoomi/models/response/UsersPage.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/UserRole.dart';
+import '../../models/UserRole.dart';
 
 abstract class AuthService {
   Future<ApiResponse<UserInfo>> login(String usernameEmail, String password);

@@ -2,16 +2,16 @@ import 'package:bhakti_bhoomi/models/UserInfo.dart';
 import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/models/response/ApiResponse.dart';
 import 'package:bhakti_bhoomi/models/response/UsersPage.dart';
-import 'package:bhakti_bhoomi/services/AuthService.dart';
 import 'package:bhakti_bhoomi/services/apis/AuthApi.dart';
+import 'package:bhakti_bhoomi/services/brahmaSutra/BrahmaSutraService.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AuthRepository implements AuthService {
+class BrahmaSutraRepository implements BrahmaSutraService {
   final AuthApi authApi;
-  static final AuthRepository _instance = AuthRepository._();
+  static final BrahmaSutraRepository _instance = BrahmaSutraRepository._();
 
-  AuthRepository._() : authApi = AuthApi();
-  factory AuthRepository() => _instance;
+  BrahmaSutraRepository._() : authApi = AuthApi();
+  factory BrahmaSutraRepository() => _instance;
 
   @override
   Future<ApiResponse> addRole({required String userId, required UserRole userRole}) async {
