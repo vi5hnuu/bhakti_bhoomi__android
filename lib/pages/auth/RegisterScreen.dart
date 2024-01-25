@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/state/auth/auth_state_bloc.dart';
+import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,9 +30,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthStateBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
         listener: (ctx, state) {
-          if (!state.isLoggedIn) return;
+          if (!state.isAuthenticated) return;
           context.goNamed(Routing.home);
         },
         builder: (context, state) => Scaffold(

@@ -1,5 +1,6 @@
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:bhakti_bhoomi/models/UserRole.dart';
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/singletons/DioSingleton.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -30,23 +31,25 @@ class AuthApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> login({required String usernameEmail, required String password}) async {
-    var res = await Dio().post(_loginUrl, data: {
-      "usernameEmail": usernameEmail,
-      "password": password,
-    });
+  Future<Map<String, dynamic>> login({required String usernameEmail, required String password, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.post(_loginUrl,
+        data: {
+          "usernameEmail": usernameEmail,
+          "password": password,
+        },
+        cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> register({
-    required String firstName,
-    required String lastName,
-    required String userName,
-    required String email,
-    required String password,
-    required XFile profileImage,
-    required XFile posterImage,
-  }) async {
+  Future<Map<String, dynamic>> register(
+      {required String firstName,
+      required String lastName,
+      required String userName,
+      required String email,
+      required String password,
+      required XFile profileImage,
+      required XFile posterImage,
+      CancelToken? cancelToken}) async {
     FormData formData = FormData.fromMap({
       "userInfo": {
         "firstName": firstName,
@@ -58,80 +61,82 @@ class AuthApi {
       "profileImage": await MultipartFile.fromFile(profileImage.path, filename: profileImage.name),
       "posterImage": await MultipartFile.fromFile(posterImage.path, filename: posterImage.name),
     });
-    var res = await Dio().post(_registerUrl, data: formData);
+    var res = await DioSingleton().dio.post(_registerUrl, data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> reVerify({required String email}) async {
-    var res = await Dio().get('$_reVerifyUrl?email=$email');
+  Future<Map<String, dynamic>> reVerify({required String email, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_reVerifyUrl?email=$email', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> forgotPassword({required String usernameEmail}) async {
-    var res = await Dio().post(_forgotPasswordUrl, data: {"usernameEmail": usernameEmail});
+  Future<Map<String, dynamic>> forgotPassword({required String usernameEmail, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.post(_forgotPasswordUrl, data: {"usernameEmail": usernameEmail}, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword}) async {
-    var res = await Dio().post(_resetPaswordUrl, data: {"usernameEmail": usernameEmail, "otp": otp, "password": password, "confirmPassword": confirmPassword});
+  Future<Map<String, dynamic>> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.post(_resetPaswordUrl, data: {"usernameEmail": usernameEmail, "otp": otp, "password": password, "confirmPassword": confirmPassword}, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> updateProfilePic({required XFile profileImage}) async {
+  Future<Map<String, dynamic>> updateProfilePic({required XFile profileImage, CancelToken? cancelToken}) async {
     final FormData formData = FormData.fromMap({"poster": await MultipartFile.fromFile(profileImage.path, filename: profileImage.name)});
-    var res = await Dio().post(_updatePosterImageUrl, data: formData);
+    var res = await DioSingleton().dio.post(_updatePosterImageUrl, data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> updatePosterPic({required XFile posterImage}) async {
+  Future<Map<String, dynamic>> updatePosterPic({required XFile posterImage, CancelToken? cancelToken}) async {
     final FormData formData = FormData.fromMap({"profile": await MultipartFile.fromFile(posterImage.path, filename: posterImage.name)});
-    var res = await Dio().post(_updateProfileImageUrl, data: formData);
+    var res = await DioSingleton().dio.post(_updateProfileImageUrl, data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> logout() async {
-    var res = await Dio().get(_logoutUrl);
+  Future<Map<String, dynamic>> logout({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_logoutUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> me() async {
-    var res = await Dio().get(_meUrl);
+  Future<Map<String, dynamic>> me({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_meUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> deleteMe() async {
-    var res = await Dio().delete(_deleteMeUrl);
+  Future<Map<String, dynamic>> deleteMe({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.delete(_deleteMeUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> updatePassword({required String oldPassword, required String newPassword, required String confirmPassword}) async {
-    var res = await Dio().patch(_updatePasswordUrl, data: {"oldPassword": oldPassword, "newPassword": newPassword, "confirmPassword": confirmPassword});
+  Future<Map<String, dynamic>> updatePassword({required String oldPassword, required String newPassword, required String confirmPassword, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.patch(_updatePasswordUrl, data: {"oldPassword": oldPassword, "newPassword": newPassword, "confirmPassword": confirmPassword}, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getAllUsers({int? pageNo, int? pageSize}) async {
+  Future<Map<String, dynamic>> getAllUsers({int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
     String url = _allUsersUrl;
     if (pageNo != null) url = "$url?pageNo=$pageNo";
     if (pageSize != null) url = pageNo != null ? "$url&pageSize=$pageSize" : "$url?pageSize=$pageSize";
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> deleteUser({required String userId}) async {
-    var res = await Dio().delete('$_deleteUserUrl/$userId');
+  Future<Map<String, dynamic>> deleteUser({required String userId, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.delete('$_deleteUserUrl/$userId', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getUser({required String userId}) async {
-    var res = await Dio().get('$_getUserUrl/$userId');
+  Future<Map<String, dynamic>> getUser({required String userId, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_getUserUrl/$userId', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> addRole({required String userId, required UserRole userRole}) async {
-    var res = await Dio().patch('$_addRoleUrl', data: {
-      "userId": userId,
-      "role": userRole.role,
-    });
+  Future<Map<String, dynamic>> addRole({required String userId, required UserRole userRole, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.patch('$_addRoleUrl',
+        data: {
+          "userId": userId,
+          "role": userRole.role,
+        },
+        cancelToken: cancelToken);
     return res.data;
   }
 }

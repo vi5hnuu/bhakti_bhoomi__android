@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class MahabharatApi {
   static final MahabharatApi _instance = MahabharatApi._();
@@ -14,23 +16,23 @@ class MahabharatApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getMahabharatInfo() async {
-    var res = await Dio().get(_mahabharatInfoUrl);
+  Future<Map<String, dynamic>> getMahabharatInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_mahabharatInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getMahabharatShlokById({required String id}) async {
-    var res = await Dio().get('$_mahabharatShlokByIdUrl?id=$id');
+  Future<Map<String, dynamic>> getMahabharatShlokById({required String id, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_mahabharatShlokByIdUrl?id=$id', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getMahabharatShlokByShlokNo({required int bookNo, required int chapterNo, required int shlokNo}) async {
+  Future<Map<String, dynamic>> getMahabharatShlokByShlokNo({required int bookNo, required int chapterNo, required int shlokNo, CancelToken? cancelToken}) async {
     var url = _mahabharatShlokByShlokNoUrl.replaceAll("%bookNo%", '$bookNo').replaceAll("%chapterNo%", '$chapterNo').replaceAll("%shlokNo%", '$shlokNo');
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getMahabharatShloksByBookChapter({required int bookNo, required int chapterNo, int? pageNo, int? pageSize}) async {
+  Future<Map<String, dynamic>> getMahabharatShloksByBookChapter({required int bookNo, required int chapterNo, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
     var url = _mahabharatShloksByBookChapterUrl.replaceAll("%bookNo%", '$bookNo').replaceAll("%chapterNo%", '$chapterNo');
     if (pageNo != null) {
       url += '?pageNo=$pageNo';
@@ -38,7 +40,7 @@ class MahabharatApi {
     if (pageSize != null) {
       url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

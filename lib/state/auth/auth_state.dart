@@ -1,16 +1,26 @@
-part of 'auth_state_bloc.dart';
+part of 'auth_bloc.dart';
 
 @immutable
 class AuthState {
   final UserInfo? userInfo;
-  final bool error;
   final String? message;
   final bool success;
+  final String? error;
   final bool isLoading;
 
-  const AuthState({this.isLoading = false, this.success = false, this.userInfo, this.error = false, this.message});
+  const AuthState({this.isLoading = true, this.success = false, this.userInfo, this.error, this.message});
 
-  bool get isLoggedIn {
-    return success && userInfo != null;
+  AuthState copyWith({UserInfo? userInfo, String? message, bool? success, String? error, bool? isLoading}) {
+    return AuthState(
+      userInfo: userInfo ?? this.userInfo,
+      message: message ?? this.message,
+      success: success ?? this.success,
+      error: error ?? this.error,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
+
+  bool get isAuthenticated {
+    return success;
   }
 }

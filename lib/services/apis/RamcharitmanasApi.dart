@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class RamcharitmanasApi {
   static final RamcharitmanasApi _instance = RamcharitmanasApi._();
@@ -16,49 +18,49 @@ class RamcharitmanasApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasInfo() async {
-    var res = await Dio().get(_ramcharitmanasInfoUrl);
+  Future<Map<String, dynamic>> getRamcharitmanasInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_ramcharitmanasInfoUrl);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasVerseById({required String id, String? lang}) async {
+  Future<Map<String, dynamic>> getRamcharitmanasVerseById({required String id, String? lang, CancelToken? cancelToken}) async {
     var url = '$_ramcharitmanasVerseByVerseIdUrl/$id';
     if (lang != null) {
       url += '?lang=$lang';
     }
 
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasVerseByKandaAndVerseNo({required String kanda, required int verseNo, String? lang}) async {
+  Future<Map<String, dynamic>> getRamcharitmanasVerseByKandaAndVerseNo({required String kanda, required int verseNo, String? lang, CancelToken? cancelToken}) async {
     var url = _ramcharitmanasVerseByKandaAndVerseNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%verseNo%", '$verseNo');
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasMangalacharanByKanda({required String kanda, String? lang}) async {
+  Future<Map<String, dynamic>> getRamcharitmanasMangalacharanByKanda({required String kanda, String? lang, CancelToken? cancelToken}) async {
     var url = _ramcharitmanasMangalaCharanByKandaUrl.replaceAll("%kanda%", '$kanda');
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasAllMangalacharan({String? lang}) async {
+  Future<Map<String, dynamic>> getRamcharitmanasAllMangalacharan({String? lang, CancelToken? cancelToken}) async {
     var url = _ramcharitmanasAllMangalacharanUrl;
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamcharitmanasVersesByKand({required String kanda, String? lang, int? pageNo, int? pageSize}) async {
+  Future<Map<String, dynamic>> getRamcharitmanasVersesByKand({required String kanda, String? lang, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
     var url = '$_ramcharitmanasVersesByKandaUrl/$kanda';
 
     if (pageNo != null) {
@@ -71,7 +73,7 @@ class RamcharitmanasApi {
       url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
     }
 
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

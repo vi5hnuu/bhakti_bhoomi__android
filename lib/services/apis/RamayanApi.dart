@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class RamayanApi {
   static final RamayanApi _instance = RamayanApi._();
@@ -15,30 +17,30 @@ class RamayanApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getRamayanInfo() async {
-    var res = await Dio().get(_ramayanInfoUrl);
+  Future<Map<String, dynamic>> getRamayanInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_ramayanInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamayanShlokByKandSargaNoShlokNo({required String kanda, required int sargaNo, required int shlokNo, String? lang}) async {
+  Future<Map<String, dynamic>> getRamayanShlokByKandSargaNoShlokNo({required String kanda, required int sargaNo, required int shlokNo, String? lang, CancelToken? cancelToken}) async {
     var url = _ramayanShlokByKandSargaNoShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaNo%", '$sargaNo').replaceAll("%shlokNo%", '$shlokNo');
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamayanShlokByKandSargaIdShlokNo({required String kanda, required String sargaId, required int shlokNo, String? lang}) async {
+  Future<Map<String, dynamic>> getRamayanShlokByKandSargaIdShlokNo({required String kanda, required String sargaId, required int shlokNo, String? lang, CancelToken? cancelToken}) async {
     var url = _ramayanVerseByKandSargaIdShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId').replaceAll("%shlokNo%", '$shlokNo');
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaNo({required String kanda, required int sargaNo, int? pageNo, int? pageSize, String? lang}) async {
+  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaNo({required String kanda, required int sargaNo, int? pageNo, int? pageSize, String? lang, CancelToken? cancelToken}) async {
     var url = _ramayanShlokasByKandSargaNo.replaceAll("%kanda%", '$kanda').replaceAll("%sargaNo%", '$sargaNo');
     if (pageNo != null) {
       url += '?pageNo=$pageNo';
@@ -49,11 +51,11 @@ class RamayanApi {
     if (lang != null) {
       url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaId({required String kanda, required String sargaId, int? pageNo, int? pageSize, String? lang}) async {
+  Future<Map<String, dynamic>> getRamayanShlokasByKandSargaId({required String kanda, required String sargaId, int? pageNo, int? pageSize, String? lang, CancelToken? cancelToken}) async {
     var url = _ramayanShlokasByKandSargaId.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId');
     if (pageNo != null) {
       url += '?pageNo=$pageNo';
@@ -64,7 +66,7 @@ class RamayanApi {
     if (lang != null) {
       url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

@@ -3,105 +3,114 @@ import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/models/response/ApiResponse.dart';
 import 'package:bhakti_bhoomi/models/response/UsersPage.dart';
 import 'package:bhakti_bhoomi/services/apis/AuthApi.dart';
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'AuthService.dart';
 
 class AuthRepository implements AuthService {
-  final AuthApi authApi;
+  final AuthApi _authApi;
   static final AuthRepository _instance = AuthRepository._();
 
-  AuthRepository._() : authApi = AuthApi();
+  AuthRepository._() : _authApi = AuthApi();
   factory AuthRepository() => _instance;
 
   @override
-  Future<ApiResponse> addRole({required String userId, required UserRole userRole}) async {
-    var res = await authApi.addRole(userId: userId, userRole: userRole);
+  Future<ApiResponse> addRole({required String userId, required UserRole userRole, CancelToken? cancelToken}) async {
+    var res = await _authApi.addRole(userId: userId, userRole: userRole, cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse> deleteMe() async {
-    var res = await authApi.deleteMe();
+  Future<ApiResponse> deleteMe({CancelToken? cancelToken}) async {
+    var res = await _authApi.deleteMe(cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse> deleteUser({required String userId}) async {
-    var res = await authApi.deleteUser(userId: userId);
+  Future<ApiResponse> deleteUser({required String userId, CancelToken? cancelToken}) async {
+    var res = await _authApi.deleteUser(userId: userId, cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse> forgotPassword({required String usernameEmail}) async {
-    var res = await authApi.forgotPassword(usernameEmail: usernameEmail);
+  Future<ApiResponse> forgotPassword({required String usernameEmail, CancelToken? cancelToken}) async {
+    var res = await _authApi.forgotPassword(usernameEmail: usernameEmail, cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse<UsersPage>> getAllUsers({int? pageNo, int? pageSize}) async {
-    var res = await authApi.getAllUsers(pageNo: pageNo, pageSize: pageSize);
+  Future<ApiResponse<UsersPage>> getAllUsers({int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
+    var res = await _authApi.getAllUsers(pageNo: pageNo, pageSize: pageSize, cancelToken: cancelToken);
     return ApiResponse<UsersPage>(success: res['success'], message: res['message'], data: UsersPage.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<UserInfo>> getUser({required String userId}) async {
-    var res = await authApi.getUser(userId: userId);
+  Future<ApiResponse<UserInfo>> getUser({required String userId, CancelToken? cancelToken}) async {
+    var res = await _authApi.getUser(userId: userId, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<UserInfo>> login(String usernameEmail, String password) async {
-    var res = await authApi.login(usernameEmail: usernameEmail, password: password);
+  Future<ApiResponse<UserInfo>> login({required String usernameEmail, required String password, CancelToken? cancelToken}) async {
+    var res = await _authApi.login(usernameEmail: usernameEmail, password: password, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> logout() async {
-    var res = await authApi.logout();
+  Future<ApiResponse> logout({CancelToken? cancelToken}) async {
+    var res = await _authApi.logout(cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse<UserInfo>> me() async {
-    var res = await authApi.me();
+  Future<ApiResponse<UserInfo>> me({CancelToken? cancelToken}) async {
+    var res = await _authApi.me(cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> reVerify({required String email}) async {
-    var res = await authApi.reVerify(email: email);
+  Future<ApiResponse> reVerify({required String email, CancelToken? cancelToken}) async {
+    var res = await _authApi.reVerify(email: email, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
   Future<ApiResponse> register(
-      {required String firstName, required String lastName, required String userName, required String email, required String password, required XFile profileImage, required XFile posterImage}) async {
-    var res = await authApi.register(email: email, firstName: firstName, lastName: lastName, password: password, posterImage: posterImage, profileImage: profileImage, userName: userName);
+      {required String firstName,
+      required String lastName,
+      required String userName,
+      required String email,
+      required String password,
+      required XFile profileImage,
+      required XFile posterImage,
+      CancelToken? cancelToken}) async {
+    var res = await _authApi.register(
+        email: email, firstName: firstName, lastName: lastName, password: password, posterImage: posterImage, profileImage: profileImage, userName: userName, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword}) async {
-    var res = await authApi.resetPassword(usernameEmail: usernameEmail, otp: otp, password: password, confirmPassword: confirmPassword);
+  Future<ApiResponse> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken}) async {
+    var res = await _authApi.resetPassword(usernameEmail: usernameEmail, otp: otp, password: password, confirmPassword: confirmPassword, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> updatePassword({required String oldPassword, required String newPassword, required String confirmPassword}) async {
-    var res = await authApi.updatePassword(confirmPassword: confirmPassword, newPassword: newPassword, oldPassword: oldPassword);
+  Future<ApiResponse> updatePassword({required String oldPassword, required String newPassword, required String confirmPassword, CancelToken? cancelToken}) async {
+    var res = await _authApi.updatePassword(confirmPassword: confirmPassword, newPassword: newPassword, oldPassword: oldPassword, cancelToken: cancelToken);
     return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> updatePosterPic({required XFile posterImage}) async {
-    var res = await authApi.updatePosterPic(posterImage: posterImage);
+  Future<ApiResponse> updatePosterPic({required XFile posterImage, CancelToken? cancelToken}) async {
+    var res = await _authApi.updatePosterPic(posterImage: posterImage, cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 
   @override
-  Future<ApiResponse> updateProfilePic({required XFile profileImage}) async {
-    var res = await authApi.updateProfilePic(profileImage: profileImage);
+  Future<ApiResponse> updateProfilePic({required XFile profileImage, CancelToken? cancelToken}) async {
+    var res = await _authApi.updateProfilePic(profileImage: profileImage, cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);
   }
 }

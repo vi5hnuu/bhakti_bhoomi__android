@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class RigvedaApi {
   static final RigvedaApi _instance = RigvedaApi._();
@@ -14,23 +16,23 @@ class RigvedaApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getRigvedaInfo() async {
-    var res = await Dio().get(_rigvedaInfoUrl);
+  Future<Map<String, dynamic>> getRigvedaInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_rigvedaInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getVerseByMandalaSukta({required int mandalaNo, required int suktaNo}) async {
+  Future<Map<String, dynamic>> getVerseByMandalaSukta({required int mandalaNo, required int suktaNo, CancelToken? cancelToken}) async {
     var url = _verseByMandalaSuktaUrl.replaceAll("%mandalaNo%", '$mandalaNo').replaceAll("%suktaNo%", '$suktaNo');
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getVerseBySuktaId({required String suktaId}) async {
-    var res = await Dio().get('$_rigvedaInfoUrl/$suktaId');
+  Future<Map<String, dynamic>> getVerseBySuktaId({required String suktaId, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_rigvedaInfoUrl/$suktaId', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getVersesByMandala({required int mandalaNo, int? pageNo, int? pageSize}) async {
+  Future<Map<String, dynamic>> getVersesByMandala({required int mandalaNo, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
     var url = _versesByMandalaUrl.replaceAll("%mandalaNo%", '$mandalaNo');
     if (pageNo != null) {
       url += '?pageNo=$pageNo';
@@ -39,7 +41,7 @@ class RigvedaApi {
       url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
     }
 
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

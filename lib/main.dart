@@ -1,3 +1,4 @@
+import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
@@ -6,30 +7,68 @@ import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
-import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatScreen.dart';
+import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasScreen.dart';
 import 'package:bhakti_bhoomi/pages/rigveda/RigvedaScreen.dart';
+import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/services/aarti/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/auth/AuthRepository.dart';
-import 'package:bhakti_bhoomi/state/auth/auth_state_bloc.dart';
+import 'package:bhakti_bhoomi/services/bhagvadGeeta/BhagvadGeetaRepository.dart';
+import 'package:bhakti_bhoomi/services/brahmaSutra/BrahmaSutraRepository.dart';
+import 'package:bhakti_bhoomi/services/chalisa/ChalisaRepository.dart';
+import 'package:bhakti_bhoomi/services/chanakyaNeeti/ChanakyaNeetiRepository.dart';
+import 'package:bhakti_bhoomi/services/mahabharat/MahabharatRepository.dart';
+import 'package:bhakti_bhoomi/services/mantra/MantraRepository.dart';
+import 'package:bhakti_bhoomi/services/ramayan/RamayanRepository.dart';
+import 'package:bhakti_bhoomi/services/ramcharitmanas/RamcharitmanasRepository.dart';
+import 'package:bhakti_bhoomi/services/rigveda/RigvedaRepository.dart';
+import 'package:bhakti_bhoomi/services/yogasutra/YogaSutraRepository.dart';
+import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
+import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
+import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
+import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
+import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => AuthStateBloc(authRepository: AuthRepository()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AartiBloc>(create: (ctx) => AartiBloc(aartiRepository: AartiRepository())),
+        BlocProvider<BrahmaSutraBloc>(create: (ctx) => BrahmaSutraBloc(brahmaSutraRepository: BrahmaSutraRepository())),
+        BlocProvider<ChalisaBloc>(create: (ctx) => ChalisaBloc(chalisaRepository: ChalisaRepository())),
+        BlocProvider<ChanakyaNeetiBloc>(create: (ctx) => ChanakyaNeetiBloc(chanakyaNeetiRepository: ChanakyaNeetiRepository())),
+        BlocProvider<MahabharatBloc>(create: (ctx) => MahabharatBloc(mahabharatRepository: MahabharatRepository())),
+        BlocProvider<MantraBloc>(create: (ctx) => MantraBloc(mantraRepository: MantraRepository())),
+        BlocProvider<RamcharitmanasBloc>(create: (ctx) => RamcharitmanasBloc(ramcharitmanasRepository: RamcharitmanasRepository())),
+        BlocProvider<RigvedaBloc>(create: (ctx) => RigvedaBloc(rigvedaRepository: RigvedaRepository())),
+        BlocProvider<RamayanBloc>(create: (ctx) => RamayanBloc(ramayanRepository: RamayanRepository())),
+        BlocProvider<BhagvadGeetaBloc>(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository())),
+        BlocProvider<YogaSutraBloc>(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository())),
+        BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
+      ],
       child: MaterialApp.router(
         title: 'Spirtual Shakti',
         debugShowCheckedModeBanner: false,
@@ -38,18 +77,24 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         routerConfig: GoRouter(
-            errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti'),
+            debugLogDiagnostics: true,
+            errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
             redirect: (context, state) {
-              if (!['/register', '/login'].contains(state.fullPath) && !BlocProvider.of<AuthStateBloc>(context).state.isLoggedIn) {
+              if (!['/register', '/login', '/splash'].contains(state.fullPath) && !BlocProvider.of<AuthBloc>(context).state.isAuthenticated) {
                 return '/login';
               }
+              return null;
             },
-            initialLocation: '/home',
+            initialLocation: '/splash',
             routes: [
               GoRoute(
-                name: Routing.home,
-                path: '/',
-                builder: (context, state) => const Home(title: 'Spirtual Shakti'),
+                name: Routing.splash,
+                path: '/splash',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: SplashScreen(title: "Splash"),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
               ),
               GoRoute(
                 name: Routing.login,
@@ -70,59 +115,83 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               GoRoute(
+                name: Routing.home,
+                path: '/home',
+                builder: (context, state) => const Home(title: 'Spirtual Shakti'),
+              ),
+              GoRoute(
+                name: Routing.aartiInfo,
+                path: '/aarti-info',
+                builder: (context, state) => AartiInfoScreen(title: 'Aarti info'),
+              ),
+              GoRoute(
                 name: Routing.aarti,
-                path: '/aarti',
-                builder: (context, state) => const AartiHome(title: 'Aarti'),
+                path: '/aarti/:id',
+                builder: (context, state) => AartiScreen(title: 'Aartis', aartiId: state.pathParameters['id']!),
               ),
               GoRoute(
                 name: Routing.brahmasutra,
                 path: '/brahmasutra',
-                builder: (context, state) => const BrahmasutraHome(title: 'Brahmasutra'),
+                builder: (context, state) => BlocProvider(create: (ctx) => BrahmaSutraBloc(brahmaSutraRepository: BrahmaSutraRepository()), child: const BrahmasutraHome(title: 'Brahmasutra')),
               ),
               GoRoute(
                 name: Routing.chalisa,
                 path: '/chalisa',
-                builder: (context, state) => const ChalisaHome(title: 'Chalisa'),
+                builder: (context, state) => BlocProvider(create: (ctx) => ChalisaBloc(chalisaRepository: ChalisaRepository()), child: const ChalisaHome(title: 'Chalisa')),
               ),
               GoRoute(
                 name: Routing.chanakyaNiti,
                 path: '/chanakya-niti',
-                builder: (context, state) => const ChanakyaNeetiHome(title: 'ChanaKya Niti'),
+                builder: (context, state) =>
+                    BlocProvider(create: (ctx) => ChanakyaNeetiBloc(chanakyaNeetiRepository: ChanakyaNeetiRepository()), child: const ChanakyaNeetiHome(title: 'ChanaKya Niti')),
               ),
               GoRoute(
-                name: Routing.mahabharat,
-                path: '/mahabharat',
-                builder: (context, state) => const MahabharatHome(title: 'MahaBharat'),
+                name: Routing.mahabharatBookInfos,
+                path: '/mahabharat-info',
+                builder: (context, state) => const MahabharatBookInfoScreen(title: 'MahaBharat'),
               ),
+              GoRoute(
+                  name: Routing.mahabharatBookChaptersInfos,
+                  path: '/mahabharat/book/:bookNo/chapters',
+                  builder: (context, state) => MahabharatChaptersInfoScreen(title: 'Mahabharat', bookNo: int.parse(state.pathParameters['bookNo']!))),
+              GoRoute(
+                  name: Routing.mahabharatBookChapterShloks,
+                  path: '/mahabharat/book/:bookNo/chapter/:chapterNo/shloks',
+                  builder: (context, state) => MahabharatShlokScreen(
+                        title: 'Mahabharat',
+                        bookNo: int.parse(state.pathParameters['bookNo']!),
+                        chapterNo: int.parse(state.pathParameters['chapterNo']!),
+                      )),
               GoRoute(
                 name: Routing.mantra,
                 path: '/mantra',
-                builder: (context, state) => const MantraHome(title: 'Mantra'),
+                builder: (context, state) => BlocProvider(create: (ctx) => MantraBloc(mantraRepository: MantraRepository()), child: const MantraHome(title: 'Mantra')),
               ),
               GoRoute(
                 name: Routing.ramcharitmanas,
                 path: '/ramcharitmanas',
-                builder: (context, state) => const RamcharitmanasHome(title: 'RamCharitManas'),
+                builder: (context, state) =>
+                    BlocProvider(create: (ctx) => RamcharitmanasBloc(ramcharitmanasRepository: RamcharitmanasRepository()), child: const RamcharitmanasHome(title: 'RamCharitManas')),
               ),
               GoRoute(
                 name: Routing.rigveda,
                 path: '/rigveda',
-                builder: (context, state) => const RigvedaHome(title: 'RigVeda'),
+                builder: (context, state) => BlocProvider(create: (ctx) => RigvedaBloc(rigvedaRepository: RigvedaRepository()), child: const RigvedaHome(title: 'RigVeda')),
               ),
               GoRoute(
                 name: Routing.valmikiRamayan,
                 path: '/valmiki-ramayan',
-                builder: (context, state) => const ValmikiRamayanHome(title: 'Valmiki Ramayan'),
+                builder: (context, state) => BlocProvider(create: (ctx) => RamayanBloc(ramayanRepository: RamayanRepository()), child: const ValmikiRamayanHome(title: 'Valmiki Ramayan')),
               ),
               GoRoute(
                 name: Routing.bhagvadGeeta,
                 path: '/bhagvad-geeta',
-                builder: (context, state) => const BhagvadGeetaHome(title: 'BhaGvad Geeta'),
+                builder: (context, state) => BlocProvider(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository()), child: const BhagvadGeetaHome(title: 'BhaGvad Geeta')),
               ),
               GoRoute(
                 name: Routing.yogaSutra,
                 path: '/yoga-sutra',
-                builder: (context, state) => const YogaSutraHome(title: 'Yoga Sutra'),
+                builder: (context, state) => BlocProvider(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository()), child: const YogaSutraHome(title: 'Yoga Sutra')),
               ),
             ]),
       ),

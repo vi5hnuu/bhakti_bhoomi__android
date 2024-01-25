@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class YogasutraApi {
   static final YogasutraApi _instance = YogasutraApi._();
@@ -14,30 +16,30 @@ class YogasutraApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getyogasutraInfo() async {
-    var res = await Dio().get(_yogasutraInfoUrl);
+  Future<Map<String, dynamic>> getyogasutraInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_yogasutraInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getYogasutraBySutraId({required String sutraId, String? lang}) async {
+  Future<Map<String, dynamic>> getYogasutraBySutraId({required String sutraId, String? lang, CancelToken? cancelToken}) async {
     var url = '$_yogasutraBySutraIdUrl?id=$sutraId';
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getYogasutraByChapterNoSutraNo({required int chapterNo, required int sutraNo, String? lang}) async {
+  Future<Map<String, dynamic>> getYogasutraByChapterNoSutraNo({required int chapterNo, required int sutraNo, String? lang, CancelToken? cancelToken}) async {
     var url = _yogasutraByChapterNoSutraNoUrl.replaceAll("%chapterNo%", '$chapterNo').replaceAll("%sutraNo%", '$sutraNo');
     if (lang != null) {
       url += '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getYogasutrasByChapterNo({required int chapterNo, int? pageNo, int? pageSize, String? lang}) async {
+  Future<Map<String, dynamic>> getYogasutrasByChapterNo({required int chapterNo, int? pageNo, int? pageSize, String? lang, CancelToken? cancelToken}) async {
     var url = '$_yogasutrasByChapterNo/$chapterNo';
 
     if (pageNo != null) {
@@ -49,7 +51,7 @@ class YogasutraApi {
     if (lang != null) {
       url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

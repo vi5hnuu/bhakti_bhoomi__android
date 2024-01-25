@@ -3,49 +3,50 @@ import 'package:bhakti_bhoomi/models/ramcharitmanas/RamcharitmanasMangalacharanM
 import 'package:bhakti_bhoomi/models/ramcharitmanas/RamcharitmanasVerseModel.dart';
 import 'package:bhakti_bhoomi/models/response/ApiResponse.dart';
 import 'package:bhakti_bhoomi/services/apis/RamcharitmanasApi.dart';
+import 'package:dio/dio.dart';
 
 import 'RamcharitmanasService.dart';
 
 class RamcharitmanasRepository implements RamcharitmanasService {
-  final RamcharitmanasApi ramcharitmanasApi;
+  final RamcharitmanasApi _ramcharitmanasApi;
   static final RamcharitmanasRepository _instance = RamcharitmanasRepository._();
 
-  RamcharitmanasRepository._() : ramcharitmanasApi = RamcharitmanasApi();
+  RamcharitmanasRepository._() : _ramcharitmanasApi = RamcharitmanasApi();
   factory RamcharitmanasRepository() => _instance;
 
   @override
-  Future<ApiResponse<List<RamcharitmanasMangalacharanModel>>> getRamcharitmanasAllMangalacharan({String? lang}) async {
-    final res = await ramcharitmanasApi.getRamcharitmanasAllMangalacharan(lang: lang);
+  Future<ApiResponse<List<RamcharitmanasMangalacharanModel>>> getRamcharitmanasAllMangalacharan({String? lang, CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasAllMangalacharan(lang: lang, cancelToken: cancelToken);
     return ApiResponse<List<RamcharitmanasMangalacharanModel>>(success: res['success'], data: res['data'].map((e) => RamcharitmanasMangalacharanModel.fromJson(e)).toList());
   }
 
   @override
-  Future<ApiResponse<RamcharitmanasInfoModel>> getRamcharitmanasInfo() async {
-    final res = await ramcharitmanasApi.getRamcharitmanasInfo();
+  Future<ApiResponse<RamcharitmanasInfoModel>> getRamcharitmanasInfo({CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasInfo(cancelToken: cancelToken);
     return ApiResponse<RamcharitmanasInfoModel>(success: res['success'], data: RamcharitmanasInfoModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<RamcharitmanasMangalacharanModel>> getRamcharitmanasMangalacharanByKanda({required String kanda, String? lang}) async {
-    final res = await ramcharitmanasApi.getRamcharitmanasMangalacharanByKanda(kanda: kanda, lang: lang);
+  Future<ApiResponse<RamcharitmanasMangalacharanModel>> getRamcharitmanasMangalacharanByKanda({required String kanda, String? lang, CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasMangalacharanByKanda(kanda: kanda, lang: lang, cancelToken: cancelToken);
     return ApiResponse<RamcharitmanasMangalacharanModel>(success: res['success'], data: RamcharitmanasMangalacharanModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<RamcharitmanasVerseModel>> getRamcharitmanasVerseById({required String id, String? lang}) async {
-    final res = await ramcharitmanasApi.getRamcharitmanasVerseById(id: id, lang: lang);
+  Future<ApiResponse<RamcharitmanasVerseModel>> getRamcharitmanasVerseById({required String id, String? lang, CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasVerseById(id: id, lang: lang, cancelToken: cancelToken);
     return ApiResponse<RamcharitmanasVerseModel>(success: res['success'], data: RamcharitmanasVerseModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<RamcharitmanasVerseModel>> getRamcharitmanasVerseByKandaAndVerseNo({required String kanda, required int verseNo, String? lang}) async {
-    final res = await ramcharitmanasApi.getRamcharitmanasVerseByKandaAndVerseNo(kanda: kanda, verseNo: verseNo, lang: lang);
+  Future<ApiResponse<RamcharitmanasVerseModel>> getRamcharitmanasVerseByKandaAndVerseNo({required String kanda, required int verseNo, String? lang, CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasVerseByKandaAndVerseNo(kanda: kanda, verseNo: verseNo, lang: lang, cancelToken: cancelToken);
     return ApiResponse<RamcharitmanasVerseModel>(success: res['success'], data: RamcharitmanasVerseModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<List<RamcharitmanasVerseModel>>> getRamcharitmanasVersesByKand({required String kanda, String? lang, int? pageNo, int? pageSize}) async {
-    final res = await ramcharitmanasApi.getRamcharitmanasVersesByKand(kanda: kanda, lang: lang, pageNo: pageNo, pageSize: pageSize);
+  Future<ApiResponse<List<RamcharitmanasVerseModel>>> getRamcharitmanasVersesByKand({required String kanda, String? lang, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
+    final res = await _ramcharitmanasApi.getRamcharitmanasVersesByKand(kanda: kanda, lang: lang, pageNo: pageNo, pageSize: pageSize, cancelToken: cancelToken);
     return ApiResponse<List<RamcharitmanasVerseModel>>(success: res['success'], data: res['data'].map((e) => RamcharitmanasVerseModel.fromJson(e)).toList());
   }
 }

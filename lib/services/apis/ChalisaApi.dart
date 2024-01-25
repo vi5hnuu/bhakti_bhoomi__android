@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class ChalisaApi {
   static final ChalisaApi _instance = ChalisaApi._();
@@ -13,23 +15,23 @@ class ChalisaApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getAllChalisaInfo() async {
-    var res = await Dio().get(_allChalisaInfoUrl);
+  Future<Map<String, dynamic>> getAllChalisaInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_allChalisaInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getAllChalisa() async {
-    var res = await Dio().get(_allChalisaUrl);
+  Future<Map<String, dynamic>> getAllChalisa({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_allChalisaUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getChalisaById({required String id}) async {
-    var res = await Dio().get('$_chalisaByIdOrTitleUrl?id=$id');
+  Future<Map<String, dynamic>> getChalisaById({required String id, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_chalisaByIdOrTitleUrl?id=$id', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getChalisaByTitle({required String title}) async {
-    var res = await Dio().get('$_chalisaByIdOrTitleUrl?title=$title');
+  Future<Map<String, dynamic>> getChalisaByTitle({required String title, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_chalisaByIdOrTitleUrl?title=$title', cancelToken: cancelToken);
     return res.data;
   }
 }

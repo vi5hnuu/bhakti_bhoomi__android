@@ -14,7 +14,7 @@ class UserInfo {
   final bool enabled;
   final bool locked;
 
-  UserInfo({
+  const UserInfo({
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -22,11 +22,21 @@ class UserInfo {
     required this.role,
     required this.createdAt,
     required this.updatedAt,
-    required this.profileMeta,
-    required this.posterMeta,
+    this.profileMeta,
+    this.posterMeta,
     this.enabled = true,
     this.locked = false,
   });
+
+  factory UserInfo.test() => UserInfo(
+        id: 'test',
+        firstName: 'test',
+        lastName: 'test',
+        email: 'xyz@gmail.com',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        role: [UserRole.roleAdmin],
+      );
 
   factory UserInfo.fromJson(Map<String, dynamic> userInfo) {
     return UserInfo(

@@ -8,9 +8,6 @@ class MahabharatBookInfoModel {
   });
 
   factory MahabharatBookInfoModel.fromJson(Map<String, dynamic> json) {
-    return MahabharatBookInfoModel(
-      bookNo: json['bookNo'],
-      info: Map<String, int>.from(json['info'].map((key, value) => MapEntry<String, int>(key, value))),
-    );
+    return MahabharatBookInfoModel(bookNo: json['bookNo'], info: (json['info'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)));
   }
 }

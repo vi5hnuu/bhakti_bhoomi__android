@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class BhagvadGeetaApi {
   static final BhagvadGeetaApi _instance = BhagvadGeetaApi._();
@@ -14,23 +16,23 @@ class BhagvadGeetaApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getbhagvadGeetaChapters() async {
-    var res = await Dio().get(_bhagvadGeetaChaptersUrl);
+  Future<Map<String, dynamic>> getbhagvadGeetaChapters({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_bhagvadGeetaChaptersUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getbhagvadGeetaChapter({required String chapterId}) async {
-    var res = await Dio().get('$_bhagvadGeetaChapterUrl/$chapterId');
+  Future<Map<String, dynamic>> getbhagvadGeetaChapter({required String chapterId, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_bhagvadGeetaChapterUrl/$chapterId', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getbhagvadShlokByChapterIdShlokId({required String chapterId, required String shlokId}) async {
+  Future<Map<String, dynamic>> getbhagvadShlokByChapterIdShlokId({required String chapterId, required String shlokId, CancelToken? cancelToken}) async {
     var url = _bhagvadGeetaShlokBychapterIdShlokIdUrl.replaceAll("%chapterId%", '$chapterId').replaceAll("%shlokId%", '$shlokId');
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getbhagvadGeetaShloks({required String chapterId, int? pageNo, int? pageSize}) async {
+  Future<Map<String, dynamic>> getbhagvadGeetaShloks({required String chapterId, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
     var url = _bhagvadGeetaShloksByChapterIdUrl.replaceAll("%chapterId%", '$chapterId');
     if (pageNo != null) {
       url += '?pageNo=$pageNo';
@@ -38,7 +40,7 @@ class BhagvadGeetaApi {
     if (pageSize != null) {
       url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
     }
-    var res = await Dio().get(url);
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 }

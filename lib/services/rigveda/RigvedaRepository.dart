@@ -3,35 +3,36 @@ import 'package:bhakti_bhoomi/models/rigveda/RigvedaInfoModel.dart';
 import 'package:bhakti_bhoomi/models/rigveda/RigvedaVerseModel.dart';
 import 'package:bhakti_bhoomi/services/apis/RigvedaApi.dart';
 import 'package:bhakti_bhoomi/services/rigveda/RigvedaService.dart';
+import 'package:dio/dio.dart';
 
 class RigvedaRepository implements RigvedaService {
-  final RigvedaApi rigvedaApi;
+  final RigvedaApi _rigvedaApi;
   static final RigvedaRepository _instance = RigvedaRepository._();
 
-  RigvedaRepository._() : rigvedaApi = RigvedaApi();
+  RigvedaRepository._() : _rigvedaApi = RigvedaApi();
   factory RigvedaRepository() => _instance;
 
   @override
-  Future<ApiResponse<RigvedaInfoModel>> getRigvedaInfo() async {
-    final res = await rigvedaApi.getRigvedaInfo();
+  Future<ApiResponse<RigvedaInfoModel>> getRigvedaInfo({CancelToken? cancelToken}) async {
+    final res = await _rigvedaApi.getRigvedaInfo(cancelToken: cancelToken);
     return ApiResponse<RigvedaInfoModel>(success: res['data'], data: RigvedaInfoModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<RigvedaVerseModel>> getVerseByMandalaSukta({required int mandalaNo, required int suktaNo}) async {
-    final res = await rigvedaApi.getVerseByMandalaSukta(mandalaNo: mandalaNo, suktaNo: suktaNo);
+  Future<ApiResponse<RigvedaVerseModel>> getVerseByMandalaSukta({required int mandalaNo, required int suktaNo, CancelToken? cancelToken}) async {
+    final res = await _rigvedaApi.getVerseByMandalaSukta(mandalaNo: mandalaNo, suktaNo: suktaNo, cancelToken: cancelToken);
     return ApiResponse<RigvedaVerseModel>(success: res['data'], data: RigvedaVerseModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<RigvedaVerseModel>> getVerseBySuktaId({required String suktaId}) async {
-    final res = await rigvedaApi.getVerseBySuktaId(suktaId: suktaId);
+  Future<ApiResponse<RigvedaVerseModel>> getVerseBySuktaId({required String suktaId, CancelToken? cancelToken}) async {
+    final res = await _rigvedaApi.getVerseBySuktaId(suktaId: suktaId, cancelToken: cancelToken);
     return ApiResponse<RigvedaVerseModel>(success: res['data'], data: RigvedaVerseModel.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse<List<RigvedaVerseModel>>> getVersesByMandala({required int mandalaNo, int? pageNo, int? pageSize}) async {
-    final res = await rigvedaApi.getVersesByMandala(mandalaNo: mandalaNo, pageNo: pageNo, pageSize: pageSize);
+  Future<ApiResponse<List<RigvedaVerseModel>>> getVersesByMandala({required int mandalaNo, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
+    final res = await _rigvedaApi.getVersesByMandala(mandalaNo: mandalaNo, pageNo: pageNo, pageSize: pageSize, cancelToken: cancelToken);
     return ApiResponse<List<RigvedaVerseModel>>(success: res['data'], data: res['data'].map((e) => RigvedaVerseModel.fromJson(e)).toList());
   }
 }

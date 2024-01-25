@@ -1,5 +1,7 @@
-import 'package:bhakti_bhoomi/services/ApiConstants.dart';
+import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
+
+import '../../singletons/DioSingleton.dart';
 
 class ChanakyaNeetiApi {
   static final ChanakyaNeetiApi _instance = ChanakyaNeetiApi._();
@@ -13,18 +15,18 @@ class ChanakyaNeetiApi {
     return _instance;
   }
 
-  Future<Map<String, dynamic>> getchanakyaNeetiChaptersInfo() async {
-    var res = await Dio().get(_chanakyaNeetiChaptersInfoUrl);
+  Future<Map<String, dynamic>> getchanakyaNeetiChaptersInfo({CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get(_chanakyaNeetiChaptersInfoUrl, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getchanakyaNeetiChapterVerses({required int chapterNo}) async {
-    var res = await Dio().get('$_chanakyaNeetiVersesByChapterNoUrl/$chapterNo');
+  Future<Map<String, dynamic>> getchanakyaNeetiChapterVerses({required int chapterNo, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_chanakyaNeetiVersesByChapterNoUrl/$chapterNo', cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getchanakyaNeetiVerseByChapterNoVerseNo({required int chapterNo, required int verseNo}) async {
-    var res = await Dio().get('$_chanakyaNeetiVerseByChapterNoVerseNoUrl/$chapterNo/$verseNo');
+  Future<Map<String, dynamic>> getchanakyaNeetiVerseByChapterNoVerseNo({required int chapterNo, required int verseNo, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.get('$_chanakyaNeetiVerseByChapterNoVerseNoUrl/$chapterNo/$verseNo', cancelToken: cancelToken);
     return res.data;
   }
 }

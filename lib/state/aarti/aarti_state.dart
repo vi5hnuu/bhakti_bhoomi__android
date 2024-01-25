@@ -1,45 +1,40 @@
 part of 'aarti_bloc.dart';
 
-@immutable
+@Immutable("cannot modify aarti state")
 class AartiState extends Equatable {
   final bool isLoading;
   final String? error;
-  final Map<String, AartiModel> _aarti; //aartiId,aarti
-  final Map<String, AartiInfoModel> _aartiInfo; //aartiId,aartiInfo
+  final Map<String, AartiModel> aartis; //aartiId,aarti
+  final List<AartiInfoModel> aartisInfo; //aartiId,aartiInfo
 
-  const AartiState({this.isLoading = false, this.error, Map<String, AartiModel> aarti = const {}, Map<String, AartiInfoModel> aartiInfo = const {}})
-      : _aartiInfo = aartiInfo,
-        _aarti = aarti;
+  const AartiState._({
+    this.isLoading = true,
+    this.error,
+    required Map<String, AartiModel> aartis,
+    required List<AartiInfoModel> aartisInfo,
+  })  : this.aartis = aartis,
+        this.aartisInfo = aartisInfo;
+
+  const AartiState.initial()
+      : this._(
+          aartis: const {},
+          aartisInfo: const [],
+        );
 
   AartiState copyWith({
     bool? isLoading,
     String? error,
-    Map<String, AartiModel>? aarti,
-    Map<String, AartiInfoModel>? aartiInfo,
+    Map<String, AartiModel>? aartis,
+    List<AartiInfoModel>? aartisInfo,
   }) {
-    return AartiState(
+    return AartiState._(
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
-      aarti: aarti ?? this._aarti,
-      aartiInfo: aartiInfo ?? this._aartiInfo,
+      aartis: aartis ?? this.aartis,
+      aartisInfo: aartisInfo ?? this.aartisInfo,
     );
   }
 
-  get aartis => Map.unmodifiable(_aarti);
-  void addAarti(AartiModel aarti) {
-    _aarti[aarti.id] = aarti;
-  }
-
-  get aartisInfo => Map.unmodifiable(_aartiInfo);
-  void addAartiInfo(AartiInfoModel aartiInfo) {
-    _aartiInfo[aartiInfo.id] = aartiInfo;
-  }
-
-  factory AartiState.initial() => AartiState();
-  factory AartiState.loading() => AartiState(isLoading: true);
-  factory AartiState.failure(String error) => AartiState(error: error);
-  factory AartiState.success(Map<String, AartiModel> aarti, Map<String, AartiInfoModel> aartiInfo) => AartiState(aarti: aarti, aartiInfo: aartiInfo);
-
   @override
-  List<Object?> get props => [isLoading, error, _aarti, _aartiInfo];
+  List<Object?> get props => [isLoading, error, aartis, aartisInfo];
 }
