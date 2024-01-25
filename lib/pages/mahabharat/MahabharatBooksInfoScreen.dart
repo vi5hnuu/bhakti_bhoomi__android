@@ -1,25 +1,37 @@
 import 'package:bhakti_bhoomi/models/mahabharat/MahabharatBookInfoModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class MahabharatBookInfoScreen extends StatelessWidget {
+class MahabharatBookInfoScreen extends StatefulWidget {
   final String title;
-  const MahabharatBookInfoScreen({super.key, required this.title});
+  MahabharatBookInfoScreen({super.key, required this.title});
+
+  @override
+  State<MahabharatBookInfoScreen> createState() => _MahabharatBookInfoScreenState();
+}
+
+class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
+  final CancelToken token = CancelToken();
+
+  @override
+  void initState() {
+    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent(cancelToken: token));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent()));
-
     return BlocBuilder<MahabharatBloc, MahabharatState>(
       buildWhen: (previous, current) => previous.allBooksInfo != current.allBooksInfo,
       builder: (context, state) => Scaffold(
           appBar: AppBar(
             title: Text('Mahabharat'),
           ),
-          body: (state.isLoading) && state.error == null
+          body: (state.isLoading || state.allBooksInfo == null) && state.error == null
               ? const CircularProgressIndicator()
               : state.error != null
                   ? Text(state.error!)
@@ -31,6 +43,12 @@ class MahabharatBookInfoScreen extends StatelessWidget {
                               ))
                           .toList())),
     );
+  }
+
+  @override
+  void dispose() {
+    token.cancel("cancelled");
+    super.dispose();
   }
 }
 

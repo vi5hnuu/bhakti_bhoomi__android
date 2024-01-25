@@ -148,7 +148,7 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.mahabharatBookInfos,
                 path: '/mahabharat-info',
-                builder: (context, state) => const MahabharatBookInfoScreen(title: 'MahaBharat'),
+                builder: (context, state) => MahabharatBookInfoScreen(title: 'MahaBharat'),
               ),
               GoRoute(
                   name: Routing.mahabharatBookChaptersInfos,

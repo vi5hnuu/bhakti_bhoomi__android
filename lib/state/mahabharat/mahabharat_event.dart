@@ -6,7 +6,9 @@ abstract class MahabharatEvent {
   const MahabharatEvent({this.cancelToken});
 }
 
-class FetchMahabharatInfoEvent extends MahabharatEvent {}
+class FetchMahabharatInfoEvent extends MahabharatEvent {
+  FetchMahabharatInfoEvent({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
 
 class FetchMahabharatShlokById extends MahabharatEvent {
   final String id;
