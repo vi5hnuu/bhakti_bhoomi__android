@@ -8,7 +8,7 @@ class ChanakyaNeetiState extends Equatable {
   final Map<String, ChanakyaNeetiVerseModel> _verses; //id,ChanakyaNeetiVerseModel
 
   const ChanakyaNeetiState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     Map<int, ChanakyaNeetiChapterInfoModel> chaptersInfo = const {},
     Map<String, ChanakyaNeetiVerseModel> verses = const {},
@@ -30,26 +30,10 @@ class ChanakyaNeetiState extends Equatable {
   }
 
   factory ChanakyaNeetiState.initial() => const ChanakyaNeetiState();
-  factory ChanakyaNeetiState.loading() => const ChanakyaNeetiState(isLoading: true);
-  factory ChanakyaNeetiState.failure(String error) => ChanakyaNeetiState(error: error);
-  factory ChanakyaNeetiState.success({
-    required Map<int, ChanakyaNeetiChapterInfoModel> chaptersInfo,
-    required Map<String, ChanakyaNeetiVerseModel> verses,
-  }) =>
-      ChanakyaNeetiState(
-        chaptersInfo: chaptersInfo,
-        verses: verses,
-      );
 
   get allChaptersInfo => Map.unmodifiable(_chaptersInfo);
-  void addChapterInfo(ChanakyaNeetiChapterInfoModel chapterInfo) {
-    _chaptersInfo[chapterInfo.chapterNo] = chapterInfo;
-  }
 
   get allVerses => Map.unmodifiable(_verses);
-  void addVerse(ChanakyaNeetiVerseModel verse) {
-    _verses[verse.id] = verse;
-  }
 
   @override
   List<Object?> get props => [isLoading, error, _chaptersInfo, _verses];

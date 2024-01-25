@@ -5,10 +5,9 @@ class BhagvadGeetaState extends Equatable {
   final bool isLoading;
   final String? error;
   final Map<String, BhagvadGeetaChapterModel> _bhagvadGeetaChapters; //bhagvadGeetaChapterId,bhagvadGeetaChapter
-  final Map<String, BhagvadGeetaShlokModel> _bhagvadGeetaShloks; //bhagvadGeetaShlokId,bhagvadGeetaShloks
+  final Map<String, BhagvadGeetaShlokModel> _bhagvadGeetaShloks; //bhagvadGeetaShlokId,bhagvadGeetaShlok
 
-  const BhagvadGeetaState(
-      {this.isLoading = false, this.error, Map<String, BhagvadGeetaChapterModel> bhagvadGeetaChapters = const {}, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
+  const BhagvadGeetaState({this.isLoading = true, this.error, Map<String, BhagvadGeetaChapterModel> bhagvadGeetaChapters = const {}, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
       : _bhagvadGeetaShloks = bhagvadGeetaShloks,
         _bhagvadGeetaChapters = bhagvadGeetaChapters;
 
@@ -27,20 +26,9 @@ class BhagvadGeetaState extends Equatable {
   }
 
   factory BhagvadGeetaState.initial() => BhagvadGeetaState();
-  factory BhagvadGeetaState.loading() => BhagvadGeetaState(isLoading: true);
-  factory BhagvadGeetaState.failure(String error) => BhagvadGeetaState(error: error);
-  factory BhagvadGeetaState.success(Map<String, BhagvadGeetaChapterModel> bhagvadGeetaChapters, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks) =>
-      BhagvadGeetaState(bhagvadGeetaChapters: bhagvadGeetaChapters, bhagvadGeetaShloks: bhagvadGeetaShloks);
 
   get bhagvadGeetaChapters => Map.unmodifiable(_bhagvadGeetaChapters);
-  void addBhagvadGeetaChapter(BhagvadGeetaChapterModel bhagvadGeetaChapter) {
-    _bhagvadGeetaChapters[bhagvadGeetaChapter.id] = bhagvadGeetaChapter;
-  }
-
   get bhagvadGeetaShloks => Map.unmodifiable(_bhagvadGeetaShloks);
-  void addBhagvadGeetaShlok(BhagvadGeetaShlokModel bhagvadGeetaShlok) {
-    _bhagvadGeetaShloks[bhagvadGeetaShlok.id] = bhagvadGeetaShlok;
-  }
 
   @override
   List<Object?> get props => [isLoading, error, _bhagvadGeetaChapters, _bhagvadGeetaShloks];

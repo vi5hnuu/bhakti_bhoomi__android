@@ -8,7 +8,7 @@ class RigvedaState extends Equatable {
   final Map<String, RigvedaVerseModel> _verses; //verseId,verse
 
   RigvedaState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     this.rigvedaInfo,
     Map<String, RigvedaVerseModel> verses = const {},
@@ -29,17 +29,8 @@ class RigvedaState extends Equatable {
   }
 
   factory RigvedaState.initial() => RigvedaState();
-  factory RigvedaState.loading() => RigvedaState(isLoading: true);
-  factory RigvedaState.failure(String error) => RigvedaState(error: error);
-  factory RigvedaState.success(RigvedaInfoModel rigvedaInfo, Map<String, RigvedaVerseModel> verses) => RigvedaState(
-        rigvedaInfo: rigvedaInfo,
-        verses: verses,
-      );
 
   get allVerses => Map.unmodifiable(_verses);
-  void addVerse(RigvedaVerseModel verse) {
-    _verses[verse.id] = verse;
-  }
 
   @override
   List<Object?> get props => [isLoading, error, rigvedaInfo, _verses];

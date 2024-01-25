@@ -9,7 +9,7 @@ class RamcharitmanasState extends Equatable {
   final Map<String, RamcharitmanasVerseModel> _verses; //verseId, verse
 
   RamcharitmanasState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     this.info,
     Map<String, RamcharitmanasMangalacharanModel> mangalacharan = const {},
@@ -34,28 +34,10 @@ class RamcharitmanasState extends Equatable {
   }
 
   factory RamcharitmanasState.initial() => RamcharitmanasState();
-  factory RamcharitmanasState.loading() => RamcharitmanasState(isLoading: true);
-  factory RamcharitmanasState.error(String error) => RamcharitmanasState(error: error);
-  factory RamcharitmanasState.success({
-    required RamcharitmanasInfoModel info,
-    required Map<String, RamcharitmanasMangalacharanModel> mangalacharan,
-    required Map<String, RamcharitmanasVerseModel> verses,
-  }) =>
-      RamcharitmanasState(
-        info: info,
-        mangalacharan: mangalacharan,
-        verses: verses,
-      );
 
   get allMangalacharan => Map.unmodifiable(_mangalacharan);
-  void addMangalacharan(RamcharitmanasMangalacharanModel mangalacharan) {
-    _mangalacharan[mangalacharan.id] = mangalacharan;
-  }
 
   get allVerses => Map.unmodifiable(_verses);
-  void addVerse(RamcharitmanasVerseModel verse) {
-    _verses[verse.id] = verse;
-  }
 
   @override
   List<Object?> get props => [isLoading, error, info, _mangalacharan, _verses];

@@ -8,7 +8,7 @@ class ChalisaState extends Equatable {
   final Map<String, ChalisaModel> _chalisa; //chalisaId,ChalisaModel
 
   const ChalisaState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     Map<String, String> chalisaInfo = const {},
     Map<String, ChalisaModel> chalisa = const {},
@@ -29,24 +29,11 @@ class ChalisaState extends Equatable {
     );
   }
 
-  factory ChalisaState.initial() {
-    return const ChalisaState();
-  }
-  factory ChalisaState.loading() {
-    return const ChalisaState(isLoading: true);
-  }
-  factory ChalisaState.failure(String error) {
-    return ChalisaState(error: error);
-  }
-  factory ChalisaState.success(Map<String, String> chalisaInfo, Map<String, ChalisaModel> chalisa) {
-    return ChalisaState(chalisaInfo: chalisaInfo, chalisa: chalisa);
-  }
+  factory ChalisaState.initial() => const ChalisaState();
 
   get chalisaInfos => Map.unmodifiable(_chalisaInfo);
-  void addChalisaInfo(ChalisaInfoModel chalisaInfo) => _chalisaInfo[chalisaInfo.id] = chalisaInfo.title;
 
   get allChalisa => Map.unmodifiable(_chalisa);
-  void addChalisa(ChalisaModel chalisa) => _chalisa[chalisa.id] = chalisa;
 
   @override
   List<Object?> get props => [isLoading, error, _chalisaInfo, _chalisa];

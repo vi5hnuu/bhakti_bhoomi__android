@@ -1,5 +1,6 @@
 part of 'brahma_sutra_bloc.dart';
 
+@Immutable("instance BrahmaSutraState cannot be modified")
 class BrahmaSutraState extends Equatable {
   final bool isLoading;
   final String? error;
@@ -8,7 +9,7 @@ class BrahmaSutraState extends Equatable {
   final Map<String, BrahmaSutraModel> _brahmaSutras; //sutraId->brahmaSutraModel
 
   const BrahmaSutraState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     Map<int, BrahmaSutraChapterInfoModel> chaptersInfo = const {},
     this.brahmasutraInfo,
@@ -33,20 +34,10 @@ class BrahmaSutraState extends Equatable {
   }
 
   factory BrahmaSutraState.initial() => const BrahmaSutraState();
-  factory BrahmaSutraState.loading() => const BrahmaSutraState(isLoading: true);
-  factory BrahmaSutraState.failure(String error) => BrahmaSutraState(error: error);
-  factory BrahmaSutraState.success(Map<int, BrahmaSutraChapterInfoModel> chaptersInfo, BrahmasutraInfoModel brahmasutraInfoModel, Map<String, BrahmaSutraModel> brahmaSutras) =>
-      BrahmaSutraState(chaptersInfo: chaptersInfo, brahmasutraInfo: brahmasutraInfoModel, brahmaSutras: brahmaSutras);
 
   get chaptersInfo => Map.unmodifiable(_chaptersInfo);
-  void addChapterInfo(int chapterNo, BrahmaSutraChapterInfoModel chapterInfo) {
-    _chaptersInfo[chapterNo] = chapterInfo;
-  }
 
   get brahmaSutras => Map.unmodifiable(_brahmaSutras);
-  void addBrahmaSutra(BrahmaSutraModel brahmaSutra) {
-    _brahmaSutras[brahmaSutra.id] = brahmaSutra;
-  }
 
   @override
   List<Object?> get props => [isLoading, error, _chaptersInfo, brahmasutraInfo, _brahmaSutras];

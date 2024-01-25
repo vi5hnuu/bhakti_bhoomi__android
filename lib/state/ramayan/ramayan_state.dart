@@ -14,7 +14,7 @@ class RamayanState extends Equatable {
   }
 
   RamayanState({
-    this.isLoading = false,
+    this.isLoading = true,
     this.error,
     this.ramayanInfo,
     Map<String, RamayanKandaInfoModel> kandaInfo = const {},
@@ -43,35 +43,12 @@ class RamayanState extends Equatable {
   }
 
   factory RamayanState.initial() => RamayanState();
-  factory RamayanState.loading() => RamayanState(isLoading: true);
-  factory RamayanState.error(String error) => RamayanState(error: error);
-  factory RamayanState.success({
-    required RamayanInfoModel ramayanInfo,
-    required Map<String, RamayanKandaInfoModel> kandaInfo,
-    required Map<String, RamayanSargaInfoModel> sargaInfo,
-    required Map<String, RamayanShlokModel> shloks,
-  }) =>
-      RamayanState(
-        ramayanInfo: ramayanInfo,
-        kandaInfo: kandaInfo,
-        sargaInfo: sargaInfo,
-        shloks: shloks,
-      );
 
   get allKandaInfo => Map.unmodifiable(_kandaInfo);
-  void addKandaInfo(RamayanKandaInfoModel kandaInfo) {
-    _kandaInfo[kandaInfo.kanda] = kandaInfo;
-  }
 
   get allSargaInfo => Map.unmodifiable(_sargaInfo);
-  void addSargaInfo(RamayanSargaInfoModel sargaInfo) {
-    _sargaInfo[sargaInfo.sargaId] = sargaInfo;
-  }
 
   get allShloks => Map.unmodifiable(_shloks);
-  void addShlok(RamayanShlokModel shlok) {
-    _shloks[_uniqueShlokIdentifier(shlok)] = shlok;
-  }
 
   @override
   List<Object?> get props => [
