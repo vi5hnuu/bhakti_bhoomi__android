@@ -13,7 +13,9 @@ import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
-import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasScreen.dart';
+import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScreen.dart';
+import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.dart';
 import 'package:bhakti_bhoomi/pages/rigveda/RigvedaScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanScreen.dart';
@@ -174,9 +176,19 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => const MantraHome(title: 'Mantra'),
               ),
               GoRoute(
-                name: Routing.ramcharitmanas,
-                path: '/ramcharitmanas',
-                builder: (context, state) => const RamcharitmanasHome(title: 'RamCharitManas'),
+                name: Routing.ramcharitmanasInfo,
+                path: '/ramcharitmanas-info',
+                builder: (context, state) => const RamcharitmanasInfoScreen(title: 'RamCharitManas'),
+              ),
+              GoRoute(
+                name: Routing.ramcharitmanasKandVerses,
+                path: '/ramcharitmanas/kand/:kand/verses',
+                builder: (context, state) => RamcharitmanasVersesScreen(title: 'RamCharitManas', kand: state.pathParameters['kand']!),
+              ),
+              GoRoute(
+                name: Routing.ramcharitmanasMangalaCharan,
+                path: '/ramcharitmanas/kand/:kand/mangalacharan',
+                builder: (context, state) => RamcharitmanasMangalacharanScreen(title: 'RamCharitManas', kand: state.pathParameters['kand']!),
               ),
               GoRoute(
                 name: Routing.rigveda,

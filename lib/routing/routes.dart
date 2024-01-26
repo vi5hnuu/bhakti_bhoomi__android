@@ -19,7 +19,11 @@ class Routing {
   static final String mahabharatBookChapterShloks = "mahabharat-book-chapter-shloks";
 
   static final String mantra = "mantra";
-  static final String ramcharitmanas = "ramcharitmanas";
+
+  static final String ramcharitmanasInfo = "ramcharitmanas-info";
+  static final String ramcharitmanasMangalaCharan = "ramcharitmanas-mangalacharan";
+  static final String ramcharitmanasKandVerses = "ramcharitmanas-kand-verses";
+
   static final String rigveda = "rigveda";
   static final String valmikiRamayan = "valmiki-ramayan";
 
