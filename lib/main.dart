@@ -2,7 +2,8 @@ import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
-import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaScreen.dart';
+import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
+import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiScreen.dart';
@@ -132,18 +133,17 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.brahmasutra,
                 path: '/brahmasutra',
-                builder: (context, state) => BlocProvider(create: (ctx) => BrahmaSutraBloc(brahmaSutraRepository: BrahmaSutraRepository()), child: const BrahmasutraHome(title: 'Brahmasutra')),
+                builder: (context, state) => const BrahmasutraHome(title: 'Brahmasutra'),
               ),
               GoRoute(
                 name: Routing.chalisa,
                 path: '/chalisa',
-                builder: (context, state) => BlocProvider(create: (ctx) => ChalisaBloc(chalisaRepository: ChalisaRepository()), child: const ChalisaHome(title: 'Chalisa')),
+                builder: (context, state) => const ChalisaHome(title: 'Chalisa'),
               ),
               GoRoute(
                 name: Routing.chanakyaNiti,
                 path: '/chanakya-niti',
-                builder: (context, state) =>
-                    BlocProvider(create: (ctx) => ChanakyaNeetiBloc(chanakyaNeetiRepository: ChanakyaNeetiRepository()), child: const ChanakyaNeetiHome(title: 'ChanaKya Niti')),
+                builder: (context, state) => const ChanakyaNeetiHome(title: 'ChanaKya Niti'),
               ),
               GoRoute(
                 name: Routing.mahabharatBookInfos,
@@ -165,33 +165,37 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.mantra,
                 path: '/mantra',
-                builder: (context, state) => BlocProvider(create: (ctx) => MantraBloc(mantraRepository: MantraRepository()), child: const MantraHome(title: 'Mantra')),
+                builder: (context, state) => const MantraHome(title: 'Mantra'),
               ),
               GoRoute(
                 name: Routing.ramcharitmanas,
                 path: '/ramcharitmanas',
-                builder: (context, state) =>
-                    BlocProvider(create: (ctx) => RamcharitmanasBloc(ramcharitmanasRepository: RamcharitmanasRepository()), child: const RamcharitmanasHome(title: 'RamCharitManas')),
+                builder: (context, state) => const RamcharitmanasHome(title: 'RamCharitManas'),
               ),
               GoRoute(
                 name: Routing.rigveda,
                 path: '/rigveda',
-                builder: (context, state) => BlocProvider(create: (ctx) => RigvedaBloc(rigvedaRepository: RigvedaRepository()), child: const RigvedaHome(title: 'RigVeda')),
+                builder: (context, state) => const RigvedaHome(title: 'RigVeda'),
               ),
               GoRoute(
                 name: Routing.valmikiRamayan,
                 path: '/valmiki-ramayan',
-                builder: (context, state) => BlocProvider(create: (ctx) => RamayanBloc(ramayanRepository: RamayanRepository()), child: const ValmikiRamayanHome(title: 'Valmiki Ramayan')),
+                builder: (context, state) => const ValmikiRamayanHome(title: 'Valmiki Ramayan'),
               ),
               GoRoute(
-                name: Routing.bhagvadGeeta,
-                path: '/bhagvad-geeta',
-                builder: (context, state) => BlocProvider(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository()), child: const BhagvadGeetaHome(title: 'BhaGvad Geeta')),
+                name: Routing.bhagvadGeetaChapters,
+                path: '/bhagvad-geeta-chapters',
+                builder: (context, state) => BhagvadGeetaChaptersScreen(title: 'Bhagvad Geeta'),
+              ),
+              GoRoute(
+                name: Routing.bhagvadGeetaChapterShloks,
+                path: '/bhagvad-geeta/chapter/:chapterNo/shloks',
+                builder: (context, state) => BhagvadGeetaShlokScreen(title: 'Bhagvad Geeta shlok', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
               ),
               GoRoute(
                 name: Routing.yogaSutra,
                 path: '/yoga-sutra',
-                builder: (context, state) => BlocProvider(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository()), child: const YogaSutraHome(title: 'Yoga Sutra')),
+                builder: (context, state) => const YogaSutraHome(title: 'Yoga Sutra'),
               ),
             ]),
       ),

@@ -1,3 +1,4 @@
+import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/mahabharat/MahabharatShlokModel.dart';
 import 'package:bhakti_bhoomi/services/mahabharat/MahabharatRepository.dart';
 import 'package:bloc/bloc.dart';
@@ -26,7 +27,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
         final booksInfoObj = await mahabharatRepository.getMahabharatInfo(cancelToken: event.cancelToken);
         emit(state.copyWith(isLoading: false, bookInfo: booksInfoObj.data));
       } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: _handleDioException(e)));
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
       } catch (e) {
         emit(state.copyWith(isLoading: false, error: "something went wrong"));
       }
@@ -45,7 +46,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
               {shlokObj.data!.id: shlokObj.data}
             ])));
       } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: _handleDioException(e)));
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
       } catch (e) {
         emit(state.copyWith(isLoading: false, error: "something went wrong"));
       }
@@ -58,7 +59,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
         final shlokObj = await mahabharatRepository.getMahabharatShlokByShlokNo(bookNo: event.bookNo, chapterNo: event.chapterNo, shlokNo: event.shlokNo, cancelToken: event.cancelToken);
         emit(state.copyWith(isLoading: false, shloks: Map.fromEntries([...state.allShloks.entries, MahabharatState.shlokEntry(shlokObj.data!)])));
       } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: _handleDioException(e)));
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
       } catch (e) {
         emit(state.copyWith(isLoading: false, error: "something went wrong"));
       }
@@ -73,24 +74,10 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
             await mahabharatRepository.getMahabharatShloksByBookChapter(bookNo: event.bookNo, chapterNo: event.bookNo, pageNo: event.pageNo, pageSize: event.pageSize, cancelToken: event.cancelToken);
         emit(state.copyWith(isLoading: false, shloks: Map.fromEntries([...state.allShloks.entries, ...((shloksObj.data!).map((shlok) => MahabharatState.shlokEntry(shlok)))])));
       } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: _handleDioException(e)));
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
       } catch (e) {
         emit(state.copyWith(isLoading: false, error: "something went wrong"));
       }
     });
-  }
-
-  String? _handleDioException(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.cancel:
-        return null;
-      case DioExceptionType.connectionError:
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.sendTimeout:
-        return "please check your internet connection.";
-      default:
-        return e.message;
-    }
   }
 }

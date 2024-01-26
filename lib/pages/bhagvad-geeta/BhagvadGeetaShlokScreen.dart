@@ -1,36 +1,35 @@
-import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MahabharatShlokScreen extends StatefulWidget {
+class BhagvadGeetaShlokScreen extends StatefulWidget {
   final String title;
-  final int bookNo;
   final int chapterNo;
-  const MahabharatShlokScreen({super.key, required this.title, required this.bookNo, required this.chapterNo});
+  const BhagvadGeetaShlokScreen({super.key, required this.title, required this.chapterNo});
 
   @override
-  State<MahabharatShlokScreen> createState() => _MahabharatShlokScreenState();
+  State<BhagvadGeetaShlokScreen> createState() => _BhagvadGeetaShlokScreenState();
 }
 
-class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
-  final pageStorageKey = const PageStorageKey('mahabharat_shlok_screen');
+class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
+  final pageStorageKey = const PageStorageKey('bhagvadGeeta_shlok_screen');
   final PageController _controller = PageController(initialPage: 0);
   CancelToken? token;
+
   @override
   initState() {
     super.initState();
-    print('->bookNo ${widget.bookNo} chapterNo ${widget.chapterNo}');
-    token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: 1);
+    token = loadShlok(chapterNo: widget.chapterNo, shlokNo: 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MahabharatBloc, MahabharatState>(
+    return BlocBuilder<BhagvadGeetaBloc, BhagvadGeetaState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Mahabharat'),
+            title: Text('Bhagvad Geeta'),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -38,9 +37,9 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo),
+            itemCount: state.bhagvadGeetaChapters![widget.chapterNo].versesCount,
             itemBuilder: (context, index) {
-              final shlok = state.getShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
+              final shlok = state.getShlok(chapterNo: widget.chapterNo, shlokNo: index + 1);
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
@@ -53,7 +52,7 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   mainAxisSize: MainAxisSize.max,
-                                  children: [Text(shlok!.text)],
+                                  children: [Text(shlok!.shlok)],
                                 ),
                                 const Positioned(
                                   bottom: 45,
@@ -72,18 +71,20 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(() {
-              print("token $token");
-              token?.cancel("cancelled");
-              token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
-            }),
+            onPageChanged: (pageNo) => setState(
+              () {
+                print("token $token");
+                token?.cancel("cancelled");
+                token = loadShlok(chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
+              },
+            ),
           )),
     );
   }
 
-  CancelToken loadShlok({required int bookNo, required int chapterNo, required int shlokNo}) {
+  CancelToken loadShlok({required int chapterNo, required int shlokNo}) {
     CancelToken cancelToken = CancelToken();
-    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
+    BlocProvider.of<BhagvadGeetaBloc>(context).add(FetchBhagvadShlokByChapterNoShlokNo(chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
     return cancelToken;
   }
 

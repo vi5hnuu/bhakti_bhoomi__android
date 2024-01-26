@@ -6,9 +6,10 @@ import '../../singletons/DioSingleton.dart';
 class BhagvadGeetaApi {
   static final BhagvadGeetaApi _instance = BhagvadGeetaApi._();
 
-  static final String _bhagvadGeetaChaptersUrl = "${ApiConstants.baseUrl}/bhagavad_geeta//chapter"; //GET
-  static final String _bhagvadGeetaChapterUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter/sacc"; //GET
-  static final String _bhagvadGeetaShlokBychapterIdShlokIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter/%chapterId%/shlok/%shlokId%"; //GET
+  static final String _bhagvadGeetaChaptersUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter"; //GET
+  static final String _bhagvadGeetaShlokBychapterIdShlokIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokId/%shlokId%"; //GET
+  static final String _bhagvadGeetaShlokBychapterIdShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokNo/%shlokNo%"; //GET
+  static final String _bhagvadGeetaShlokBychapterNoShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterNo/%chapterNo%/shlokNo/%shlokNo%"; //GET
   static final String _bhagvadGeetaShloksByChapterIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter/%chapterId%/shlok"; //GET
 
   BhagvadGeetaApi._();
@@ -21,13 +22,20 @@ class BhagvadGeetaApi {
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getbhagvadGeetaChapter({required String chapterId, CancelToken? cancelToken}) async {
-    var res = await DioSingleton().dio.get('$_bhagvadGeetaChapterUrl/$chapterId', cancelToken: cancelToken);
+  Future<Map<String, dynamic>> getbhagvadShlokByChapterIdShlokId({required String chapterId, required String shlokId, CancelToken? cancelToken}) async {
+    var url = _bhagvadGeetaShlokBychapterIdShlokIdUrl.replaceAll("%chapterId%", '$chapterId').replaceAll("%shlokId%", '$shlokId');
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> getbhagvadShlokByChapterIdShlokId({required String chapterId, required String shlokId, CancelToken? cancelToken}) async {
-    var url = _bhagvadGeetaShlokBychapterIdShlokIdUrl.replaceAll("%chapterId%", '$chapterId').replaceAll("%shlokId%", '$shlokId');
+  Future<Map<String, dynamic>> getbhagvadShlokByChapterIdShlokNo({required String chapterId, required int shlokNo, CancelToken? cancelToken}) async {
+    var url = _bhagvadGeetaShlokBychapterIdShlokNoUrl.replaceAll("%chapterId%", '$chapterId').replaceAll("%shlokNo%", '$shlokNo');
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getbhagvadShlokByChapterNoShlokNo({required int chapterNo, required int shlokNo, CancelToken? cancelToken}) async {
+    var url = _bhagvadGeetaShlokBychapterNoShlokNoUrl.replaceAll("%chapterNo%", '$chapterNo').replaceAll("%shlokNo%", '$shlokNo');
     var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }

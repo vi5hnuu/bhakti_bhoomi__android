@@ -27,8 +27,8 @@ class BhagvadGeetaChapterModel {
       name: json['name'],
       translation: json['translation'],
       transliteration: json['transliteration'],
-      meaning: json['meaning'],
-      summary: json['summary'],
+      meaning: Map.fromEntries((json['meaning'] as Map<String, dynamic>).entries.map((e) => MapEntry(e.key, e.value as String))),
+      summary: Map.fromEntries((json['summary'] as Map<String, dynamic>).entries.map((e) => MapEntry(e.key, e.value as String))),
     );
   }
 }

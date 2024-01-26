@@ -18,7 +18,7 @@ class BhagvadGeetaShlokModel {
       verse: json['verse'],
       shlok: json['shlok'],
       transliteration: json['transliteration'],
-      translationsBy: json['translationsBy'],
+      translationsBy: (json['translationsBy'] as Map<String, dynamic>).map((key, value) => MapEntry(key, Map<String, String>.from(value))),
     );
   }
 }

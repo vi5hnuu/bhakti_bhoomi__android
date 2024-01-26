@@ -4,17 +4,17 @@ part of 'bhagvad_geeta_bloc.dart';
 class BhagvadGeetaState extends Equatable {
   final bool isLoading;
   final String? error;
-  final Map<String, BhagvadGeetaChapterModel> _bhagvadGeetaChapters; //bhagvadGeetaChapterId,bhagvadGeetaChapter
+  final List<BhagvadGeetaChapterModel>? _bhagvadGeetaChapters; //bhagvadGeetaChapterId,bhagvadGeetaChapter
   final Map<String, BhagvadGeetaShlokModel> _bhagvadGeetaShloks; //bhagvadGeetaShlokId,bhagvadGeetaShlok
 
-  const BhagvadGeetaState({this.isLoading = true, this.error, Map<String, BhagvadGeetaChapterModel> bhagvadGeetaChapters = const {}, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
+  const BhagvadGeetaState({this.isLoading = true, this.error, List<BhagvadGeetaChapterModel>? bhagvadGeetaChapters, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
       : _bhagvadGeetaShloks = bhagvadGeetaShloks,
         _bhagvadGeetaChapters = bhagvadGeetaChapters;
 
   BhagvadGeetaState copyWith({
     bool? isLoading,
     String? error,
-    Map<String, BhagvadGeetaChapterModel>? bhagvadGeetaChapters,
+    List<BhagvadGeetaChapterModel>? bhagvadGeetaChapters,
     Map<String, BhagvadGeetaShlokModel>? bhagvadGeetaShloks,
   }) {
     return BhagvadGeetaState(
@@ -27,8 +27,15 @@ class BhagvadGeetaState extends Equatable {
 
   factory BhagvadGeetaState.initial() => BhagvadGeetaState();
 
-  get bhagvadGeetaChapters => Map.unmodifiable(_bhagvadGeetaChapters);
-  get bhagvadGeetaShloks => Map.unmodifiable(_bhagvadGeetaShloks);
+  String _uniqueKey({required int chapterNo, required int shlokNo}) => "$chapterNo-$shlokNo}";
+  MapEntry<String, BhagvadGeetaShlokModel> getEntry(BhagvadGeetaShlokModel shlok) => MapEntry(_uniqueKey(chapterNo: shlok.chapter, shlokNo: shlok.verse), shlok);
+
+  bool shlokExists({required int chapterNo, required int shlokNo}) => _bhagvadGeetaShloks.containsKey(_uniqueKey(chapterNo: chapterNo, shlokNo: shlokNo));
+
+  List<BhagvadGeetaChapterModel>? get bhagvadGeetaChapters => _bhagvadGeetaChapters != null ? List.unmodifiable(_bhagvadGeetaChapters) : null;
+  Map<String, BhagvadGeetaShlokModel> get bhagvadGeetaShloks => Map.unmodifiable(_bhagvadGeetaShloks);
+
+  BhagvadGeetaShlokModel? getShlok({required int chapterNo, required int shlokNo}) => _bhagvadGeetaShloks[_uniqueKey(chapterNo: chapterNo, shlokNo: shlokNo)];
 
   @override
   List<Object?> get props => [isLoading, error, _bhagvadGeetaChapters, _bhagvadGeetaShloks];
