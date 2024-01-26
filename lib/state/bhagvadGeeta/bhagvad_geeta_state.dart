@@ -19,7 +19,7 @@ class BhagvadGeetaState extends Equatable {
   }) {
     return BhagvadGeetaState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       bhagvadGeetaChapters: bhagvadGeetaChapters ?? this._bhagvadGeetaChapters,
       bhagvadGeetaShloks: bhagvadGeetaShloks ?? this._bhagvadGeetaShloks,
     );

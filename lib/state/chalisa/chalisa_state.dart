@@ -23,7 +23,7 @@ class ChalisaState extends Equatable {
   }) {
     return ChalisaState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       chalisaInfo: chalisaInfo ?? this._chalisaInfo,
       chalisa: chalisa ?? this._chalisa,
     );

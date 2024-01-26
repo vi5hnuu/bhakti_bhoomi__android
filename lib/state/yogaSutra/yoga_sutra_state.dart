@@ -22,7 +22,7 @@ class YogaSutraState extends Equatable {
   }) {
     return YogaSutraState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       yogaSutraInfo: yogaSutraInfo ?? this.yogaSutraInfo,
       sutras: sutras ?? this._sutras,
     );

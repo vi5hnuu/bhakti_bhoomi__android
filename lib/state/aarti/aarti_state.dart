@@ -29,7 +29,7 @@ class AartiState extends Equatable {
   }) {
     return AartiState._(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       aartis: aartis ?? this.aartis,
       aartisInfo: aartisInfo ?? this.aartisInfo,
     );

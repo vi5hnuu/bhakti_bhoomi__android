@@ -15,7 +15,7 @@ class AuthState {
       userInfo: userInfo ?? this.userInfo,
       message: message ?? this.message,
       success: success ?? this.success,
-      error: error ?? this.error,
+      error: error,
       isLoading: isLoading ?? this.isLoading,
     );
   }

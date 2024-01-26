@@ -22,7 +22,7 @@ class RigvedaState extends Equatable {
   }) {
     return RigvedaState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       rigvedaInfo: rigvedaInfo ?? this.rigvedaInfo,
       verses: verses ?? this._verses,
     );

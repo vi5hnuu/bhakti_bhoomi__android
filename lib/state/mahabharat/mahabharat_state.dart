@@ -23,7 +23,7 @@ class MahabharatState extends Equatable {
   }) {
     return MahabharatState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       bookInfo: bookInfo ?? this._booksInfo,
       shloks: shloks ?? this._shloks,
     );

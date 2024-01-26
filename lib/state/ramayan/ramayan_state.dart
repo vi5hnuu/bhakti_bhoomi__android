@@ -34,7 +34,7 @@ class RamayanState extends Equatable {
   }) {
     return RamayanState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       ramayanInfo: ramayanInfo ?? this.ramayanInfo,
       kandaInfo: kandaInfo ?? this._kandaInfo,
       sargaInfo: sargaInfo ?? this._sargaInfo,

@@ -31,7 +31,7 @@ class Home extends StatelessWidget {
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters)}, title: "chanakyaneeti"),
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos)}, title: "mahabharat"),
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantra)}, title: "mantra"),
-          ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanas)}, title: "ramcharitmanas"),
+          ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo)}, title: "ramcharitmanas"),
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigveda)}, title: "rigveda"),
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayan)}, title: "valmiikiramayan"),
           ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters)}, title: "bhagvadgeeta"),

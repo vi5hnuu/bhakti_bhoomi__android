@@ -23,7 +23,7 @@ class MantraState extends Equatable {
   }) {
     return MantraState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       mantraInfo: mantraInfo ?? this._mantraInfo,
       mantras: mantras ?? this._mantras,
     );

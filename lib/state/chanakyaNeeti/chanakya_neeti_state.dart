@@ -23,7 +23,7 @@ class ChanakyaNeetiState extends Equatable {
   }) {
     return ChanakyaNeetiState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       chaptersInfo: chaptersInfo ?? this._chaptersInfo,
       verses: verses ?? this._verses,
     );

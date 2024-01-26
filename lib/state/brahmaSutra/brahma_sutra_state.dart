@@ -26,7 +26,7 @@ class BrahmaSutraState extends Equatable {
   }) {
     return BrahmaSutraState(
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      error: error,
       chaptersInfo: chaptersInfo ?? this._chaptersInfo,
       brahmasutraInfo: brahmasutraInfoModel ?? this.brahmasutraInfo,
       brahmaSutras: brahmaSutras ?? this._brahmaSutras,
