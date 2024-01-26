@@ -16,13 +16,13 @@ class ChanakyaNeetiRepository implements ChanakyaNeetiService {
   @override
   Future<ApiResponse<List<ChanakyaNeetiVerseModel>>> getchanakyaNeetiChapterVerses({required int chapterNo, CancelToken? cancelToken}) async {
     final res = await _chanakyaNeetiApi.getchanakyaNeetiChapterVerses(chapterNo: chapterNo, cancelToken: cancelToken);
-    return ApiResponse<List<ChanakyaNeetiVerseModel>>(success: res['success'], data: res['data'].map((e) => ChanakyaNeetiVerseModel.fromJson(res['data'])));
+    return ApiResponse<List<ChanakyaNeetiVerseModel>>(success: res['success'], data: res['data'].map((e) => ChanakyaNeetiVerseModel.fromJson(e)));
   }
 
   @override
   Future<ApiResponse<List<ChanakyaNeetiChapterInfoModel>>> getchanakyaNeetiChaptersInfo({CancelToken? cancelToken}) async {
     final res = await _chanakyaNeetiApi.getchanakyaNeetiChaptersInfo(cancelToken: cancelToken);
-    return ApiResponse<List<ChanakyaNeetiChapterInfoModel>>(success: res['success'], data: res['data'].map((e) => ChanakyaNeetiChapterInfoModel.fromJson(res['data'])));
+    return ApiResponse<List<ChanakyaNeetiChapterInfoModel>>(success: res['success'], data: (res['data'] as List).map((e) => ChanakyaNeetiChapterInfoModel.fromJson(e)).toList());
   }
 
   @override

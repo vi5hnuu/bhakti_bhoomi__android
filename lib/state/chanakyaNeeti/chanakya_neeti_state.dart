@@ -4,13 +4,13 @@ part of 'chanakya_neeti_bloc.dart';
 class ChanakyaNeetiState extends Equatable {
   final bool isLoading;
   final String? error;
-  final Map<int, ChanakyaNeetiChapterInfoModel> _chaptersInfo; //chapterNo,ChanakyaNeetiChapterInfoModel
+  final List<ChanakyaNeetiChapterInfoModel>? _chaptersInfo; //ChanakyaNeetiChapterInfoModel
   final Map<String, ChanakyaNeetiVerseModel> _verses; //id,ChanakyaNeetiVerseModel
 
   const ChanakyaNeetiState({
     this.isLoading = true,
     this.error,
-    Map<int, ChanakyaNeetiChapterInfoModel> chaptersInfo = const {},
+    List<ChanakyaNeetiChapterInfoModel>? chaptersInfo,
     Map<String, ChanakyaNeetiVerseModel> verses = const {},
   })  : _verses = verses,
         _chaptersInfo = chaptersInfo;
@@ -18,7 +18,7 @@ class ChanakyaNeetiState extends Equatable {
   ChanakyaNeetiState copyWith({
     bool? isLoading,
     String? error,
-    Map<int, ChanakyaNeetiChapterInfoModel>? chaptersInfo,
+    List<ChanakyaNeetiChapterInfoModel>? chaptersInfo,
     Map<String, ChanakyaNeetiVerseModel>? verses,
   }) {
     return ChanakyaNeetiState(
@@ -31,9 +31,17 @@ class ChanakyaNeetiState extends Equatable {
 
   factory ChanakyaNeetiState.initial() => const ChanakyaNeetiState();
 
-  get allChaptersInfo => Map.unmodifiable(_chaptersInfo);
+  List<ChanakyaNeetiChapterInfoModel>? get allChaptersInfo => _chaptersInfo != null ? List.unmodifiable(_chaptersInfo) : null;
 
-  get allVerses => Map.unmodifiable(_verses);
+  Map<String, ChanakyaNeetiVerseModel> get allVerses => Map.unmodifiable(_verses);
+
+  String _uniqueKey({required int chapterNo, required int verseNo}) => '$chapterNo-$verseNo';
+
+  MapEntry<String, ChanakyaNeetiVerseModel> getEntry(ChanakyaNeetiVerseModel verse) => MapEntry(_uniqueKey(chapterNo: verse.chapterNo, verseNo: verse.verseNo), verse);
+
+  bool verseExists({required int chapterNo, required int verseNo}) => _verses.containsKey(_uniqueKey(chapterNo: chapterNo, verseNo: verseNo));
+
+  ChanakyaNeetiVerseModel? getVerse({required int chapterNo, required int verseNo}) => _verses[_uniqueKey(chapterNo: chapterNo, verseNo: verseNo)];
 
   @override
   List<Object?> get props => [isLoading, error, _chaptersInfo, _verses];

@@ -6,7 +6,8 @@ import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dar
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
-import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiScreen.dart';
+import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiChaptersScreen.dart';
+import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
@@ -141,9 +142,14 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => const ChalisaHome(title: 'Chalisa'),
               ),
               GoRoute(
-                name: Routing.chanakyaNiti,
-                path: '/chanakya-niti',
-                builder: (context, state) => const ChanakyaNeetiHome(title: 'ChanaKya Niti'),
+                name: Routing.chanakyaNitiChapters,
+                path: '/chanakya-niti-chapters',
+                builder: (context, state) => const ChanakyaNeetiChaptersScreen(title: 'ChanaKya Niti'),
+              ),
+              GoRoute(
+                name: Routing.chanakyaNitiChapterShlok,
+                path: '/chanakya-niti/chapter/:chapterNo/shloks',
+                builder: (context, state) => ChanakyaNeetiShlokScreen(title: 'ChanaKya Niti', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
               ),
               GoRoute(
                 name: Routing.mahabharatBookInfos,

@@ -11,7 +11,8 @@ class Routing {
 
   static final String chalisa = "chalisa";
 
-  static final String chanakyaNiti = "chanakya-niti";
+  static final String chanakyaNitiChapters = "chanakya-niti-chapters";
+  static final String chanakyaNitiChapterShlok = "chanakya-niti-chapter-shlok";
 
   static final String mahabharatBookInfos = "mahabharat-book-info";
   static final String mahabharatBookChaptersInfos = "mahabharat-book-chapters-info";
