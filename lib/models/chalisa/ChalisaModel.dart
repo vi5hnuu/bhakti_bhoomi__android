@@ -15,11 +15,7 @@ class ChalisaModel {
     return ChalisaModel(
         id: json['id'],
         title: json['title'],
-        translations: Map<String, Map<String, List<ChalisaVerseModel>>>.from(
-          json['translations'].map((key, value) => MapEntry<String, Map<String, List<ChalisaVerseModel>>>(
-              key,
-              Map<String, List<ChalisaVerseModel>>.from(
-                  value.map((key, value) => MapEntry<String, List<ChalisaVerseModel>>(key, List<ChalisaVerseModel>.from(value.map((item) => ChalisaVerseModel.fromJson(item)))))))),
-        ));
+        translations: Map.fromEntries((json['translations'] as Map<String, dynamic>).entries.map((e) =>
+            MapEntry(e.key, Map.fromEntries((e.value as Map<String, dynamic>).entries.map((e1) => MapEntry(e1.key, (e1.value as List).map((e2) => ChalisaVerseModel.fromJson(e2)).toList())))))));
   }
 }

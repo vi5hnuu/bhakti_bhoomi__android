@@ -15,9 +15,11 @@ class FetchAllChalisa extends ChalisaEvent {
 }
 
 class FetchChalisaById extends ChalisaEvent {
-  const FetchChalisaById({required String id, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+  final String id;
+  const FetchChalisaById({required this.id, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
 class FetchChalisaByTitle extends ChalisaEvent {
-  const FetchChalisaByTitle({required String title, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+  final String title;
+  const FetchChalisaByTitle({required this.title, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }

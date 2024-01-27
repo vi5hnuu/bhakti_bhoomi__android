@@ -10,7 +10,7 @@ class ChalisaVerseModel {
   factory ChalisaVerseModel.fromJson(Map<String, dynamic> json) {
     return ChalisaVerseModel(
       title: json['title'],
-      verses: json['verses'],
+      verses: (json['verses'] as List).map((e) => e as String).toList(),
     );
   }
 }

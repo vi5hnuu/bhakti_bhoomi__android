@@ -4,13 +4,13 @@ part of 'chalisa_bloc.dart';
 class ChalisaState extends Equatable {
   final bool isLoading;
   final String? error;
-  final Map<String, String> _chalisaInfo; //chalisaId,chalisaTitle
+  final Map<String, String>? _chalisaInfo; //chalisaId,chalisaTitle
   final Map<String, ChalisaModel> _chalisa; //chalisaId,ChalisaModel
 
   const ChalisaState({
     this.isLoading = true,
     this.error,
-    Map<String, String> chalisaInfo = const {},
+    Map<String, String>? chalisaInfo,
     Map<String, ChalisaModel> chalisa = const {},
   })  : _chalisa = chalisa,
         _chalisaInfo = chalisaInfo;
@@ -31,9 +31,15 @@ class ChalisaState extends Equatable {
 
   factory ChalisaState.initial() => const ChalisaState();
 
-  get chalisaInfos => Map.unmodifiable(_chalisaInfo);
+  Map<String, String>? get chalisaInfos => _chalisaInfo != null ? Map.unmodifiable(_chalisaInfo) : null;
 
-  get allChalisa => Map.unmodifiable(_chalisa);
+  Map<String, ChalisaModel> get allChalisa => Map.unmodifiable(_chalisa);
+
+  ChalisaModel? getChalisaById({required String chalisaId}) => _chalisa[chalisaId];
+
+  bool chalisaExists({required String chalisaId}) => _chalisa.containsKey(chalisaId);
+
+  MapEntry<String, ChalisaModel> getChalisaEntry({required ChalisaModel chalisa}) => MapEntry(chalisa.id, chalisa);
 
   @override
   List<Object?> get props => [isLoading, error, _chalisaInfo, _chalisa];

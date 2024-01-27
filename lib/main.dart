@@ -5,6 +5,7 @@ import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
+import 'package:bhakti_bhoomi/pages/chalisa/ChalisaInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiShlokScreen.dart';
@@ -144,9 +145,14 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => const BrahmasutraHome(title: 'Brahmasutra'),
               ),
               GoRoute(
+                name: Routing.chalisaInfo,
+                path: '/chalisa/info',
+                builder: (context, state) => const ChalisaInfoScreen(title: 'Chalisa'),
+              ),
+              GoRoute(
                 name: Routing.chalisa,
-                path: '/chalisa',
-                builder: (context, state) => const ChalisaHome(title: 'Chalisa'),
+                path: '/chalisa/:chalisaId',
+                builder: (context, state) => ChalisaScreen(title: 'Chalisa', chalisaId: state.pathParameters['chalisaId']!),
               ),
               GoRoute(
                 name: Routing.chanakyaNitiChapters,

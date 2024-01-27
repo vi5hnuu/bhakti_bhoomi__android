@@ -21,7 +21,7 @@ class ChalisaRepository implements ChalisaService {
   @override
   Future<ApiResponse<List<ChalisaInfoModel>>> getAllChalisaInfo({CancelToken? cancelToken}) async {
     final res = await _chalisaApi.getAllChalisaInfo(cancelToken: cancelToken);
-    return ApiResponse<List<ChalisaInfoModel>>(success: res['success'], data: res['data'].map((e) => ChalisaInfoModel.fromJson(e)).toList());
+    return ApiResponse<List<ChalisaInfoModel>>(success: res['success'], data: (res['data'] as List).map((e) => ChalisaInfoModel.fromJson(e)).toList());
   }
 
   @override

@@ -9,6 +9,7 @@ class Routing {
 
   static final String brahmasutra = "brahmasutra";
 
+  static final String chalisaInfo = "chalisa-info";
   static final String chalisa = "chalisa";
 
   static final String chanakyaNitiChapters = "chanakya-niti-chapters";
