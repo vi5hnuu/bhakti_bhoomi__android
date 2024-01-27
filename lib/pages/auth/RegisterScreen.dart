@@ -79,6 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: CameraIconButton(onPressed: () async {
                                   var posterImage = await imagePicker.pickImage(source: ImageSource.gallery);
                                   setState(() {
+                                    if (!mounted) return;
                                     coverImage = posterImage;
                                   });
                                 }),
@@ -98,6 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         child: CameraIconButton(onPressed: () async {
                                           var profileImage = await imagePicker.pickImage(source: ImageSource.gallery);
                                           setState(() {
+                                            if (!mounted) return;
                                             this.profileImage = profileImage;
                                           });
                                         }),

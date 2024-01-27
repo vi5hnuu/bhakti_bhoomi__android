@@ -18,7 +18,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasInfo());
+    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasInfo(cancelToken: cancelToken));
     super.initState();
   }
 

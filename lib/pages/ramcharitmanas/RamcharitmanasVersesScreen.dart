@@ -59,6 +59,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                       dropdownMenuEntries: state.info!.versesTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
                                       initialSelection: lang ?? RamcharitmanasState.defaultLang,
                                       onSelected: (value) => setState(() {
+                                        if (!mounted) return;
                                         lang = value;
                                         token = token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
                                       }),

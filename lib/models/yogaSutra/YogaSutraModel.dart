@@ -18,7 +18,7 @@ class YogaSutraModel {
       id: json['id'],
       chapterNo: json['chapterNo'],
       sutraNo: json['sutraNo'],
-      sutra: Map<String, String>.from(json['sutra'].map((key, value) => MapEntry<String, String>(key, value))),
+      sutra: Map.fromEntries((json['sutra'] as Map<String, dynamic>).entries.map((e) => MapEntry<String, String>(e.key, e.value as String))),
       language: json['language'],
     );
   }

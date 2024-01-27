@@ -43,6 +43,7 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                             dropdownMenuEntries: state.info!.mangalacharanTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
                             initialSelection: lang ?? RamcharitmanasState.defaultLang,
                             onSelected: (value) => setState(() {
+                              if (!mounted) return;
                               lang = value;
                               token = token = _loadMangalacharan(kand: widget.kand, lang: value);
                             }),

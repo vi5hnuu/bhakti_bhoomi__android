@@ -18,7 +18,10 @@ import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScr
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.dart';
 import 'package:bhakti_bhoomi/pages/rigveda/RigvedaScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
-import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanScreen.dart';
+import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanKandsScreen.dart';
+import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanSargasScreen.dart';
+import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanShlokScreen.dart';
+import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/services/aarti/AartiRepository.dart';
@@ -196,9 +199,19 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => const RigvedaHome(title: 'RigVeda'),
               ),
               GoRoute(
-                name: Routing.valmikiRamayan,
-                path: '/valmiki-ramayan',
-                builder: (context, state) => const ValmikiRamayanHome(title: 'Valmiki Ramayan'),
+                name: Routing.valmikiRamayanKandsInfo,
+                path: '/valmiki-ramayan/info',
+                builder: (context, state) => const ValmikiRamayanKandsScreen(title: 'Valmiki Ramayan kanda'),
+              ),
+              GoRoute(
+                name: Routing.valmikiRamayanSargasInfo,
+                path: '/valmiki-ramayan/kand/:kand/sargas',
+                builder: (context, state) => ValmikiRamayanSargasScreen(title: 'Valmiki Ramayan', kand: state.pathParameters['kand']!),
+              ),
+              GoRoute(
+                name: Routing.valmikiRamayanShlok,
+                path: '/valmiki-ramayan/kand/:kand/sarga/:sargaNo',
+                builder: (context, state) => ValmikiRamayanShlokScreen(title: 'Valmiki Ramayan', kand: state.pathParameters['kand']!, sargaNo: int.parse(state.pathParameters['sargaNo']!)),
               ),
               GoRoute(
                 name: Routing.bhagvadGeetaChapters,
@@ -211,9 +224,14 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => BhagvadGeetaShlokScreen(title: 'Bhagvad Geeta shlok', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
               ),
               GoRoute(
+                name: Routing.yogaSutraChapters,
+                path: '/yoga-sutra/chapters',
+                builder: (context, state) => const YogaSutraChapters(title: 'Yoga Sutra'),
+              ),
+              GoRoute(
                 name: Routing.yogaSutra,
-                path: '/yoga-sutra',
-                builder: (context, state) => const YogaSutraHome(title: 'Yoga Sutra'),
+                path: '/yoga-sutra/chapter/:chapterNo',
+                builder: (context, state) => YogaSutraScreen(title: 'Yoga Sutra', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
               ),
             ]),
       ),

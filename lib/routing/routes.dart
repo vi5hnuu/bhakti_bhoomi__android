@@ -25,10 +25,14 @@ class Routing {
   static final String ramcharitmanasKandVerses = "ramcharitmanas-kand-verses";
 
   static final String rigveda = "rigveda";
-  static final String valmikiRamayan = "valmiki-ramayan";
+
+  static final String valmikiRamayanKandsInfo = "valmiki-ramayan-info";
+  static final String valmikiRamayanSargasInfo = "valmiki-ramayan-kand-sargas-info";
+  static final String valmikiRamayanShlok = "valmiki-ramayan-kand-sarga-shlok";
 
   static final String bhagvadGeetaChapters = "bhagvad-geeta-chapters";
   static final String bhagvadGeetaChapterShloks = "bhagvad-geeta-Shlok";
 
-  static final String yogaSutra = "yoga-sutra";
+  static final String yogaSutraChapters = "yoga-sutra-chapters";
+  static final String yogaSutra = "yoga-sutra-sutras";
 }

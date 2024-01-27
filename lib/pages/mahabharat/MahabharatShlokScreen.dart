@@ -73,6 +73,7 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
             },
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(() {
+              if (!mounted) return;
               print("token $token");
               token?.cancel("cancelled");
               token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
