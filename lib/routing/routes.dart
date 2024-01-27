@@ -24,7 +24,8 @@ class Routing {
   static final String ramcharitmanasMangalaCharan = "ramcharitmanas-mangalacharan";
   static final String ramcharitmanasKandVerses = "ramcharitmanas-kand-verses";
 
-  static final String rigveda = "rigveda";
+  static final String rigvedaMandalasInfo = "rigveda-mandalas-info";
+  static final String rigvedaMandalaSuktas = "rigveda-mandala-suktas";
 
   static final String valmikiRamayanKandsInfo = "valmiki-ramayan-info";
   static final String valmikiRamayanSargasInfo = "valmiki-ramayan-kand-sargas-info";

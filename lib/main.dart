@@ -16,7 +16,8 @@ import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.dart';
-import 'package:bhakti_bhoomi/pages/rigveda/RigvedaScreen.dart';
+import 'package:bhakti_bhoomi/pages/rigveda/RigvedaMandalasInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/rigveda/RigvedaSuktaScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanKandsScreen.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanSargasScreen.dart';
@@ -194,9 +195,14 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => RamcharitmanasMangalacharanScreen(title: 'RamCharitManas', kand: state.pathParameters['kand']!),
               ),
               GoRoute(
-                name: Routing.rigveda,
-                path: '/rigveda',
-                builder: (context, state) => const RigvedaHome(title: 'RigVeda'),
+                name: Routing.rigvedaMandalasInfo,
+                path: '/rigveda/mandalas/info',
+                builder: (context, state) => const RigvedaMandalasInfoScreen(title: 'RigVeda'),
+              ),
+              GoRoute(
+                name: Routing.rigvedaMandalaSuktas,
+                path: '/rigveda/mandala/:mandala/suktas',
+                builder: (context, state) => RigvedaSuktaScreen(title: 'RigVeda', mandala: int.parse(state.pathParameters['mandala']!)),
               ),
               GoRoute(
                 name: Routing.valmikiRamayanKandsInfo,

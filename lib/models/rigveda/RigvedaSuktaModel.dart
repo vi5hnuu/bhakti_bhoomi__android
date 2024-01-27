@@ -1,11 +1,11 @@
-class RigvedaVerseModel {
+class RigvedaSuktaModel {
   final String id;
   final String veda;
   final int mandala;
   final int sukta;
   final String text;
 
-  const RigvedaVerseModel({
+  const RigvedaSuktaModel({
     required this.id,
     required this.veda,
     required this.mandala,
@@ -13,8 +13,8 @@ class RigvedaVerseModel {
     required this.text,
   });
 
-  factory RigvedaVerseModel.fromJson(Map<String, dynamic> json) {
-    return RigvedaVerseModel(
+  factory RigvedaSuktaModel.fromJson(Map<String, dynamic> json) {
+    return RigvedaSuktaModel(
       id: json['id'],
       veda: json['veda'],
       mandala: json['mandala'],
