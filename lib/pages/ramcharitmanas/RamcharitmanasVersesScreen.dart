@@ -61,7 +61,8 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                       onSelected: (value) => setState(() {
                                         if (!mounted) return;
                                         lang = value;
-                                        token = token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
+                                        token?.cancel("cancelled");
+                                        token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
                                       }),
                                     ),
                                     Text(verse!.text)
@@ -96,7 +97,6 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
   }
 
   CancelToken _loadVerse({required String kand, required int verseNo, String? lang}) {
-    token?.cancel("cancelled");
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasVerseByKandaAndVerseNo(kanda: kand, verseNo: verseNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;

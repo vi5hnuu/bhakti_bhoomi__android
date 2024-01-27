@@ -18,6 +18,7 @@ class Routing {
   static final String mahabharatBookChaptersInfos = "mahabharat-book-chapters-info";
   static final String mahabharatBookChapterShloks = "mahabharat-book-chapter-shloks";
 
+  static final String mantraInfo = "mantra-info";
   static final String mantra = "mantra";
 
   static final String ramcharitmanasInfo = "ramcharitmanas-info";

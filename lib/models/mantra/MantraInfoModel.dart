@@ -13,7 +13,7 @@ class MantraInfoModel {
     return MantraInfoModel(
       id: json['id'],
       title: json['title'],
-      description: Map<String, String>.from(json['description'].map((key, value) => MapEntry<String, String>(key, value))),
+      description: Map<String, String>.from((json['description'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value as String))),
     );
   }
 }

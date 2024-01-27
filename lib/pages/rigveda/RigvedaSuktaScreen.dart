@@ -80,7 +80,6 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
   }
 
   CancelToken _loadSukta({required int mandala, required int suktaNo}) {
-    token?.cancel("cancelled");
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<RigvedaBloc>(context).add(FetchVerseByMandalaSukta(mandalaNo: mandala, suktaNo: suktaNo, cancelToken: cancelToken));
     return cancelToken;

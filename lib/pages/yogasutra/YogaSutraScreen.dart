@@ -62,6 +62,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                       onSelected: (value) => setState(() {
                                         if (!mounted) return;
                                         lang = value;
+                                        token?.cancel("cancelled");
                                         token = token = _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
                                       }),
                                     ),
@@ -97,7 +98,6 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
   }
 
   CancelToken _loadSutra({required int chapterNo, required int sutraNo, String? lang}) {
-    token?.cancel("cancelled");
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraByChapterNoSutraNo(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;

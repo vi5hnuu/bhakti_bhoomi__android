@@ -12,6 +12,7 @@ import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
+import 'package:bhakti_bhoomi/pages/mantra/MantraInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScreen.dart';
@@ -175,9 +176,14 @@ class MyApp extends StatelessWidget {
                         chapterNo: int.parse(state.pathParameters['chapterNo']!),
                       )),
               GoRoute(
+                name: Routing.mantraInfo,
+                path: '/mantra/info',
+                builder: (context, state) => const MantraInfoScreen(title: 'Mantra'),
+              ),
+              GoRoute(
                 name: Routing.mantra,
-                path: '/mantra',
-                builder: (context, state) => const MantraHome(title: 'Mantra'),
+                path: '/mantra/:mantraId',
+                builder: (context, state) => MantraScreen(title: 'Mantra', mantraId: state.pathParameters['mantraId']!),
               ),
               GoRoute(
                 name: Routing.ramcharitmanasInfo,

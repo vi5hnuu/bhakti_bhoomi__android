@@ -45,7 +45,8 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                             onSelected: (value) => setState(() {
                               if (!mounted) return;
                               lang = value;
-                              token = token = _loadMangalacharan(kand: widget.kand, lang: value);
+                              token?.cancel("cancelled");
+                              token = _loadMangalacharan(kand: widget.kand, lang: value);
                             }),
                           ),
                           SizedBox(
@@ -59,7 +60,6 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
   }
 
   CancelToken _loadMangalacharan({required String kand, String? lang}) {
-    token?.cancel("cancelled");
     CancelToken newToken = CancelToken();
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasMangalacharanByKanda(kanda: kand, lang: lang, cancelToken: newToken));
     return newToken;

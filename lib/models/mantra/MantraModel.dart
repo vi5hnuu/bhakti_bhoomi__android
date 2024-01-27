@@ -1,19 +1,19 @@
 class MantraModel {
-  final String id;
   final String title;
   final Map<String, String> description;
-  final Map<String, List<String>> translations;
+  final Map<String, List<String>>? translations;
   final List<MantraModel>? subMantras;
 
-  const MantraModel({required this.id, required this.title, required this.description, required this.translations, this.subMantras});
+  const MantraModel({required this.title, required this.description, this.translations, this.subMantras});
 
   factory MantraModel.fromJson(Map<String, dynamic> json) {
     return MantraModel(
-      id: json['id'],
       title: json['title'],
-      description: Map<String, String>.from(json['description'].map((key, value) => MapEntry<String, String>(key, value))),
-      translations: Map<String, List<String>>.from(json['translations'].map((key, value) => MapEntry<String, List<String>>(key, List<String>.from(value)))),
-      subMantras: json['subMantras'] != null ? List<MantraModel>.from(json['subMantras'].map((item) => MantraModel.fromJson(item))) : null,
+      description: Map<String, String>.from((json['description'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value as String))),
+      translations: json['translations'] != null
+          ? Map<String, List<String>>.from((json['translations'] as Map<String, dynamic>).map((key, value) => MapEntry(key, (value as List).map((e) => e as String).toList())))
+          : null,
+      subMantras: json['subMantras'] != null ? (json['subMantras'] as List).map((e) => MantraModel.fromJson(e)).toList() : null,
     );
   }
 }
