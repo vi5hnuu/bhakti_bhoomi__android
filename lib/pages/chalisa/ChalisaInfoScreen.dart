@@ -32,20 +32,20 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
             appBar: AppBar(
               title: Text('Chalisa'),
             ),
-            body: (state.isLoading || chalisaInfo == null) && state.error == null
-                ? RefreshProgressIndicator()
+            body: chalisaInfo != null
+                ? ListView.builder(
+                    itemCount: chalisaInfo.length,
+                    itemBuilder: (context, index) {
+                      final chalisa = chalisaInfo.entries.elementAt(index);
+                      return InkWell(
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa, pathParameters: {'chalisaId': chalisa.key}),
+                        child: Text(chalisa.value),
+                      );
+                    },
+                  )
                 : state.error != null
-                    ? Text(state.error!)
-                    : ListView.builder(
-                        itemCount: chalisaInfo!.length,
-                        itemBuilder: (context, index) {
-                          final chalisa = chalisaInfo.entries.elementAt(index);
-                          return InkWell(
-                            onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa, pathParameters: {'chalisaId': chalisa.key}),
-                            child: Text(chalisa.value),
-                          );
-                        },
-                      ));
+                    ? Center(child: Text(state.error!))
+                    : Center(child: const RefreshProgressIndicator()));
       },
     );
   }

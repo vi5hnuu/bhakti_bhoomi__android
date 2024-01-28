@@ -30,23 +30,23 @@ class _BhagvadGeetaChaptersScreenState extends State<BhagvadGeetaChaptersScreen>
         appBar: AppBar(
           title: Text('Bhagvad Geeta'),
         ),
-        body: (state.isLoading || state.bhagvadGeetaChapters == null) && state.error == null
-            ? RefreshProgressIndicator()
+        body: state.bhagvadGeetaChapters != null
+            ? SingleChildScrollView(
+                child: Column(
+                  children: state.bhagvadGeetaChapters!
+                      .map((e) => InkWell(
+                            child: Container(
+                              child: Text("${e.chapterNumber} ${e.name}"),
+                              height: 60,
+                            ),
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapterShloks, pathParameters: {'chapterNo': '${e.chapterNumber}'}),
+                          ))
+                      .toList(),
+                ),
+              )
             : state.error != null
-                ? Text(state.error!)
-                : SingleChildScrollView(
-                    child: Column(
-                      children: state.bhagvadGeetaChapters!
-                          .map((e) => InkWell(
-                                child: Container(
-                                  child: Text("${e.chapterNumber} ${e.name}"),
-                                  height: 60,
-                                ),
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapterShloks, pathParameters: {'chapterNo': '${e.chapterNumber}'}),
-                              ))
-                          .toList(),
-                    ),
-                  ),
+                ? Center(child: Text(state.error!))
+                : const Center(child: CircularProgressIndicator()),
       ),
     );
   }

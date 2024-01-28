@@ -31,11 +31,11 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
             appBar: AppBar(
               title: Text('Chalisa'),
             ),
-            body: (state.isLoading || chalisa == null) && state.error == null
-                ? RefreshProgressIndicator()
+            body: chalisa != null
+                ? Text(chalisa.title)
                 : state.error != null
-                    ? Text(state.error!)
-                    : Text(chalisa!.title));
+                    ? Center(child: Text(state.error!))
+                    : Center(child: const RefreshProgressIndicator()));
       },
     );
   }

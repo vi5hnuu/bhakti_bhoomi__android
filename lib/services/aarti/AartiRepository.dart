@@ -15,25 +15,25 @@ class AartiRepository implements AartiService {
 
   @override
   Future<ApiResponse<AartiModel>> getAartiById({required String id, CancelToken? cancelToken}) async {
-    final res = await _aartiApi.getAartiById(id: id);
+    final res = await _aartiApi.getAartiById(id: id, cancelToken: cancelToken);
     return ApiResponse<AartiModel>(success: res['success'], data: AartiModel.fromJson(res['data']));
   }
 
   @override
   Future<ApiResponse<AartiModel>> getAartiByTitle({required String title, CancelToken? cancelToken}) async {
-    final res = await _aartiApi.getAartiByTitle(title: title);
+    final res = await _aartiApi.getAartiByTitle(title: title, cancelToken: cancelToken);
     return ApiResponse<AartiModel>(success: res['success'], data: AartiModel.fromJson(res['data']));
   }
 
   @override
   Future<ApiResponse<List<AartiModel>>> getAllAarti({CancelToken? cancelToken}) async {
-    final res = await _aartiApi.getAllAarti();
+    final res = await _aartiApi.getAllAarti(cancelToken: cancelToken);
     return ApiResponse<List<AartiModel>>(success: res['success'], data: (res['data'] as List).map((e) => AartiModel.fromJson(e)).toList());
   }
 
   @override
   Future<ApiResponse<List<AartiInfoModel>>> getAllAartiInfo({CancelToken? cancelToken}) async {
-    final res = await _aartiApi.getAllAartiInfo();
+    final res = await _aartiApi.getAllAartiInfo(cancelToken: cancelToken);
     return ApiResponse<List<AartiInfoModel>>(success: res['success'], data: (res['data'] as List).map((e) => AartiInfoModel.fromJson(e)).toList());
   }
 }

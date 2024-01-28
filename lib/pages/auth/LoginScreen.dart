@@ -1,14 +1,22 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../widgets/notificationSnackbar.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
   final TextEditingController usernameEmailController = TextEditingController(text: 'vi5hnuu');
   final TextEditingController passwordController = TextEditingController(text: 'kumawatvishnu16199');
@@ -75,6 +83,7 @@ class LoginScreen extends StatelessWidget {
                               LoginEvent(
                                 usernameEmail: usernameEmailController.text,
                                 password: passwordController.text,
+                                cancelToken: cancelToken,
                               ),
                             );
                           },
@@ -93,5 +102,11 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    cancelToken.cancel("login cancelled");
+    super.dispose();
   }
 }

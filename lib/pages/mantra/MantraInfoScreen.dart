@@ -32,18 +32,18 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
             appBar: AppBar(
               title: Text('Mantra'),
             ),
-            body: (state.isLoading || mantraInfo == null) && state.error == null
-                ? RefreshProgressIndicator()
+            body: mantraInfo != null
+                ? Column(
+                    children: mantraInfo.entries
+                        .map((e) => InkWell(
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.mantra, pathParameters: {'mantraId': e.key}),
+                              child: Text(e.value.title),
+                            ))
+                        .toList(),
+                  )
                 : state.error != null
-                    ? Text(state.error!)
-                    : Column(
-                        children: mantraInfo!.entries
-                            .map((e) => InkWell(
-                                  onTap: () => GoRouter.of(context).pushNamed(Routing.mantra, pathParameters: {'mantraId': e.key}),
-                                  child: Text(e.value.title),
-                                ))
-                            .toList(),
-                      ));
+                    ? Center(child: Text(state.error!))
+                    : Center(child: CircularProgressIndicator()));
       },
     );
   }

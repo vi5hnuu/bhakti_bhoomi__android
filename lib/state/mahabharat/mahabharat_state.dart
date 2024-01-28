@@ -32,6 +32,8 @@ class MahabharatState extends Equatable {
   factory MahabharatState.initial() => MahabharatState();
 
   List<MahabharatBookInfoModel>? get allBooksInfo => _booksInfo != null ? List.unmodifiable(_booksInfo) : null;
+  MahabharatBookInfoModel? getBooksInfo({required int bookNo}) => allBooksInfo?[bookNo - 1];
+
   Map<String, MahabharatShlokModel> get allShloks => Map.unmodifiable(_shloks);
 
   bool existsShlokByKey({required String shlokId}) => allShloks[shlokId] != null;

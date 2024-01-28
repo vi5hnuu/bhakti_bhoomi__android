@@ -17,13 +17,13 @@ class MahabharatChaptersInfoScreen extends StatelessWidget {
         ),
         body: BlocBuilder<MahabharatBloc, MahabharatState>(
           builder: (context, state) => ListView.builder(
-            itemCount: state.allBooksInfo![bookNo - 1].info.length,
+            itemCount: state.getBooksInfo(bookNo: bookNo)!.info.length,
             itemBuilder: (context, index) => Card(
               child: InkWell(
                   onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks, pathParameters: {'bookNo': '${bookNo}', 'chapterNo': '${index + 1}'}),
                   child: ListTile(
                     title: Text(
-                      'Chapter ${index + 1} totalVerses ${state.allBooksInfo![bookNo - 1].info['${index + 1}']!}',
+                      'Chapter ${index + 1} totalVerses ${state.getBooksInfo(bookNo: bookNo)!.info['${index + 1}']!}',
                       textAlign: TextAlign.center,
                     ),
                   )),

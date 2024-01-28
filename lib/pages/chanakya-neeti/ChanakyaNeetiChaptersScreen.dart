@@ -32,22 +32,22 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
           appBar: AppBar(
             title: Text('Chanakya Neeti'),
           ),
-          body: ((state.isLoading || chaptersInfo == null) && state.error == null)
-              ? const RefreshProgressIndicator()
+          body: chaptersInfo != null
+              ? SingleChildScrollView(
+                  child: Column(
+                    children: chaptersInfo
+                        .map((chapterInfo) => InkWell(
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapterShlok, pathParameters: {'chapterNo': '${chapterInfo.chapterNo}'}),
+                            child: Container(
+                              height: 20,
+                              child: Text("${chapterInfo.chapterNo} - ${chapterInfo.versesCount}"),
+                            )))
+                        .toList(),
+                  ),
+                )
               : state.error != null
-                  ? Text(state.error!)
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: chaptersInfo!
-                            .map((chapterInfo) => InkWell(
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapterShlok, pathParameters: {'chapterNo': '${chapterInfo.chapterNo}'}),
-                                child: Container(
-                                  height: 20,
-                                  child: Text("${chapterInfo.chapterNo} - ${chapterInfo.versesCount}"),
-                                )))
-                            .toList(),
-                      ),
-                    ),
+                  ? Center(child: Text(state.error!))
+                  : Center(child: const RefreshProgressIndicator()),
         );
       },
     );

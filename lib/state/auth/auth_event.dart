@@ -1,13 +1,16 @@
 part of 'auth_bloc.dart';
 
 @immutable
-abstract class AuthEvent {}
+abstract class AuthEvent {
+  final CancelToken? cancelToken;
+  AuthEvent({this.cancelToken});
+}
 
 class LoginEvent extends AuthEvent {
   final String usernameEmail;
   final String password;
 
-  LoginEvent({required this.usernameEmail, required this.password});
+  LoginEvent({required this.usernameEmail, required this.password, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
 class TryAuthenticatingEvent extends AuthEvent {
@@ -23,13 +26,14 @@ class RegisterEvent extends AuthEvent {
   final XFile? profilePic;
   final XFile? posterPic;
 
-  RegisterEvent({required this.firstName, required this.lastName, required this.username, required this.email, required this.password, this.profilePic, this.posterPic});
+  RegisterEvent({required this.firstName, required this.lastName, required this.username, required this.email, required this.password, this.profilePic, this.posterPic, CancelToken? cancelToken})
+      : super(cancelToken: cancelToken);
 }
 
 class FetchUserInfoEvent extends AuthEvent {
-  FetchUserInfoEvent();
+  FetchUserInfoEvent({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
 class LogoutEvent extends AuthEvent {
-  LogoutEvent();
+  LogoutEvent({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }

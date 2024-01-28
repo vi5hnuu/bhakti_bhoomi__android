@@ -18,11 +18,11 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
   final pageStorageKey = const PageStorageKey('mahabharat_shlok_screen');
   final PageController _controller = PageController(initialPage: 0);
   CancelToken? token;
+
   @override
   initState() {
-    super.initState();
-    print('->bookNo ${widget.bookNo} chapterNo ${widget.chapterNo}');
     token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: 1);
+    super.initState();
   }
 
   @override
@@ -44,37 +44,36 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || shlok == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
-                      : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [Text(shlok!.text)],
-                                ),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
-                                  ),
-                                )
-                              ],
+                  child: shlok != null
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [Text(shlok.text)],
                             ),
+                            const Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : state.error != null
+                          ? Center(child: Text(state.error!))
+                          : const Center(child: CircularProgressIndicator()),
                 ),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(() {
               if (!mounted) return;
-              print("token $token");
               token?.cancel("cancelled");
               token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
             }),

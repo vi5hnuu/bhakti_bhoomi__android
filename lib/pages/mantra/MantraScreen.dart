@@ -31,11 +31,11 @@ class _MantraScreenState extends State<MantraScreen> {
             appBar: AppBar(
               title: Text('Rigveda'),
             ),
-            body: (state.isLoading || mantra == null) && state.error == null
-                ? RefreshProgressIndicator()
+            body: mantra != null
+                ? Text(mantra.title)
                 : state.error != null
-                    ? Text(state.error!)
-                    : Text(mantra!.title));
+                    ? Center(child: Text(state.error!))
+                    : Center(child: CircularProgressIndicator()));
       },
     );
   }

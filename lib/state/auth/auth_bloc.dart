@@ -23,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((event, emit) async {
       emit(const AuthState(isLoading: true, error: null));
       try {
-        ApiResponse<UserInfo> res = await authRepository.login(usernameEmail: event.usernameEmail, password: event.password);
+        ApiResponse<UserInfo> res = await authRepository.login(usernameEmail: event.usernameEmail, password: event.password, cancelToken: event.cancelToken);
         emit(AuthState(success: res.success, userInfo: res.data, message: res.message));
       } catch (e) {
         var error = (e is DioException) ? (e.response?.data.toString()) : 'something went wrong';
@@ -48,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (state.userInfo != null) return emit(state.copyWith(isLoading: false));
       emit(state.copyWith(isLoading: true, error: null));
       try {
-        ApiResponse<UserInfo> res = await authRepository.me();
+        ApiResponse<UserInfo> res = await authRepository.me(cancelToken: event.cancelToken);
         emit(state.copyWith(isLoading: false, success: res.success, userInfo: res.data, message: res.message));
       } catch (e) {
         var error = (e is DioException) ? (e.response?.data.toString()) : 'something went wrong';
@@ -59,7 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>((event, emit) async {
       emit(state.copyWith(isLoading: true, error: null));
       try {
-        final res = await authRepository.logout();
+        final res = await authRepository.logout(cancelToken: event.cancelToken);
         await _sStorage.storage.delete(key: Constants.jwtKey);
         emit(AuthState(isLoading: false, success: false, message: res.message));
       } catch (e) {

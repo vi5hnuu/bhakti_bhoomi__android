@@ -31,16 +31,16 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
         body: BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
           builder: (context, state) {
             final brahmasutraInfo = state.brahmasutraInfo;
-            return (state.isLoading || brahmasutraInfo == null) && state.error == null
-                ? RefreshProgressIndicator()
+            return brahmasutraInfo != null
+                ? Column(
+                    children: List.generate(
+                        state.brahmasutraInfo!.totalChapters,
+                        (index) =>
+                            InkWell(onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo, pathParameters: {'chapterNo': '${index + 1}'}), child: Text('${index + 1} chapter'))),
+                  )
                 : state.error != null
-                    ? Text(state.error!)
-                    : Column(
-                        children: List.generate(
-                            state.brahmasutraInfo!.totalChapters,
-                            (index) => InkWell(
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo, pathParameters: {'chapterNo': '${index + 1}'}), child: Text('${index + 1} chapter'))),
-                      );
+                    ? Center(child: Text(state.error!))
+                    : Center(child: const RefreshProgressIndicator());
           },
         ));
   }

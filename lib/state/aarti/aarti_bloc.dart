@@ -15,7 +15,7 @@ class AartiBloc extends Bloc<AartiEvent, AartiState> {
       if (state.aartisInfo.isNotEmpty) return emit(state.copyWith(isLoading: false, error: null));
       emit(state.copyWith(isLoading: true, error: null));
       try {
-        final aartiInfo = await aartiRepository.getAllAartiInfo();
+        final aartiInfo = await aartiRepository.getAllAartiInfo(cancelToken: event.cancelToken);
         emit(state.copyWith(isLoading: false, aartisInfo: aartiInfo.data!));
       } on DioException catch (e) {
         var data = e.response?.data;
@@ -28,7 +28,7 @@ class AartiBloc extends Bloc<AartiEvent, AartiState> {
       if (state.aartis[event.aartiId] != null) return emit(state.copyWith(isLoading: false, error: null));
       emit(state.copyWith(isLoading: true, error: null));
       try {
-        final aarti = await aartiRepository.getAartiById(id: event.aartiId);
+        final aarti = await aartiRepository.getAartiById(id: event.aartiId, cancelToken: event.cancelToken);
         final newState = state.copyWith(isLoading: false, aartis: {...state.aartis, event.aartiId: aarti.data!});
         emit(newState);
       } on DioException catch (e) {

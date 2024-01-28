@@ -44,26 +44,26 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || sukta == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
+                  child: sukta != null
+                      ? Stack(
+                          children: [
+                            Text(sukta.text),
+                            const Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
                       : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
-                              children: [
-                                Text(sukta!.text),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                          ? Center(child: Text(state.error!))
+                          : const RefreshProgressIndicator(),
                 ),
               );
             },

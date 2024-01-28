@@ -14,14 +14,14 @@ class ChanakyaNeetiShlokScreen extends StatefulWidget {
 }
 
 class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
-  final pageStorageKey = const PageStorageKey('bhagvadGeeta_shlok_screen');
+  final pageStorageKey = const PageStorageKey('chanakya-neeti_screen');
   final PageController _controller = PageController(initialPage: 0);
   CancelToken? token;
 
   @override
   initState() {
     super.initState();
-    token = loadVerse(chapterNo: widget.chapterNo, verseNo: 1);
+    token = _loadVerse(chapterNo: widget.chapterNo, verseNo: 1);
   }
 
   @override
@@ -29,7 +29,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     return BlocBuilder<ChanakyaNeetiBloc, ChanakyaNeetiState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Bhagvad Geeta'),
+            title: Text('Chanakya Neeti'),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -42,47 +42,45 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
               final verse = state.getVerse(chapterNo: widget.chapterNo, verseNo: index + 1);
               return Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || verse == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
-                      : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [Text(verse!.id)],
+                    padding: const EdgeInsets.all(15),
+                    child: verse != null
+                        ? Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [Text(verse.id)],
+                              ),
+                              const Positioned(
+                                bottom: 45,
+                                right: 15,
+                                child: Column(
+                                  children: [
+                                    IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                    SizedBox(height: 10),
+                                    IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  ],
                                 ),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                ),
+                              )
+                            ],
+                          )
+                        : state.error != null
+                            ? Center(child: Text(state.error!))
+                            : const Center(child: RefreshProgressIndicator())),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(
               () {
-                print("token $token");
                 token?.cancel("cancelled");
-                token = loadVerse(chapterNo: widget.chapterNo, verseNo: pageNo + 1);
+                token = _loadVerse(chapterNo: widget.chapterNo, verseNo: pageNo + 1);
               },
             ),
           )),
     );
   }
 
-  CancelToken loadVerse({required int chapterNo, required int verseNo}) {
+  CancelToken _loadVerse({required int chapterNo, required int verseNo}) {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiVerseByChapterNoVerseNo(chapterNo: chapterNo, verseNo: verseNo, cancelToken: cancelToken));
     return cancelToken;

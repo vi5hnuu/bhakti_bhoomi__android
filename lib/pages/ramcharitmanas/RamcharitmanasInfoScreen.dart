@@ -29,49 +29,48 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
       builder: (context, state) {
         final info = state.info;
         return Scaffold(
-          appBar: AppBar(
-            title: Text('Ramcharitmanas'),
-          ),
-          body: ((state.isLoading || info == null) && state.error == null)
-              ? const RefreshProgressIndicator()
-              : state.error != null
-                  ? Text(state.error!)
-                  : Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: ListView(
-                            children: state
-                                .getAllKands()
-                                .map((kand) => InkWell(
-                                      onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses, pathParameters: {"kand": kand}),
-                                      child: SizedBox(
-                                        height: 60,
-                                        child: Text(kand),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
+            appBar: AppBar(
+              title: Text('Ramcharitmanas'),
+            ),
+            body: info != null
+                ? Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: ListView(
+                          children: state
+                              .getAllKands()
+                              .map((kand) => InkWell(
+                                    onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses, pathParameters: {"kand": kand}),
+                                    child: SizedBox(
+                                      height: 60,
+                                      child: Text(kand),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
-                        Expanded(
-                          flex: 5,
-                          child: ListView(
-                            children: state
-                                .getAllKands()
-                                .map((kand) => InkWell(
-                                      onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan, pathParameters: {"kand": kand}),
-                                      child: SizedBox(
-                                        height: 60,
-                                        child: Text("$kand Mangalacharan"),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: ListView(
+                          children: state
+                              .getAllKands()
+                              .map((kand) => InkWell(
+                                    onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan, pathParameters: {"kand": kand}),
+                                    child: SizedBox(
+                                      height: 60,
+                                      child: Text("$kand Mangalacharan"),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
-                      ],
-                    ),
-        );
+                      ),
+                    ],
+                  )
+                : state.error != null
+                    ? Center(child: Text(state.error!))
+                    : const RefreshProgressIndicator());
       },
     );
   }

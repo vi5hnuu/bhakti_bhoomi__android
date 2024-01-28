@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController usernameControllerCntrl = TextEditingController(text: '');
   final TextEditingController emailCntrl = TextEditingController(text: '');
   final TextEditingController passwordCntrl = TextEditingController(text: '');
+  final CancelToken cancelToken = CancelToken();
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (formKey.currentState?.validate() == false) {
                               return;
                             }
+                            //register and pass cancel token
                           },
                           child: Text(
                             'Register',
@@ -203,5 +206,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ));
+  }
+
+  @override
+  void dispose() {
+    cancelToken.cancel("register cancelled");
+    super.dispose();
   }
 }

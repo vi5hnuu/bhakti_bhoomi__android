@@ -35,6 +35,10 @@ class AartiState extends Equatable {
     );
   }
 
+  AartiModel? getAarti(String aartiId) {
+    return aartis[aartiId];
+  }
+
   @override
   List<Object?> get props => [isLoading, error, aartis, aartisInfo];
 }

@@ -20,8 +20,8 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
 
   @override
   initState() {
+    token = _loadShlok(chapterNo: widget.chapterNo, shlokNo: 1);
     super.initState();
-    token = loadShlok(chapterNo: widget.chapterNo, shlokNo: 1);
   }
 
   @override
@@ -43,46 +43,45 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || shlok == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
-                      : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [Text(shlok!.shlok)],
-                                ),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
-                                  ),
-                                )
-                              ],
+                  child: shlok != null
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [Text(shlok!.shlok)],
                             ),
+                            const Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : state.error != null
+                          ? Center(child: Text(state.error!))
+                          : const Center(child: CircularProgressIndicator()),
                 ),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(
               () {
-                print("token $token");
                 token?.cancel("cancelled");
-                token = loadShlok(chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
+                token = _loadShlok(chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
               },
             ),
           )),
     );
   }
 
-  CancelToken loadShlok({required int chapterNo, required int shlokNo}) {
+  CancelToken _loadShlok({required int chapterNo, required int shlokNo}) {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<BhagvadGeetaBloc>(context).add(FetchBhagvadShlokByChapterNoShlokNo(chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
     return cancelToken;

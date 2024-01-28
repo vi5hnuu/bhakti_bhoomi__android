@@ -32,18 +32,20 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
           appBar: AppBar(
             title: Text('YogaSutra'),
           ),
-          body: (state.isLoading || yogaSutraInfo == null) && state.error == null
-              ? RefreshProgressIndicator()
+          body: yogaSutraInfo != null
+              ? Column(
+                  children: List.generate(
+                      yogaSutraInfo.totalSutra.length,
+                      (index) => InkWell(
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra, pathParameters: {'chapterNo': '${index + 1}'}),
+                            child: Text("${index + 1} chapter"),
+                          )),
+                )
               : state.error != null
-                  ? Text(state.error!)
-                  : Column(
-                      children: List.generate(
-                          yogaSutraInfo!.totalSutra.length,
-                          (index) => InkWell(
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra, pathParameters: {'chapterNo': '${index + 1}'}),
-                                child: Text("${index + 1} chapter"),
-                              )),
-                    ),
+                  ? Center(
+                      child: Text(state.error!),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
         );
       },
     );

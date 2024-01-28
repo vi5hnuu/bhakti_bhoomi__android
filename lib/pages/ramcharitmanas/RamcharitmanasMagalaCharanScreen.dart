@@ -33,28 +33,30 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
             appBar: AppBar(
               title: Text('Ramcharitmanas mangalacharan'),
             ),
-            body: ((state.isLoading || mangalacharan == null) && state.error == null)
-                ? const RefreshProgressIndicator()
+            body: mangalacharan != null
+                ? Column(
+                    children: [
+                      DropdownMenu(
+                        dropdownMenuEntries: state.info!.mangalacharanTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
+                        initialSelection: lang ?? RamcharitmanasState.defaultLang,
+                        onSelected: (value) => setState(() {
+                          if (!mounted) return;
+                          lang = value;
+                          token?.cancel("cancelled");
+                          token = _loadMangalacharan(kand: widget.kand, lang: value);
+                        }),
+                      ),
+                      SizedBox(
+                        height: 60,
+                        child: Text(mangalacharan!.text),
+                      )
+                    ],
+                  )
                 : state.error != null
-                    ? Text(state.error!)
-                    : Column(
-                        children: [
-                          DropdownMenu(
-                            dropdownMenuEntries: state.info!.mangalacharanTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
-                            initialSelection: lang ?? RamcharitmanasState.defaultLang,
-                            onSelected: (value) => setState(() {
-                              if (!mounted) return;
-                              lang = value;
-                              token?.cancel("cancelled");
-                              token = _loadMangalacharan(kand: widget.kand, lang: value);
-                            }),
-                          ),
-                          SizedBox(
-                            height: 60,
-                            child: Text(mangalacharan!.text),
-                          )
-                        ],
-                      ));
+                    ? Center(
+                        child: Text(state.error!),
+                      )
+                    : const RefreshProgressIndicator());
       },
     );
   }

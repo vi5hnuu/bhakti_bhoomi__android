@@ -23,17 +23,17 @@ class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScr
         body: BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
           builder: (context, state) {
             final brahmasutraInfo = state.brahmasutraInfo;
-            return (state.isLoading || brahmasutraInfo == null) && state.error == null
-                ? RefreshProgressIndicator()
+            return brahmasutraInfo != null
+                ? Column(
+                    children: List.generate(
+                        state.brahmasutraInfo!.chaptersInfo['${widget.chapterNo}']!.totalQuaters,
+                        (index) => InkWell(
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
+                            child: Text('${index + 1} quater'))),
+                  )
                 : state.error != null
-                    ? Text(state.error!)
-                    : Column(
-                        children: List.generate(
-                            state.brahmasutraInfo!.chaptersInfo['${widget.chapterNo}']!.totalQuaters,
-                            (index) => InkWell(
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
-                                child: Text('${index + 1} quater'))),
-                      );
+                    ? Center(child: Text(state.error!))
+                    : Center(child: const RefreshProgressIndicator());
           },
         ));
   }

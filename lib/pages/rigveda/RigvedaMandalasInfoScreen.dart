@@ -31,16 +31,14 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
           appBar: AppBar(
             title: Text('Rigveda'),
           ),
-          body: (state.isLoading || state.rigvedaInfo == null) && state.error == null
-              ? RefreshProgressIndicator()
+          body: state.rigvedaInfo != null
+              ? Column(
+                  children: List.generate(state.rigvedaInfo!.totalMandala,
+                      (index) => InkWell(onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas, pathParameters: {'mandala': '${index + 1}'}), child: Text("${index + 1} mandala"))),
+                )
               : state.error != null
-                  ? Text(state.error!)
-                  : Column(
-                      children: List.generate(
-                          state.rigvedaInfo!.totalMandala,
-                          (index) =>
-                              InkWell(onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas, pathParameters: {'mandala': '${index + 1}'}), child: Text("${index + 1} mandala"))),
-                    ),
+                  ? Center(child: Text(state.error!))
+                  : const RefreshProgressIndicator(),
         );
       },
     );

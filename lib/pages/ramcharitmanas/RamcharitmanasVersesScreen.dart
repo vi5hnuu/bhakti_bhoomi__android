@@ -45,42 +45,42 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || verse == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
-                      : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
+                  child: verse != null
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.max,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    DropdownMenu(
-                                      dropdownMenuEntries: state.info!.versesTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
-                                      initialSelection: lang ?? RamcharitmanasState.defaultLang,
-                                      onSelected: (value) => setState(() {
-                                        if (!mounted) return;
-                                        lang = value;
-                                        token?.cancel("cancelled");
-                                        token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
-                                      }),
-                                    ),
-                                    Text(verse!.text)
-                                  ],
+                                DropdownMenu(
+                                  dropdownMenuEntries: state.info!.versesTranslationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
+                                  initialSelection: lang ?? RamcharitmanasState.defaultLang,
+                                  onSelected: (value) => setState(() {
+                                    if (!mounted) return;
+                                    lang = value;
+                                    token?.cancel("cancelled");
+                                    token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
+                                  }),
                                 ),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
-                                  ),
-                                )
+                                Text(verse!.text)
                               ],
                             ),
+                            const Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : state.error != null
+                          ? Center(child: Text(state.error!))
+                          : const RefreshProgressIndicator(),
                 ),
               );
             },
