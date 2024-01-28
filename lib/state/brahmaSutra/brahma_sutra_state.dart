@@ -4,41 +4,52 @@ part of 'brahma_sutra_bloc.dart';
 class BrahmaSutraState extends Equatable {
   final bool isLoading;
   final String? error;
-  final Map<int, BrahmaSutraChapterInfoModel> _chaptersInfo; //chapterNo->chapterInfo
   final BrahmasutraInfoModel? brahmasutraInfo;
-  final Map<String, BrahmaSutraModel> _brahmaSutras; //sutraId->brahmaSutraModel
+  final Map<String, BrahmaSutraModel> _brahmaSutras; //_uniqueKey,brahmaSutraModel
+  static final String defaultLang = "dv";
 
   const BrahmaSutraState({
     this.isLoading = true,
     this.error,
-    Map<int, BrahmaSutraChapterInfoModel> chaptersInfo = const {},
     this.brahmasutraInfo,
     Map<String, BrahmaSutraModel> brahmaSutras = const {},
-  })  : _brahmaSutras = brahmaSutras,
-        _chaptersInfo = chaptersInfo;
+  }) : _brahmaSutras = brahmaSutras;
 
   BrahmaSutraState copyWith({
     bool? isLoading,
     String? error,
-    Map<int, BrahmaSutraChapterInfoModel>? chaptersInfo,
-    BrahmasutraInfoModel? brahmasutraInfoModel,
+    BrahmasutraInfoModel? brahmasutraInfo,
     Map<String, BrahmaSutraModel>? brahmaSutras,
   }) {
     return BrahmaSutraState(
       isLoading: isLoading ?? this.isLoading,
       error: error,
-      chaptersInfo: chaptersInfo ?? this._chaptersInfo,
-      brahmasutraInfo: brahmasutraInfoModel ?? this.brahmasutraInfo,
+      brahmasutraInfo: brahmasutraInfo ?? this.brahmasutraInfo,
       brahmaSutras: brahmaSutras ?? this._brahmaSutras,
     );
   }
 
   factory BrahmaSutraState.initial() => const BrahmaSutraState();
 
-  get chaptersInfo => Map.unmodifiable(_chaptersInfo);
+  Map<String, BrahmaSutraModel> get brahmaSutras => Map.unmodifiable(_brahmaSutras);
 
-  get brahmaSutras => Map.unmodifiable(_brahmaSutras);
+  String _uniqueIdentifier({required int chapterNo, required int quaterNo, required int sutraNo, required String? lang}) {
+    return "$chapterNo-$quaterNo-$sutraNo-${lang ?? defaultLang}";
+  }
+
+  bool brahmaSutraExists({required int chapterNo, required int quaterNo, required int sutraNo, String? lang}) {
+    return _brahmaSutras.containsKey(_uniqueIdentifier(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang));
+  }
+
+  MapEntry<String, BrahmaSutraModel> getBrahmaSutraEntry({required BrahmaSutraModel brahmaSutra}) {
+    return MapEntry<String, BrahmaSutraModel>(
+        _uniqueIdentifier(chapterNo: brahmaSutra.chapterNo, quaterNo: brahmaSutra.quaterNo, sutraNo: brahmaSutra.sutraNo, lang: brahmaSutra.language), brahmaSutra);
+  }
+
+  BrahmaSutraModel? getBrahmaSutra({required int chapterNo, required int quaterNo, required int sutraNo, String? lang}) {
+    return _brahmaSutras[_uniqueIdentifier(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang)];
+  }
 
   @override
-  List<Object?> get props => [isLoading, error, _chaptersInfo, brahmasutraInfo, _brahmaSutras];
+  List<Object?> get props => [isLoading, error, brahmasutraInfo, _brahmaSutras];
 }

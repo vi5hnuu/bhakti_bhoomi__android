@@ -13,10 +13,10 @@ class BrahmasutraInfoModel {
 
   factory BrahmasutraInfoModel.fromJson(Map<String, dynamic> json) {
     return BrahmasutraInfoModel(
-      translationLanguages: Map<String, String>.from(json['translationLanguages'].map((key, value) => MapEntry<String, String>(key, value))),
+      translationLanguages: Map<String, String>.fromEntries((json['translationLanguages'] as Map<String, dynamic>).entries.map((e) => MapEntry(e.key, e.value as String))),
       totalChapters: json['totalChapters'],
       chaptersInfo:
-          Map<String, BrahmaSutraChapterInfoModel>.from(json['chaptersInfo'].map((key, value) => MapEntry<String, BrahmaSutraChapterInfoModel>(key, BrahmaSutraChapterInfoModel.fromJson(value)))),
+          Map<String, BrahmaSutraChapterInfoModel>.fromEntries((json['chaptersInfo'] as Map<String, dynamic>).entries.map((e) => MapEntry(e.key, BrahmaSutraChapterInfoModel.fromJson(e.value)))),
     );
   }
 }

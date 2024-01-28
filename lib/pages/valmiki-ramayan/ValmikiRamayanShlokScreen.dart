@@ -1,53 +1,59 @@
-import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
-import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BrahmasutraScreen extends StatefulWidget {
+class ValmikiRamayanShlokScreen extends StatefulWidget {
   final String title;
-  final int chapterNo;
-  final int quaterNo;
-  const BrahmasutraScreen({super.key, required this.title, required this.chapterNo, required this.quaterNo});
+  final String kand;
+  final int sargaNo;
+
+  const ValmikiRamayanShlokScreen({super.key, required this.title, required this.kand, required this.sargaNo});
 
   @override
-  State<BrahmasutraScreen> createState() => _BrahmasutraScreenState();
+  State<ValmikiRamayanShlokScreen> createState() => _ValmikiRamayanShlokScreenState();
 }
 
-class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
-  final pageStorageKey = const PageStorageKey('brahmasutra');
+class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
+  final pageStorageKey = const PageStorageKey('valmikiramayan-kand-sarga-shloks');
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
-  CancelToken? token;
+  CancelToken? shlokCancelToken;
+  CancelToken? sargaInfoCancelToken;
 
   @override
   initState() {
-    token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: 0, lang: lang);
     super.initState();
+    shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: 1, lang: lang);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
+    return BlocBuilder<RamayanBloc, RamayanState>(
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('brahmasutra'),
+            title: Text('valmiki ramayan'),
           ),
-          body: PageView.builder(
+          body: Text("")),
+    );
+  }
+
+  /*
+  PageView.builder(
             key: pageStorageKey,
             pageSnapping: true,
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.brahmasutraInfo!.chaptersInfo['${widget.chapterNo}']!.totalSutras['${widget.quaterNo}'],
+            itemCount: state.info!.kandaInfo[widget.kand],
             itemBuilder: (context, index) {
-              final sutra = state.getBrahmaSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index, lang: lang);
+              final ramayanInfo = state.ramayanInfo;
+              final shlok = state.getShlok(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: lang);
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || sutra == null) && state.error == null)
+                  child: ((state.isLoading || shlok == null) && state.error == null)
                       ? const RefreshProgressIndicator()
                       : state.error != null
                           ? Text(state.error!)
@@ -58,16 +64,14 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     DropdownMenu(
-                                      dropdownMenuEntries: state.brahmasutraInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
+                                      dropdownMenuEntries: ramayanInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
                                       initialSelection: lang ?? RamcharitmanasState.defaultLang,
-                                      onSelected: (value) => setState(() {
-                                        if (!mounted) return;
+                                      onSelected: (value) => setState(() { if(!mounted) return;
                                         lang = value;
-                                        token?.cancel("cancelled");
-                                        token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index, lang: value);
+                                        shlokCancelToken = shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: index + 1, lang: value);
                                       }),
                                     ),
-                                    Text(sutra!.sutra.entries.toList()[1].value),
+                                    Text(shlok!.explaination)
                                   ],
                                 ),
                                 const Positioned(
@@ -89,25 +93,30 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(
               () {
-                print("token $token");
-                token?.cancel("cancelled");
-                token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: pageNo, lang: lang);
+                print("token $shlokCancelToken");
+                shlokCancelToken?.cancel("cancelled");
+                shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: pageNo + 1, lang: lang);
               },
             ),
-          )),
-    );
+          )
+  */
+
+  CancelToken _loadShlok({required String kand, required int sargaNo, String? lang}) {
+    CancelToken cancelToken = CancelToken();
+    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokasByKandSargaNo(kanda: kand, sargaNo: sargaNo, lang: lang, cancelToken: cancelToken));
+    return cancelToken;
   }
 
-  CancelToken _loadSutra({required int chapterNo, required int quaterNo, required int sutraNo, String? lang}) {
+  CancelToken _loadSargaInfo({required String kand, required int sargaNo, String? lang}) {
     CancelToken cancelToken = CancelToken();
-    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: cancelToken));
+    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokasByKandSargaNo(kanda: kand, sargaNo: sargaNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    token?.cancel("cancelled");
+    shlokCancelToken?.cancel("cancelled");
     super.dispose();
   }
 }

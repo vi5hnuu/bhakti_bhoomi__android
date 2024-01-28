@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
+import 'package:bhakti_bhoomi/models/ramayan/RamayanSargaInfoModel.dart';
 import 'package:bhakti_bhoomi/models/ramayan/RamayanShlokModel.dart';
 import 'package:bhakti_bhoomi/models/response/ApiResponse.dart';
 import 'package:bhakti_bhoomi/services/apis/RamayanApi.dart';
@@ -42,5 +43,17 @@ class RamayanRepository implements RamayanService {
   Future<ApiResponse<List<RamayanShlokModel>>> getRamayanShlokasByKandSargaNo({required String kanda, required int sargaNo, int? pageNo, int? pageSize, String? lang, CancelToken? cancelToken}) async {
     final res = await _ramayanApi.getRamayanInfo(cancelToken: cancelToken);
     return ApiResponse<List<RamayanShlokModel>>(success: res['success'], data: res['data'].map((e) => RamayanShlokModel.fromJson(e)).toList());
+  }
+
+  @override
+  Future<ApiResponse<RamayanSargaInfoModel>> getRamayanSargaInfo({required String kanda, required int sargaNo, CancelToken? cancelToken}) async {
+    final res = await _ramayanApi.getRamayanSargaInfo(kanda: kanda, sargaNo: sargaNo, cancelToken: cancelToken);
+    return ApiResponse<RamayanSargaInfoModel>(success: res['success'], data: RamayanSargaInfoModel.fromJson(res['data']));
+  }
+
+  @override
+  Future<ApiResponse<List<RamayanSargaInfoModel>>> getRamayanSargasInfo({required String kanda, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
+    final res = await _ramayanApi.getRamayanSargasInfo(kanda: kanda, pageNo: pageNo, pageSize: pageSize, cancelToken: cancelToken);
+    return ApiResponse<List<RamayanSargaInfoModel>>(success: res['success'], data: (res['data'] as List).map((e) => RamayanSargaInfoModel.fromJson(e)).toList());
   }
 }

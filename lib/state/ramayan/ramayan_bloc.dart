@@ -1,5 +1,5 @@
+import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
-import 'package:bhakti_bhoomi/models/ramayan/RamayanKandaInfoModel.dart';
 import 'package:bhakti_bhoomi/models/ramayan/RamayanSargaInfoModel.dart';
 import 'package:bhakti_bhoomi/models/ramayan/RamayanShlokModel.dart';
 import 'package:bhakti_bhoomi/services/ramayan/RamayanRepository.dart';
@@ -13,12 +13,60 @@ part 'ramayan_state.dart';
 
 class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
   RamayanBloc({required RamayanRepository ramayanRepository}) : super(RamayanState.initial()) {
-    on<FetchRamayanInfo>((event, emit) {
-      // TODO: implement event handler
+    on<FetchRamayanInfo>((event, emit) async {
+      if (state.ramayanInfo != null) return emit(state.copyWith(isLoading: false, error: null));
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final ramayanInfo = await ramayanRepository.getRamayanInfo(cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, ramayanInfo: ramayanInfo.data!));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: "something went wrong"));
+      }
     });
-    on<FetchRamayanShlokByKandSargaNoShlokNo>((event, emit) {
-      // TODO: implement event handler
+
+    on<FetchRamayanSargaInfo>((event, emit) async {
+      if (state.sargaInfoExists(kanda: event.kanda, sargaNo: event.sargaNo)) return emit(state.copyWith(isLoading: false, error: null));
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final ramayanInfoData = await ramayanRepository.getRamayanSargaInfo(kanda: event.kanda, sargaNo: event.sargaNo, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, sargaInfo: Map.fromEntries([...state.allSargaInfo.entries, state.getSargaInfoEntry(ramayanInfoData.data!)])));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: "something went wrong"));
+      }
     });
+
+    on<FetchRamayanSargasInfo>((event, emit) async {
+      if (state.sargasInfoExists(kanda: event.kanda, pageNo: event.pageNo)) return emit(state.copyWith(isLoading: false, error: null));
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final ramayanSargasInfoData =
+            await ramayanRepository.getRamayanSargasInfo(kanda: event.kanda, pageNo: event.pageNo, pageSize: RamayanState.defaultSargasInfoPageSize, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, sargaInfo: Map.fromEntries([...state.allSargaInfo.entries, ...(ramayanSargasInfoData.data!).map((e) => state.getSargaInfoEntry(e))])));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: "something went wrong"));
+      }
+    });
+
+    on<FetchRamayanShlokByKandSargaNoShlokNo>((event, emit) async {
+      if (state.shlokExists(kanda: event.kanda, sargaNo: event.sargaNo, shlokNo: event.shlokNo, lang: event.lang)) return emit(state.copyWith(isLoading: false, error: null));
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final shlokData =
+            await ramayanRepository.getRamayanShlokByKandSargaNoShlokNo(kanda: event.kanda, sargaNo: event.sargaNo, shlokNo: event.shlokNo, lang: event.lang, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, shloks: Map.fromEntries([...state.allShloks.entries, state.getShlokEntry(shlokData.data!)])));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: "something went wrong"));
+      }
+    });
+
     on<FetchRamayanShlokByKandSargaIdShlokNo>((event, emit) {
       // TODO: implement event handler
     });

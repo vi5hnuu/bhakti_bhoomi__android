@@ -7,6 +7,8 @@ class Routing {
   static final String aartiInfo = "aarti-info";
   static final String aarti = "aarti";
 
+  static final String brahmasutraChaptersInfo = "brahmasutra-chapters-info";
+  static final String brahmasutraQuatersInfo = "brahmasutra-quaters-info";
   static final String brahmasutra = "brahmasutra";
 
   static final String chalisaInfo = "chalisa-info";

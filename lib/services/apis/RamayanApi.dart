@@ -7,6 +7,8 @@ class RamayanApi {
   static final RamayanApi _instance = RamayanApi._();
 
   static final String _ramayanInfoUrl = "${ApiConstants.baseUrl}/ramayan/info"; //GET
+  static final String _ramayanSargaInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sarga/%sargaNo%"; //GET
+  static final String _ramayanSargasInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargas"; //GET
   static final String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
   static final String _ramayanVerseByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
   static final String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo"; //GET
@@ -19,6 +21,24 @@ class RamayanApi {
 
   Future<Map<String, dynamic>> getRamayanInfo({CancelToken? cancelToken}) async {
     var res = await DioSingleton().dio.get(_ramayanInfoUrl, cancelToken: cancelToken);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanSargaInfo({required String kanda, required int sargaNo, CancelToken? cancelToken}) async {
+    var url = _ramayanSargaInfoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaNo%", '$sargaNo');
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> getRamayanSargasInfo({required String kanda, int? pageNo, int? pageSize, CancelToken? cancelToken}) async {
+    var url = _ramayanSargasInfoUrl.replaceAll("%kanda%", '$kanda');
+    if (pageNo != null) {
+      url += '?pageNo=$pageNo';
+    }
+    if (pageSize != null) {
+      url += pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
+    }
+    var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;
   }
 

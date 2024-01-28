@@ -1,18 +1,19 @@
-import 'package:bhakti_bhoomi/models/ramayan/RamayanKandaInfoModel.dart';
-
 class RamayanInfoModel {
   final Map<String, int> kandaOrder;
-  final Map<String, RamayanKandaInfoModel> kandInfo;
+  final Map<String, String> translationLanguages;
+  final Map<String, int> kandInfo;
 
   const RamayanInfoModel({
     required this.kandaOrder,
+    required this.translationLanguages,
     required this.kandInfo,
   });
 
   factory RamayanInfoModel.fromJson(Map<String, dynamic> json) {
     return RamayanInfoModel(
+      translationLanguages: Map<String, String>.from(json['translationLanguages'].map((key, value) => MapEntry<String, String>(key, value))),
       kandaOrder: Map<String, int>.from(json['kandaOrder'].map((key, value) => MapEntry<String, int>(key, value))),
-      kandInfo: Map<String, RamayanKandaInfoModel>.from(json['kandInfo'].map((key, value) => MapEntry<String, RamayanKandaInfoModel>(key, RamayanKandaInfoModel.fromJson(value)))),
+      kandInfo: Map<String, int>.from(json['kandInfo'].map((key, value) => MapEntry<String, int>(key, value))),
     );
   }
 }

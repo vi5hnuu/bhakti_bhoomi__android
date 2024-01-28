@@ -4,6 +4,8 @@ import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
+import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraChaptersInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraQuatersInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
@@ -140,9 +142,19 @@ class MyApp extends StatelessWidget {
                 builder: (context, state) => AartiScreen(title: 'Aartis', aartiId: state.pathParameters['id']!),
               ),
               GoRoute(
+                name: Routing.brahmasutraChaptersInfo,
+                path: '/brahmasutra/chapters/info',
+                builder: (context, state) => const BrahmasutraChaptersInfoScreen(title: 'Brahmasutra'),
+              ),
+              GoRoute(
+                name: Routing.brahmasutraQuatersInfo,
+                path: '/brahmasutra/chapter/:chapterNo/quaters/info',
+                builder: (context, state) => BrahmasutraQuatersInfoScreen(title: 'Brahmasutra', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
+              ),
+              GoRoute(
                 name: Routing.brahmasutra,
-                path: '/brahmasutra',
-                builder: (context, state) => const BrahmasutraHome(title: 'Brahmasutra'),
+                path: '/brahmasutra/chapter/:chapterNo/quater/:quaterNo/sutras',
+                builder: (context, state) => BrahmasutraScreen(title: 'Brahmasutra', chapterNo: int.parse(state.pathParameters['chapterNo']!), quaterNo: int.parse(state.pathParameters['quaterNo']!)),
               ),
               GoRoute(
                 name: Routing.chalisaInfo,

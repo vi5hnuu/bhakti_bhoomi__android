@@ -10,6 +10,18 @@ class FetchRamayanInfo extends RamayanEvent {
   const FetchRamayanInfo({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
+class FetchRamayanSargaInfo extends RamayanEvent {
+  final String kanda;
+  final int sargaNo;
+  const FetchRamayanSargaInfo({required this.kanda, required this.sargaNo, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
+
+class FetchRamayanSargasInfo extends RamayanEvent {
+  final String kanda;
+  final int pageNo;
+  const FetchRamayanSargasInfo({required this.kanda, required this.pageNo, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
+
 class FetchRamayanShlokByKandSargaNoShlokNo extends RamayanEvent {
   final String kanda;
   final int sargaNo;
