@@ -11,9 +11,9 @@ class Utils {
       case DioExceptionType.sendTimeout:
         return "please check your internet connection.";
       case DioExceptionType.badResponse:
-        return e.response?.statusCode == 401 ? "please login again." : e.response?.data['message'] ?? 'something went wrong';
+        return e.response?.data?['message'] ?? 'something went wrong';
       default:
-        return e.message;
+        return e.response?.data['message'] ?? e.message;
     }
   }
 }

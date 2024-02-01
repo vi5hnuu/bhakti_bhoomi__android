@@ -14,8 +14,8 @@ abstract class AuthService {
       required String userName,
       required String email,
       required String password,
-      required XFile profileImage,
-      required XFile posterImage,
+      required MultipartFile profileImage,
+      required MultipartFile posterImage,
       CancelToken? cancelToken});
   Future<ApiResponse> reVerify({required String email, CancelToken? cancelToken});
   Future<ApiResponse> forgotPassword({required String usernameEmail, CancelToken? cancelToken});

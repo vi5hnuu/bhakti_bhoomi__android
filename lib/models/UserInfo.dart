@@ -5,6 +5,7 @@ class UserInfo {
   final String id;
   final String firstName;
   final String lastName;
+  final String username;
   final String email;
   final List<UserRole> role;
   final DateTime createdAt;
@@ -18,6 +19,7 @@ class UserInfo {
     required this.id,
     required this.firstName,
     required this.lastName,
+    required this.username,
     required this.email,
     required this.role,
     required this.createdAt,
@@ -33,6 +35,7 @@ class UserInfo {
         firstName: 'test',
         lastName: 'test',
         email: 'xyz@gmail.com',
+        username: "test",
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         role: [UserRole.roleAdmin],
@@ -43,6 +46,7 @@ class UserInfo {
       id: userInfo['id'],
       firstName: userInfo['firstName'],
       lastName: userInfo['lastName'],
+      username: userInfo['username'],
       email: userInfo['email'],
       role: (userInfo['role'] as List).map((e) => UserRole.fromJson(e)).toList(growable: false),
       createdAt: DateTime.parse(userInfo['createdAt']),

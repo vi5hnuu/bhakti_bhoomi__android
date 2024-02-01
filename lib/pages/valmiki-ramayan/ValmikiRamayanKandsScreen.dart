@@ -29,25 +29,25 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         final ramayanInfo = state.ramayanInfo;
-        return (state.isLoading || ramayanInfo == null) && state.error == null
-            ? RefreshProgressIndicator()
-            : state.error != null
-                ? Text(state.error!)
-                : Scaffold(
-                    appBar: AppBar(
-                      title: Text('Valmiki Ramayan'),
-                    ),
-                    body: Center(
-                      child: ListView(
-                          children: state
-                              .kandas()!
-                              .map((e) => InkWell(
-                                    onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo, pathParameters: {'kand': e.key}),
-                                    child: Text('${e.value} ${e.key}'),
-                                  ))
-                              .toList()),
-                    ),
-                  );
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Valmiki Ramayan'),
+          ),
+          body: Center(
+            child: ramayanInfo != null
+                ? ListView(
+                    children: state
+                        .kandas()!
+                        .map((e) => InkWell(
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo, pathParameters: {'kand': e.key}),
+                              child: Text('${e.value} ${e.key}'),
+                            ))
+                        .toList())
+                : state.error != null
+                    ? Text(state.error!)
+                    : const CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }

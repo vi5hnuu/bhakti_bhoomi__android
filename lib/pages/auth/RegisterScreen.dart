@@ -4,6 +4,7 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,19 +24,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final ImagePicker imagePicker = ImagePicker();
   XFile? profileImage = null;
   XFile? coverImage = null;
-  final TextEditingController firstNameCntrl = TextEditingController(text: '');
-  final TextEditingController lastNameCntrl = TextEditingController(text: '');
-  final TextEditingController usernameControllerCntrl = TextEditingController(text: '');
-  final TextEditingController emailCntrl = TextEditingController(text: '');
-  final TextEditingController passwordCntrl = TextEditingController(text: '');
+
+  final _defaultCoverImagePath = "assets/images/ram_poster_sm.jpg";
+  final _defaultProfileImagePath = "assets/images/ram_dp_sm.jpg";
+  late final ImageProvider defaultCoverImage;
+  late final ImageProvider defaultProfileImage;
+  final TextEditingController firstNameCntrl = TextEditingController(text: 'vishnu');
+  final TextEditingController lastNameCntrl = TextEditingController(text: 'kumar');
+  final TextEditingController usernameControllerCntrl = TextEditingController(text: 'vishnuk');
+  final TextEditingController emailCntrl = TextEditingController(text: 'kum0rvishnu@gmail.com');
+  final TextEditingController passwordCntrl = TextEditingController(text: '1234567890');
   final CancelToken cancelToken = CancelToken();
+
+  @override
+  void initState() {
+    defaultCoverImage = AssetImage(_defaultCoverImagePath);
+    defaultProfileImage = AssetImage(_defaultProfileImagePath);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
         listener: (ctx, state) {
-          if (!state.isAuthenticated) return;
-          context.goNamed(Routing.home);
+          if (state.success) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message ?? "registered successfully")));
+            GoRouter.of(context).goNamed(Routing.login);
+          }
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
@@ -63,19 +79,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               constraints: BoxConstraints(maxHeight: 150, minHeight: 150, minWidth: double.infinity),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  image: coverImage?.path != null
-                                      ? DecorationImage(
-                                          image: FileImage(File(coverImage!.path)),
-                                          fit: BoxFit.fitWidth,
-                                          alignment: Alignment.topCenter,
-                                          repeat: ImageRepeat.noRepeat,
-                                        )
-                                      : DecorationImage(
-                                          image: AssetImage("assets/images/ram_poster_sm.jpg"),
-                                          fit: BoxFit.fitWidth,
-                                          alignment: Alignment.topCenter,
-                                          repeat: ImageRepeat.noRepeat,
-                                        )),
+                                  image: DecorationImage(
+                                    image: (coverImage != null ? FileImage(File(coverImage!.path)) : defaultCoverImage) as ImageProvider,
+                                    fit: BoxFit.fitWidth,
+                                    alignment: Alignment.topCenter,
+                                    repeat: ImageRepeat.noRepeat,
+                                  )),
                               child: Align(
                                 alignment: Alignment.topRight,
                                 child: CameraIconButton(onPressed: () async {
@@ -95,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: CircleAvatar(
                                       radius: 45.6,
-                                      backgroundImage: (profileImage?.path != null ? FileImage(File(profileImage!.path)) : AssetImage("assets/images/ram_dp_sm.jpg")) as ImageProvider,
+                                      backgroundImage: profileImage != null ? FileImage(File(profileImage!.path)) : defaultProfileImage as ImageProvider,
                                       child: Align(
                                         alignment: Alignment.center,
                                         child: CameraIconButton(onPressed: () async {
@@ -183,22 +192,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: 18,
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            if (formKey.currentState?.validate() == false) {
-                              return;
-                            }
-                            //register and pass cancel token
-                          },
+                          onPressed: state.isLoading
+                              ? null
+                              : () async {
+                                  if (formKey.currentState?.validate() == false) {
+                                    return;
+                                  }
+
+                                  BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
+                                      profilePic: (this.profileImage != null ? MultipartFile.fromFile(this.profileImage!.path) : await _getDefaultProfileImage(assetPath: _defaultProfileImagePath))
+                                          as MultipartFile,
+                                      posterPic:
+                                          (this.coverImage != null ? MultipartFile.fromFile(this.coverImage!.path) : await _getDefaultCoverImage(assetPath: _defaultCoverImagePath)) as MultipartFile,
+                                      firstName: firstNameCntrl.text,
+                                      lastName: lastNameCntrl.text,
+                                      username: usernameControllerCntrl.text,
+                                      email: emailCntrl.text,
+                                      password: passwordCntrl.text,
+                                      cancelToken: cancelToken));
+                                },
                           child: Text(
                             'Register',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: EdgeInsets.all(12)),
                         ),
+                        if (state.error != null) Text(state.error!),
                         TextButton(
-                            onPressed: () {
-                              GoRouter.of(context).goNamed(Routing.login);
-                            },
+                            onPressed: state.isLoading
+                                ? null
+                                : () {
+                                    GoRouter.of(context).goNamed(Routing.login);
+                                  },
                             child: Text('Sign-in instead'))
                       ],
                     ),
@@ -206,6 +231,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ));
+  }
+
+  Future<MultipartFile> _getDefaultCoverImage({required String assetPath}) async {
+    final bytes = await rootBundle.load(assetPath);
+    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'cover.png');
+  }
+
+  Future<MultipartFile> _getDefaultProfileImage({required String assetPath}) async {
+    final bytes = await rootBundle.load(assetPath);
+    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'profile.png');
   }
 
   @override

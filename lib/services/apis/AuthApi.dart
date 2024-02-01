@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/singletons/DioSingleton.dart';
@@ -8,7 +10,7 @@ class AuthApi {
   static final AuthApi _instance = AuthApi._();
 
   static final String _loginUrl = "${ApiConstants.baseUrl}/users/login"; //POST
-  static final String _registerUrl = "${ApiConstants.baseUrl}/users/login"; //POST
+  static final String _registerUrl = "${ApiConstants.baseUrl}/users/register"; //POST
   // static final String _verifyUrl = "${ApiConstants.baseUrl}/users/verify"; //GET (done on email itself)
   static final String _reVerifyUrl = "${ApiConstants.baseUrl}/users/re-verify"; //GET
   static final String _forgotPasswordUrl = "${ApiConstants.baseUrl}/users/forgot-password"; //POST
@@ -33,10 +35,10 @@ class AuthApi {
 
   Future<Map<String, dynamic>> login({required String usernameEmail, required String password, CancelToken? cancelToken}) async {
     var res = await DioSingleton().dio.post(_loginUrl,
-        data: {
+        data: jsonEncode({
           "usernameEmail": usernameEmail,
           "password": password,
-        },
+        }),
         cancelToken: cancelToken);
     return res.data;
   }
@@ -47,19 +49,19 @@ class AuthApi {
       required String userName,
       required String email,
       required String password,
-      required XFile profileImage,
-      required XFile posterImage,
+      required MultipartFile profileImage,
+      required MultipartFile posterImage,
       CancelToken? cancelToken}) async {
     FormData formData = FormData.fromMap({
-      "userInfo": {
+      "userInfo": jsonEncode({
         "firstName": firstName,
         "lastName": lastName,
         "userName": userName,
         "email": email,
         "password": password,
-      },
-      "profileImage": await MultipartFile.fromFile(profileImage.path, filename: profileImage.name),
-      "posterImage": await MultipartFile.fromFile(posterImage.path, filename: posterImage.name),
+      }),
+      "profileImage": profileImage,
+      "posterImage": posterImage,
     });
     var res = await DioSingleton().dio.post(_registerUrl, data: formData, cancelToken: cancelToken);
     return res.data;
@@ -71,12 +73,19 @@ class AuthApi {
   }
 
   Future<Map<String, dynamic>> forgotPassword({required String usernameEmail, CancelToken? cancelToken}) async {
-    var res = await DioSingleton().dio.post(_forgotPasswordUrl, data: {"usernameEmail": usernameEmail}, cancelToken: cancelToken);
-    return res.data;
+    try {
+      var res = await DioSingleton().dio.post(_forgotPasswordUrl, data: jsonEncode({"usernameEmail": usernameEmail}), cancelToken: cancelToken);
+      return res.data;
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<Map<String, dynamic>> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken}) async {
-    var res = await DioSingleton().dio.post(_resetPaswordUrl, data: {"usernameEmail": usernameEmail, "otp": otp, "password": password, "confirmPassword": confirmPassword}, cancelToken: cancelToken);
+    var res = await DioSingleton()
+        .dio
+        .post(_resetPaswordUrl, data: jsonEncode({"usernameEmail": usernameEmail, "otp": otp, "password": password, "confirmPassword": confirmPassword}), cancelToken: cancelToken);
     return res.data;
   }
 

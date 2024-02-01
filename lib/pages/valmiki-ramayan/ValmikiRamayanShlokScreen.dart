@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,13 +19,12 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
   final pageStorageKey = const PageStorageKey('valmikiramayan-kand-sarga-shloks');
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
-  CancelToken? shlokCancelToken;
-  CancelToken? sargaInfoCancelToken;
+  CancelToken? cancelToken;
 
   @override
   initState() {
+    cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: 1, lang: lang);
     super.initState();
-    shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: 1, lang: lang);
   }
 
   @override
@@ -35,18 +35,13 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
           appBar: AppBar(
             title: Text('valmiki ramayan'),
           ),
-          body: Text("")),
-    );
-  }
-
-  /*
-  PageView.builder(
+          body: PageView.builder(
             key: pageStorageKey,
             pageSnapping: true,
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.info!.kandaInfo[widget.kand],
+            itemCount: state.getSargaInfo(kanda: widget.kand, sargaNo: widget.sargaNo)!.totalShloks[lang ?? RamayanState.defaultLanguage],
             itemBuilder: (context, index) {
               final ramayanInfo = state.ramayanInfo;
               final shlok = state.getShlok(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: lang);
@@ -65,13 +60,14 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                   children: [
                                     DropdownMenu(
                                       dropdownMenuEntries: ramayanInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
-                                      initialSelection: lang ?? RamcharitmanasState.defaultLang,
-                                      onSelected: (value) => setState(() { if(!mounted) return;
+                                      initialSelection: lang ?? RamayanState.defaultLanguage,
+                                      onSelected: (value) => setState(() {
+                                        if (!mounted) return;
                                         lang = value;
-                                        shlokCancelToken = shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: index + 1, lang: value);
+                                        cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: value);
                                       }),
                                     ),
-                                    Text(shlok!.explaination)
+                                    Text(shlok!.translation)
                                   ],
                                 ),
                                 const Positioned(
@@ -93,30 +89,24 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(
               () {
-                print("token $shlokCancelToken");
-                shlokCancelToken?.cancel("cancelled");
-                shlokCancelToken = _loadShlok(kand: widget.kand, sargaNo: pageNo + 1, lang: lang);
+                cancelToken?.cancel("cancelled");
+                cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: pageNo + 1, lang: lang);
               },
             ),
-          )
-  */
-
-  CancelToken _loadShlok({required String kand, required int sargaNo, String? lang}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokasByKandSargaNo(kanda: kand, sargaNo: sargaNo, lang: lang, cancelToken: cancelToken));
-    return cancelToken;
+          )),
+    );
   }
 
-  CancelToken _loadSargaInfo({required String kand, required int sargaNo, String? lang}) {
+  CancelToken _loadShlok({required String kand, required int sargaNo, required int shlokNo, String? lang}) {
     CancelToken cancelToken = CancelToken();
-    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokasByKandSargaNo(kanda: kand, sargaNo: sargaNo, lang: lang, cancelToken: cancelToken));
+    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokByKandSargaNoShlokNo(kanda: kand, sargaNo: sargaNo, shlokNo: shlokNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    shlokCancelToken?.cancel("cancelled");
+    cancelToken?.cancel("cancelled");
     super.dispose();
   }
 }

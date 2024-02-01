@@ -9,10 +9,10 @@ class RamayanApi {
   static final String _ramayanInfoUrl = "${ApiConstants.baseUrl}/ramayan/info"; //GET
   static final String _ramayanSargaInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sarga/%sargaNo%"; //GET
   static final String _ramayanSargasInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargas"; //GET
-  static final String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
-  static final String _ramayanVerseByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
-  static final String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo"; //GET
-  static final String _ramayanShlokasByKandSargaId = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaId/%sargaId%"; //GET
+  static final String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
+  static final String _ramayanShlokByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
+  static final String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaNo/%sargaNo"; //GET
+  static final String _ramayanShlokasByKandSargaId = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaId/%sargaId%"; //GET
 
   RamayanApi._();
   factory RamayanApi() {
@@ -52,7 +52,7 @@ class RamayanApi {
   }
 
   Future<Map<String, dynamic>> getRamayanShlokByKandSargaIdShlokNo({required String kanda, required String sargaId, required int shlokNo, String? lang, CancelToken? cancelToken}) async {
-    var url = _ramayanVerseByKandSargaIdShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId').replaceAll("%shlokNo%", '$shlokNo');
+    var url = _ramayanShlokByKandSargaIdShlokNoUrl.replaceAll("%kanda%", '$kanda').replaceAll("%sargaId%", '$sargaId').replaceAll("%shlokNo%", '$shlokNo');
     if (lang != null) {
       url += '?lang=$lang';
     }

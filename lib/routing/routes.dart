@@ -1,6 +1,12 @@
 class Routing {
+  static final String profile = "profile";
+
   static final String home = "home";
   static final String login = "login";
+
+  static final String forgotPassword = "forgot-password";
+  static final String otp = "otp";
+
   static final String splash = "splash";
   static final String register = "register";
 

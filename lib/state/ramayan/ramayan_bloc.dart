@@ -27,25 +27,19 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
     });
 
     on<FetchRamayanSargaInfo>((event, emit) async {
-      if (state.sargaInfoExists(kanda: event.kanda, sargaNo: event.sargaNo)) return emit(state.copyWith(isLoading: false, error: null));
-      emit(state.copyWith(isLoading: true, error: null));
-      try {
-        final ramayanInfoData = await ramayanRepository.getRamayanSargaInfo(kanda: event.kanda, sargaNo: event.sargaNo, cancelToken: event.cancelToken);
-        emit(state.copyWith(isLoading: false, sargaInfo: Map.fromEntries([...state.allSargaInfo.entries, state.getSargaInfoEntry(ramayanInfoData.data!)])));
-      } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
-      } catch (e) {
-        emit(state.copyWith(isLoading: false, error: "something went wrong"));
-      }
+      // TODO: implement event handler
     });
 
     on<FetchRamayanSargasInfo>((event, emit) async {
-      if (state.sargasInfoExists(kanda: event.kanda, pageNo: event.pageNo)) return emit(state.copyWith(isLoading: false, error: null));
+      if (state.isSargaInfoPageLoaded(kand: event.kanda, pageNo: event.pageNo)) return emit(state.copyWith(isLoading: false, error: null));
       emit(state.copyWith(isLoading: true, error: null));
       try {
         final ramayanSargasInfoData =
             await ramayanRepository.getRamayanSargasInfo(kanda: event.kanda, pageNo: event.pageNo, pageSize: RamayanState.defaultSargasInfoPageSize, cancelToken: event.cancelToken);
-        emit(state.copyWith(isLoading: false, sargaInfo: Map.fromEntries([...state.allSargaInfo.entries, ...(ramayanSargasInfoData.data!).map((e) => state.getSargaInfoEntry(e))])));
+        emit(state.copyWith(
+            isLoading: false,
+            loadedPages: Map.fromEntries([...state.isPageLoaded.entries, state.getPageLoadedEntry(kanda: event.kanda, pageNo: event.pageNo)]),
+            sargaInfo: Map.fromEntries([...state.allSargaInfo.entries, ...(ramayanSargasInfoData.data!).map((e) => state.getSargaInfoEntry(e))])));
       } on DioException catch (e) {
         emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
       } catch (e) {

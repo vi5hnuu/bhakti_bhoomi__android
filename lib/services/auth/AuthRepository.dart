@@ -82,18 +82,18 @@ class AuthRepository implements AuthService {
       required String userName,
       required String email,
       required String password,
-      required XFile profileImage,
-      required XFile posterImage,
+      required MultipartFile profileImage,
+      required MultipartFile posterImage,
       CancelToken? cancelToken}) async {
     var res = await _authApi.register(
         email: email, firstName: firstName, lastName: lastName, password: password, posterImage: posterImage, profileImage: profileImage, userName: userName, cancelToken: cancelToken);
-    return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message']);
   }
 
   @override
   Future<ApiResponse> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken}) async {
     var res = await _authApi.resetPassword(usernameEmail: usernameEmail, otp: otp, password: password, confirmPassword: confirmPassword, cancelToken: cancelToken);
-    return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message']);
   }
 
   @override

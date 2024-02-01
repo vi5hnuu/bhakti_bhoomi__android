@@ -1,6 +1,8 @@
 import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
+import 'package:bhakti_bhoomi/pages/auth/ForgotPasswordScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
+import 'package:bhakti_bhoomi/pages/auth/OtpScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
@@ -17,6 +19,7 @@ import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/mantra/MantraInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
+import 'package:bhakti_bhoomi/pages/profileScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScreen.dart';
 import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.dart';
@@ -62,6 +65,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final whiteListedRoutes = ['/login', '/register', '/forgot-password', '/splash', '/otp/:usernameEmail'];
+
   MyApp({super.key});
 
   @override
@@ -92,9 +97,9 @@ class MyApp extends StatelessWidget {
             debugLogDiagnostics: true,
             errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
             redirect: (context, state) {
-              if (!['/register', '/login', '/splash'].contains(state.fullPath) && !BlocProvider.of<AuthBloc>(context).state.isAuthenticated) {
-                return '/login';
-              }
+              // if (!whiteListedRoutes.contains(state.fullPath) && !BlocProvider.of<AuthBloc>(context).state.isAuthenticated) {
+              //   return '/login';
+              // }
               return null;
             },
             initialLocation: '/splash',
@@ -118,6 +123,24 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               GoRoute(
+                name: Routing.forgotPassword,
+                path: '/forgot-password',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: ForgotPasswordScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
+                name: Routing.otp,
+                path: '/otp/:usernameEmail',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: OtpScreen(usernameEmail: state.pathParameters['usernameEmail']!),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
                 name: Routing.register,
                 path: '/register',
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
@@ -125,6 +148,11 @@ class MyApp extends StatelessWidget {
                   child: const RegisterScreen(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
+              ),
+              GoRoute(
+                name: Routing.profile,
+                path: '/profile',
+                builder: (context, state) => ProfileScreen(),
               ),
               GoRoute(
                 name: Routing.home,
