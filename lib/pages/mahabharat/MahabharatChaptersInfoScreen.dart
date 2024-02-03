@@ -19,14 +19,19 @@ class MahabharatChaptersInfoScreen extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<MahabharatBloc, MahabharatState>(
-          builder: (context, state) => ListView.builder(
-            itemCount: state.getBooksInfo(bookNo: bookNo)!.info.length,
-            itemBuilder: (context, index) => Card(
+          builder: (context, state) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              itemCount: state.getBooksInfo(bookNo: bookNo)!.info.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 5),
                 child: RoundedListTile(
-              itemNo: index + 1,
-              text: 'Chapter ${index + 1} | total verses ${state.getBooksInfo(bookNo: bookNo)!.info['${index + 1}']!}',
-              onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks, pathParameters: {'bookNo': '${bookNo}', 'chapterNo': '${index + 1}'}),
-            )),
+                  itemNo: index + 1,
+                  text: 'Chapter ${index + 1} | total verses ${state.getBooksInfo(bookNo: bookNo)!.info['${index + 1}']!}',
+                  onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks, pathParameters: {'bookNo': '${bookNo}', 'chapterNo': '${index + 1}'}),
+                ),
+              ),
+            ),
           ),
         ));
   }

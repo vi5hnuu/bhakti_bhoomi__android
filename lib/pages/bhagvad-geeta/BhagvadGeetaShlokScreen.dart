@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,9 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
     return BlocBuilder<BhagvadGeetaBloc, BhagvadGeetaState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Bhagvad Geeta'),
+            title: Text('Bhagvad Geeta | Chapter No - ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -45,22 +48,31 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                   padding: const EdgeInsets.all(15),
                   child: shlok != null
                       ? Stack(
+                          fit: StackFit.expand,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
-                              children: [Text(shlok!.shlok)],
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text(shlok.shlok)],
                             ),
-                            const Positioned(
+                            Positioned(
                               bottom: 45,
                               right: 15,
                               child: Column(
                                 children: [
-                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
                                   SizedBox(height: 10),
-                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
                                 ],
                               ),
+                            ),
+                            Positioned(
+                              top: 15,
+                              right: 15,
+                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
                             )
                           ],
                         )
@@ -85,6 +97,10 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<BhagvadGeetaBloc>(context).add(FetchBhagvadShlokByChapterNoShlokNo(chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
     return cancelToken;
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   @override
