@@ -2,6 +2,7 @@ import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChalisaScreen extends StatefulWidget {
   final String title;
@@ -28,14 +29,40 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
       builder: (context, state) {
         final chalisa = state.getChalisaById(chalisaId: widget.chalisaId);
         return Scaffold(
-            appBar: AppBar(
-              title: Text('Chalisa'),
+          appBar: AppBar(
+            title: Text(
+              state.isLoading || state.error != null || state.allChalisa[widget.chalisaId] == null ? 'Aarti' : state.allChalisa[widget.chalisaId]!.title,
+              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            body: chalisa != null
-                ? Text(chalisa.title)
-                : state.error != null
-                    ? Center(child: Text(state.error!))
-                    : Center(child: const RefreshProgressIndicator()));
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
+          body: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+              child: chalisa != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: chalisa.translations['hi']!['data']!
+                          .map((verseGroup) => Padding(
+                                padding: const EdgeInsets.only(bottom: 32),
+                                child: Column(
+                                  children: [
+                                    Text(verseGroup.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'NotoSansDevanagari')),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    ...verseGroup.verses.map((verse) => Text(verse, style: TextStyle(fontSize: 18)))
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                    )
+                  : state.error != null
+                      ? Center(child: Text(state.error!))
+                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
+        );
       },
     );
   }

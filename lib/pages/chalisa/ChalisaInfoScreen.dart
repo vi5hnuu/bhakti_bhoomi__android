@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,16 +31,26 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
         final chalisaInfo = state.chalisaInfos;
         return Scaffold(
             appBar: AppBar(
-              title: Text('Chalisa'),
+              title: Text(
+                widget.title,
+                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: chalisaInfo != null
                 ? ListView.builder(
+                    padding: const EdgeInsets.all(8),
                     itemCount: chalisaInfo.length,
                     itemBuilder: (context, index) {
                       final chalisa = chalisaInfo.entries.elementAt(index);
-                      return InkWell(
-                        onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa, pathParameters: {'chalisaId': chalisa.key}),
-                        child: Text(chalisa.value),
+                      return Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: RoundedListTile(
+                          itemNo: index + 1,
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa, pathParameters: {'chalisaId': chalisa.key}),
+                          text: chalisa.value,
+                        ),
                       );
                     },
                   )

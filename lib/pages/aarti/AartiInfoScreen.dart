@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +33,7 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
           style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: BlocBuilder<AartiBloc, AartiState>(builder: (context, state) {
         return state.aartisInfo.isNotEmpty
@@ -41,19 +43,11 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
                   final aartiInfo = state.aartisInfo[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: Text('${index + 1}', style: const TextStyle(color: Colors.white)),
-                      ),
+                    child: RoundedListTile(
+                      itemNo: index + 1,
+                      text: aartiInfo.title,
                       key: Key(aartiInfo.id),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(64), side: BorderSide(color: Theme.of(context).primaryColor)),
-                      title: Text(aartiInfo.title),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-                      onTap: () {
-                        GoRouter.of(context).pushNamed(Routing.aarti, pathParameters: {"id": state.aartisInfo[index].id});
-                      },
+                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti, pathParameters: {"id": state.aartisInfo[index].id}),
                     ),
                   );
                 })
