@@ -130,7 +130,7 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0.5,
-      color: Colors.white,
+      color: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.5),
       ),
@@ -139,7 +139,7 @@ class ItemCard extends StatelessWidget {
         splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
         overlayColor: MaterialStateProperty.all(Theme.of(context).primaryColor.withOpacity(0.2)),
         onTap: onPressed,
-        child: Center(child: Text(title, style: TextStyle(color: Theme.of(context).primaryColor, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))),
+        child: Center(child: Text(title, style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))),
       ),
     );
   }

@@ -30,18 +30,28 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
         final chaptersInfo = state.allChaptersInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text('Chanakya Neeti'),
+            title: Text(
+              'Chanakya Neeti',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: IconThemeData(color: Colors.white),
           ),
           body: chaptersInfo != null
               ? SingleChildScrollView(
                   child: Column(
                     children: chaptersInfo
-                        .map((chapterInfo) => InkWell(
-                            onTap: () => GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapterShlok, pathParameters: {'chapterNo': '${chapterInfo.chapterNo}'}),
-                            child: Container(
-                              height: 20,
-                              child: Text("${chapterInfo.chapterNo} - ${chapterInfo.versesCount}"),
-                            )))
+                        .map((chapterInfo) => Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                tileColor: Theme.of(context).primaryColor,
+                                leading: const Icon(Icons.menu_rounded, color: Colors.white),
+                                title: Text('Chapter ${chapterInfo.chapterNo}', style: const TextStyle(fontSize: 24, color: Colors.white)),
+                                subtitle: Text('Contains ${chapterInfo.versesCount} Verses', style: TextStyle(color: Colors.white)),
+                                onTap: () => GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapterShlok, pathParameters: {'chapterNo': '${chapterInfo.chapterNo}'}),
+                              ),
+                            ))
                         .toList(),
                   ),
                 )

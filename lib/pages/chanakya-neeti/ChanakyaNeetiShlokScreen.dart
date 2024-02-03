@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,9 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     return BlocBuilder<ChanakyaNeetiBloc, ChanakyaNeetiState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Chanakya Neeti'),
+            title: Text('Chanakya Neeti | Chapter No - ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -41,32 +44,44 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
             itemBuilder: (context, index) {
               final verse = state.getVerse(chapterNo: widget.chapterNo, verseNo: index + 1);
               return Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: verse != null
-                        ? Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [Text(verse.id)],
+                child: verse != null
+                    ? Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        padding: const EdgeInsets.all(8),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Text(verse.translations['en']!)],
+                            ),
+                            Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
+                                ],
                               ),
-                              const Positioned(
-                                bottom: 45,
-                                right: 15,
-                                child: Column(
-                                  children: [
-                                    IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                    SizedBox(height: 10),
-                                    IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                  ],
-                                ),
-                              )
-                            ],
-                          )
-                        : state.error != null
-                            ? Center(child: Text(state.error!))
-                            : const Center(child: RefreshProgressIndicator())),
+                            ),
+                            Positioned(
+                              top: 15,
+                              right: 15,
+                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
+                            )
+                          ],
+                        ),
+                      )
+                    : state.error != null
+                        ? Center(child: Text(state.error!))
+                        : const Center(child: RefreshProgressIndicator()),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
@@ -84,6 +99,10 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiVerseByChapterNoVerseNo(chapterNo: chapterNo, verseNo: verseNo, cancelToken: cancelToken));
     return cancelToken;
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   @override
