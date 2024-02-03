@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class MahabharatShlokScreen extends StatefulWidget {
   final String title;
@@ -30,7 +32,10 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
     return BlocBuilder<MahabharatBloc, MahabharatState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Mahabharat'),
+            title:
+                Text('Mahabharat | Book No - ${widget.bookNo} | Chapter No ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -42,33 +47,44 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
             itemBuilder: (context, index) {
               final shlok = state.getShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
               return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: shlok != null
-                      ? Stack(
+                child: shlok != null
+                    ? Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        padding: const EdgeInsets.all(8),
+                        child: Stack(
+                          fit: StackFit.expand,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [Text(shlok.text)],
                             ),
-                            const Positioned(
+                            Positioned(
                               bottom: 45,
                               right: 15,
                               child: Column(
                                 children: [
-                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
                                   SizedBox(height: 10),
-                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
                                 ],
                               ),
+                            ),
+                            Positioned(
+                              top: 15,
+                              right: 15,
+                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
                             )
                           ],
-                        )
-                      : state.error != null
-                          ? Center(child: Text(state.error!))
-                          : const Center(child: CircularProgressIndicator()),
-                ),
+                        ),
+                      )
+                    : state.error != null
+                        ? Center(child: Text(state.error!))
+                        : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
@@ -85,6 +101,10 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
     return cancelToken;
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   @override
