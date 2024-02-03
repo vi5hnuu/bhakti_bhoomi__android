@@ -182,7 +182,7 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.aartiInfo,
                 path: '/aarti-info',
-                builder: (context, state) => AartiInfoScreen(title: 'Aarti info'),
+                builder: (context, state) => AartiInfoScreen(title: "Aarti's"),
               ),
               GoRoute(
                 name: Routing.aarti,
