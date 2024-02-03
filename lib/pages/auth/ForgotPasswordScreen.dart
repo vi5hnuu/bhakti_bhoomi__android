@@ -1,6 +1,8 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
+import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,9 +37,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       },
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text('Login'),
+          title: Text('Login', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: Colors.orangeAccent,
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 10,
         ),
         body: Padding(
@@ -47,6 +49,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               key: formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   CustomInputField(
                       controller: usernameEmailController,
@@ -58,27 +61,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         }
                         return null;
                       }),
-                  SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: state.isLoading
-                        ? null
-                        : () {
-                            if (!formKey.currentState!.validate()) return;
-                            BlocProvider.of<AuthBloc>(context).add(
-                              ForgotPasswordEvent(
-                                usernameEmail: usernameEmailController.text,
-                                cancelToken: cancelToken,
-                              ),
-                            );
-                          },
-                    child: Text(
-                      'Forgot-password',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-                  ),
-                  TextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.login), child: Text('Sign-in instead'))
+                  const SizedBox(height: 12),
+                  CustomElevatedButton(
+                      onPressed: state.isLoading
+                          ? null
+                          : () {
+                              if (!formKey.currentState!.validate()) return;
+                              BlocProvider.of<AuthBloc>(context).add(
+                                ForgotPasswordEvent(
+                                  usernameEmail: usernameEmailController.text,
+                                  cancelToken: cancelToken,
+                                ),
+                              );
+                            },
+                      child: const Text(
+                        'Forgot-password',
+                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                      )),
+                  const SizedBox(height: 12),
+                  CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.login), child: const Text('Sign-in instead'))
                 ],
               ),
             ),

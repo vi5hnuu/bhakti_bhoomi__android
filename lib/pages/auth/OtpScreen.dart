@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
+import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,15 +19,18 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'registerForm');
-  final TextEditingController usernameEmailCntrl = TextEditingController(text: 'vishnuk');
-  final TextEditingController otpCntrl = TextEditingController(text: '');
+  final TextEditingController oldPassword = TextEditingController(text: 'vishnuk');
   final TextEditingController passwordCntrl = TextEditingController(text: '9876543210');
   final TextEditingController confirmPasswordCntrl = TextEditingController(text: '9876543210');
+  late List<FocusNode> _focusNodes;
+  late List<TextEditingController> _Otpcontrollers;
   final CancelToken cancelToken = CancelToken();
 
   @override
   void initState() {
     super.initState();
+    _focusNodes = List.generate(6, (index) => FocusNode());
+    _Otpcontrollers = List.generate(6, (index) => TextEditingController());
   }
 
   @override
@@ -39,10 +44,13 @@ class _OtpScreenState extends State<OtpScreen> {
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text('Registration'),
+                title: const Text(
+                  'Update Password',
+                  style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+                ),
                 centerTitle: true,
                 elevation: 10,
-                backgroundColor: Colors.orangeAccent,
+                backgroundColor: Theme.of(context).primaryColor,
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -54,79 +62,102 @@ class _OtpScreenState extends State<OtpScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         CustomInputField(
-                            controller: usernameEmailCntrl,
-                            hintText: "username",
-                            labelText: "username",
+                            controller: oldPassword,
+                            labelText: "Old Password",
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter username';
+                                return 'Please enter old password';
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
-                        CustomInputField(
-                            controller: otpCntrl,
-                            hintText: "otp",
-                            labelText: "123456",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter otp';
-                              }
-                              return null;
-                            }),
-                        SizedBox(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(
+                            6,
+                            (index) => Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(right: (index == 5 ? 0 : 5.0)),
+                                child: TextField(
+                                  controller: _Otpcontrollers[index],
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  maxLength: 1,
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty && index < 5) {
+                                      _focusNodes[index + 1].requestFocus();
+                                    } else if (value.isEmpty && index > 0) {
+                                      _focusNodes[index - 1].requestFocus();
+                                    }
+                                  },
+                                  focusNode: _focusNodes[index],
+                                  decoration: InputDecoration(
+                                    counterText: '',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
                             controller: passwordCntrl,
                             obscureText: true,
-                            hintText: "as4c45a65s",
-                            labelText: "password",
+                            labelText: "new Password",
                             suffixIcon: Icon(Icons.password),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter valid password';
+                                return 'Please enter valid new password';
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 18,
                         ),
                         CustomInputField(
                             controller: confirmPasswordCntrl,
                             obscureText: true,
-                            hintText: "as4c45a65s",
                             labelText: "confirm password",
                             suffixIcon: Icon(Icons.password),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter valid password';
+                                return 'Please enter valid confirm password';
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 18,
                         ),
-                        ElevatedButton(
+                        CustomElevatedButton(
                           onPressed: state.isLoading
                               ? null
                               : () async {
-                                  if (formKey.currentState?.validate() == false) {
+                                  if (formKey.currentState?.validate() == false || _Otpcontrollers.where((otpCntrl) => otpCntrl.value.text.isNotEmpty).isNotEmpty) {
                                     return;
                                   }
                                   BlocProvider.of<AuthBloc>(context).add(ResetPasswordEvent(
-                                      usernameEmail: widget.usernameEmail, otp: otpCntrl.text, password: passwordCntrl.text, confirmPassword: confirmPasswordCntrl.text, cancelToken: cancelToken));
+                                      usernameEmail: widget.usernameEmail,
+                                      otp: this._Otpcontrollers.map((otpCntrl) => otpCntrl.value.text).join(''),
+                                      password: passwordCntrl.text,
+                                      confirmPassword: confirmPasswordCntrl.text,
+                                      cancelToken: cancelToken));
                                 },
                           child: Text(
-                            'Register',
+                            'Update',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: EdgeInsets.all(12)),
                         ),
                         if (state.error != null) Text(state.error!),
-                        TextButton(
+                        if (passwordCntrl.value.text != confirmPasswordCntrl.value.text) Text("new password should be equal to confirm password"),
+                        const SizedBox(height: 12),
+                        CustomTextButton(
                             onPressed: state.isLoading
                                 ? null
                                 : () {
@@ -144,6 +175,12 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void dispose() {
     cancelToken.cancel("register cancelled");
+    this._focusNodes.forEach((node) => node.dispose());
+    this._Otpcontrollers.forEach((cntrl) => cntrl.dispose());
+    oldPassword.dispose();
+    passwordCntrl.dispose();
+    confirmPasswordCntrl.dispose();
+
     super.dispose();
   }
 }

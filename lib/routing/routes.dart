@@ -1,5 +1,6 @@
 class Routing {
   static final String profile = "profile";
+  static final String verify = "verify";
 
   static final String home = "home";
   static final String login = "login";
@@ -9,6 +10,7 @@ class Routing {
 
   static final String splash = "splash";
   static final String register = "register";
+  static final String updatePassword = "update-password";
 
   static final String aartiInfo = "aarti-info";
   static final String aarti = "aarti";

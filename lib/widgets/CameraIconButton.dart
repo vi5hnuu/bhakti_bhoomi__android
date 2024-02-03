@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CameraIconButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  CameraIconButton({super.key, required this.onPressed});
+  final VoidCallback? onPressed;
+  const CameraIconButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

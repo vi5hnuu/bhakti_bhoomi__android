@@ -4,6 +4,8 @@ import 'package:bhakti_bhoomi/pages/auth/ForgotPasswordScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/OtpScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
+import 'package:bhakti_bhoomi/pages/auth/UpdatePasswordScreen.dart';
+import 'package:bhakti_bhoomi/pages/auth/VerifyScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
 import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraChaptersInfoScreen.dart';
@@ -90,7 +92,7 @@ class MyApp extends StatelessWidget {
         title: 'Spirtual Shakti',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
           useMaterial3: true,
         ),
         routerConfig: GoRouter(
@@ -123,6 +125,15 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               GoRoute(
+                name: Routing.verify,
+                path: '/verify',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: VerifyScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
                 name: Routing.forgotPassword,
                 path: '/forgot-password',
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
@@ -137,6 +148,15 @@ class MyApp extends StatelessWidget {
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
                   child: OtpScreen(usernameEmail: state.pathParameters['usernameEmail']!),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
+                name: Routing.updatePassword,
+                path: '/update-password',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const UpdatePasswordScreen(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),

@@ -1,9 +1,12 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
+import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../widgets/notificationSnackbar.dart';
@@ -36,10 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text('Login'),
+          title: Text(
+            'Login',
+            style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.orangeAccent,
-          elevation: 10,
+          backgroundColor: Theme.of(context).primaryColor,
+          elevation: 1,
+          shadowColor: Colors.grey,
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -48,7 +55,16 @@ class _LoginScreenState extends State<LoginScreen> {
               key: formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Text(
+                      "Spirtual Shakti",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
+                    ),
+                  ),
                   CustomInputField(
                       controller: usernameEmailController,
                       labelText: 'Username/Email',
@@ -59,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                         return null;
                       }),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   CustomInputField(
                     controller: passwordController,
                     labelText: 'password',
@@ -73,29 +89,39 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     autoCorrect: false,
                   ),
-                  SizedBox(height: 18),
-                  ElevatedButton(
-                    onPressed: state.isLoading
-                        ? null
-                        : () {
-                            if (!formKey.currentState!.validate()) return;
-                            BlocProvider.of<AuthBloc>(context).add(
-                              LoginEvent(
-                                usernameEmail: usernameEmailController.text,
-                                password: passwordController.text,
-                                cancelToken: cancelToken,
-                              ),
-                            );
-                          },
-                    child: Text(
-                      'Log-in',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-                  ),
-                  TextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.register), child: Text('Sign-up instead')),
-                  TextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.forgotPassword), child: Text('forgot-password')),
+                  const SizedBox(height: 18),
+                  state.isLoading
+                      ? SpinKitThreeBounce(
+                          color: Theme.of(context).primaryColor,
+                          size: 32,
+                        )
+                      : CustomElevatedButton(
+                          child: const Text(
+                            'Log-in',
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  if (!formKey.currentState!.validate()) return;
+                                  BlocProvider.of<AuthBloc>(context).add(
+                                    LoginEvent(
+                                      usernameEmail: usernameEmailController.text,
+                                      password: passwordController.text,
+                                      cancelToken: cancelToken,
+                                    ),
+                                  );
+                                }),
+                  const SizedBox(height: 14),
+                  CustomTextButton(child: Text('Sign-up instead'), onPressed: state.isLoading ? null : () => context.goNamed(Routing.register)),
+                  CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.forgotPassword), child: Text('forgot-password')),
+                  CustomTextButton(
+                      onPressed: state.isLoading
+                          ? null
+                          : () {
+                              GoRouter.of(context).goNamed(Routing.verify);
+                            },
+                      child: Text('verify account'))
                 ],
               ),
             ),

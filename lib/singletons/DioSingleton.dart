@@ -13,7 +13,6 @@ class DioSingleton {
   DioSingleton._() {
     _dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
       print('REQUEST [${options.method}] => PATH: ${options.path}');
-      options.headers['content-Type'] = 'application/json';
       if (_cookies.isNotEmpty) {
         options.headers['Cookie'] = _cookies.values.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
         // options.headers['Authorization'] = 'Bearer ${_cookies['jwt']?.value}'; //[extract token [not done]]not required as cookies are read first at backend

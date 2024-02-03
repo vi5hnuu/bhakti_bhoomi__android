@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
+import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,10 +57,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text('Registration'),
+                title: Text(
+                  'Registration',
+                  style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+                ),
                 centerTitle: true,
                 elevation: 10,
-                backgroundColor: Colors.orangeAccent,
+                backgroundColor: Theme.of(context).primaryColor,
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -74,9 +79,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           clipBehavior: Clip.none,
                           children: [
                             Container(
-                              margin: EdgeInsets.symmetric(horizontal: 4.5),
-                              padding: EdgeInsets.all(5.5),
-                              constraints: BoxConstraints(maxHeight: 150, minHeight: 150, minWidth: double.infinity),
+                              margin: const EdgeInsets.symmetric(horizontal: 4.5),
+                              padding: const EdgeInsets.all(5.5),
+                              constraints: const BoxConstraints(maxHeight: 150, minHeight: 150, minWidth: double.infinity),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   image: DecorationImage(
@@ -99,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Positioned(
                                 top: 98.5,
                                 child: Card(
-                                  shape: CircleBorder(side: BorderSide(color: Colors.black26)),
+                                  shape: const CircleBorder(side: BorderSide(color: Colors.black26)),
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
                                     child: CircleAvatar(
@@ -120,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ))
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 65,
                         ),
                         CustomInputField(
@@ -133,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
@@ -146,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
@@ -159,21 +164,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
                             controller: emailCntrl,
                             hintText: "xyz@gmail.com",
                             labelText: "Email",
-                            suffixIcon: Icon(Icons.email_outlined),
+                            suffixIcon: const Icon(Icons.email_outlined),
                             validator: (value) {
                               if (value == null || !value.contains("@gmail.com")) {
                                 return 'Please enter valid email id';
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
@@ -181,50 +186,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             obscureText: true,
                             hintText: "as4c45a65s",
                             labelText: "password",
-                            suffixIcon: Icon(Icons.password),
+                            suffixIcon: const Icon(Icons.password),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter valid password';
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 18,
                         ),
-                        ElevatedButton(
-                          onPressed: state.isLoading
-                              ? null
-                              : () async {
-                                  if (formKey.currentState?.validate() == false) {
-                                    return;
-                                  }
+                        CustomElevatedButton(
+                            onPressed: state.isLoading
+                                ? null
+                                : () async {
+                                    if (formKey.currentState?.validate() == false) {
+                                      return;
+                                    }
 
-                                  BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
-                                      profilePic: (this.profileImage != null ? MultipartFile.fromFile(this.profileImage!.path) : await _getDefaultProfileImage(assetPath: _defaultProfileImagePath))
-                                          as MultipartFile,
-                                      posterPic:
-                                          (this.coverImage != null ? MultipartFile.fromFile(this.coverImage!.path) : await _getDefaultCoverImage(assetPath: _defaultCoverImagePath)) as MultipartFile,
-                                      firstName: firstNameCntrl.text,
-                                      lastName: lastNameCntrl.text,
-                                      username: usernameControllerCntrl.text,
-                                      email: emailCntrl.text,
-                                      password: passwordCntrl.text,
-                                      cancelToken: cancelToken));
-                                },
-                          child: Text(
-                            'Register',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                    BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
+                                        profilePic: (this.profileImage != null
+                                            ? await MultipartFile.fromFile(this.profileImage!.path)
+                                            : await _getDefaultProfileImage(assetPath: _defaultProfileImagePath)) as MultipartFile,
+                                        posterPic: (this.coverImage != null ? await MultipartFile.fromFile(this.coverImage!.path) : await _getDefaultCoverImage(assetPath: _defaultCoverImagePath))
+                                            as MultipartFile,
+                                        firstName: firstNameCntrl.text,
+                                        lastName: lastNameCntrl.text,
+                                        username: usernameControllerCntrl.text,
+                                        email: emailCntrl.text,
+                                        password: passwordCntrl.text,
+                                        cancelToken: cancelToken));
+                                  },
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(color: Colors.white, fontSize: 18),
+                            )),
+                        if (state.error != null)
+                          Text(
+                            state.error!,
+                            textAlign: TextAlign.center,
                           ),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: EdgeInsets.all(12)),
-                        ),
-                        if (state.error != null) Text(state.error!),
-                        TextButton(
+                        const SizedBox(height: 12),
+                        CustomTextButton(
                             onPressed: state.isLoading
                                 ? null
                                 : () {
                                     GoRouter.of(context).goNamed(Routing.login);
                                   },
-                            child: Text('Sign-in instead'))
+                            child: const Text('Sign-in instead')),
                       ],
                     ),
                   ),

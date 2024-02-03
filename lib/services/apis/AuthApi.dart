@@ -4,7 +4,6 @@ import 'package:bhakti_bhoomi/constants/ApiConstants.dart';
 import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/singletons/DioSingleton.dart';
 import 'package:dio/dio.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AuthApi {
   static final AuthApi _instance = AuthApi._();
@@ -89,15 +88,15 @@ class AuthApi {
     return res.data;
   }
 
-  Future<Map<String, dynamic>> updateProfilePic({required XFile profileImage, CancelToken? cancelToken}) async {
-    final FormData formData = FormData.fromMap({"poster": await MultipartFile.fromFile(profileImage.path, filename: profileImage.name)});
-    var res = await DioSingleton().dio.post(_updatePosterImageUrl, data: formData, cancelToken: cancelToken);
+  Future<Map<String, dynamic>> updateProfilePic({required MultipartFile profileImage, required String userId, CancelToken? cancelToken}) async {
+    final FormData formData = FormData.fromMap({"poster": profileImage});
+    var res = await DioSingleton().dio.post('$_updateProfileImageUrl/$userId', data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
-  Future<Map<String, dynamic>> updatePosterPic({required XFile posterImage, CancelToken? cancelToken}) async {
-    final FormData formData = FormData.fromMap({"profile": await MultipartFile.fromFile(posterImage.path, filename: posterImage.name)});
-    var res = await DioSingleton().dio.post(_updateProfileImageUrl, data: formData, cancelToken: cancelToken);
+  Future<Map<String, dynamic>> updatePosterPic({required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
+    final FormData formData = FormData.fromMap({"profile": posterImage});
+    var res = await DioSingleton().dio.post('$_updatePosterImageUrl/$userId', data: formData, cancelToken: cancelToken);
     return res.data;
   }
 

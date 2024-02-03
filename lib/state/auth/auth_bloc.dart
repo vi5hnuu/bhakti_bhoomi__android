@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthState(isLoading: true, error: null));
       try {
         ApiResponse<UserInfo> res = await authRepository.login(usernameEmail: event.usernameEmail, password: event.password, cancelToken: event.cancelToken);
-        emit(AuthState(success: res.success, isAuthenticated: res.success, userInfo: res.data, message: res.message));
+        emit(AuthState(success: res.success, isAuthenticated: true, userInfo: res.data, message: res.message));
       } on DioException catch (e) {
         emit(AuthState(error: Utils.handleDioException(e)));
       } catch (e) {
@@ -81,7 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<LogoutEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true, error: null, isAuthenticated: state.isAuthenticated));
+      emit(state.copyWith(isLoading: true, error: null));
       try {
         final res = await authRepository.logout(cancelToken: event.cancelToken);
         await _sStorage.storage.delete(key: Constants.jwtKey);
@@ -110,6 +110,66 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final res =
             await authRepository.resetPassword(usernameEmail: event.usernameEmail, otp: event.otp, password: event.password, confirmPassword: event.confirmPassword, cancelToken: event.cancelToken);
+        emit(AuthState(isLoading: false, success: res.success, message: res.message));
+      } on DioException catch (e) {
+        emit(AuthState(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(AuthState(isLoading: false, error: e.toString()));
+      }
+    });
+
+    on<UpdatePosterPicEvent>((event, emit) async {
+      if (state.userInfo == null) throw Error(); //developer fault
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final res = await authRepository.updatePosterPic(posterImage: event.posterImage, userId: state.userInfo!.id, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, success: res.success, message: res.message));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: e.toString()));
+      }
+    });
+
+    on<UpdateProfilePic>((event, emit) async {
+      if (state.userInfo == null) throw Error(); //developer fault
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final res = await authRepository.updateProfilePic(profileImage: event.profileImage, userId: state.userInfo!.id, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, success: res.success, message: res.message));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: e.toString()));
+      }
+    });
+    on<UpdatePasswordEvent>((event, emit) async {
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final res = await authRepository.updatePassword(oldPassword: event.oldPassword, newPassword: event.newPassword, confirmPassword: event.confirmPassword, cancelToken: event.cancelToken);
+        emit(state.copyWith(isLoading: false, success: res.success, message: res.message));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: e.toString()));
+      }
+    });
+    on<DeleteMeEvent>((event, emit) async {
+      emit(state.copyWith(isLoading: true, error: null));
+      try {
+        final res = await authRepository.deleteMe(cancelToken: event.cancelToken);
+        await this._sStorage.storage.delete(key: Constants.jwtKey);
+        emit(AuthState(isLoading: false, success: res.success, message: res.message));
+      } on DioException catch (e) {
+        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+      } catch (e) {
+        emit(state.copyWith(isLoading: false, error: e.toString()));
+      }
+    });
+    on<ReVerifyEvent>((event, emit) async {
+      emit(AuthState(isLoading: true, error: null));
+      try {
+        final res = await authRepository.reVerify(email: event.email, cancelToken: event.cancelToken);
         emit(AuthState(isLoading: false, success: res.success, message: res.message));
       } on DioException catch (e) {
         emit(AuthState(isLoading: false, error: Utils.handleDioException(e)));
