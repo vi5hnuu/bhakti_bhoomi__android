@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class RigvedaSuktaScreen extends StatefulWidget {
   final String title;
@@ -30,7 +32,12 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Rigveda'),
+            title: Text(
+              'RigVeda | Mandala - ${widget.mandala}',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -47,15 +54,23 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                   child: sukta != null
                       ? Stack(
                           children: [
-                            Text(sukta.text),
-                            const Positioned(
+                            Expanded(
+                                child: Center(
+                                    child: Text(
+                              sukta.text,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 1, fontSize: 14),
+                            ))),
+                            Positioned(
                               bottom: 45,
                               right: 15,
                               child: Column(
                                 children: [
-                                  IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
                                   SizedBox(height: 10),
-                                  IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
                                 ],
                               ),
                             )
@@ -63,7 +78,9 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                         )
                       : state.error != null
                           ? Center(child: Text(state.error!))
-                          : const RefreshProgressIndicator(),
+                          : Center(
+                              child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
+                            ),
                 ),
               );
             },
@@ -77,6 +94,10 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
             ),
           )),
     );
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   CancelToken _loadSukta({required int mandala, required int suktaNo}) {
