@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChanakyaNeetiShlokScreen extends StatefulWidget {
   final String title;
@@ -81,7 +82,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                       )
                     : state.error != null
                         ? Center(child: Text(state.error!))
-                        : const Center(child: RefreshProgressIndicator()),
+                        : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },
             dragStartBehavior: DragStartBehavior.down,

@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,10 +39,14 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text('Registration'),
+                title: Text(
+                  'Update Password',
+                  style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+                ),
                 centerTitle: true,
                 elevation: 10,
-                backgroundColor: Colors.orangeAccent,
+                backgroundColor: Theme.of(context).primaryColor,
+                iconTheme: IconThemeData(color: Colors.white),
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -88,7 +93,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                         SizedBox(
                           height: 7,
                         ),
-                        ElevatedButton(
+                        CustomElevatedButton(
                           onPressed: state.isLoading
                               ? null
                               : () async {
@@ -103,7 +108,6 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                             'Update Password',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: EdgeInsets.all(12)),
                         ),
                         if (state.error != null) Text(state.error!),
                       ],

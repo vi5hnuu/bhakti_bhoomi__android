@@ -65,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 centerTitle: true,
                 elevation: 10,
                 backgroundColor: Theme.of(context).primaryColor,
+                iconTheme: IconThemeData(color: Colors.white),
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -163,16 +164,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: state.isLoading
                                 ? null
                                 : () {
-                                    BlocProvider.of<AuthBloc>(context).add(DeleteMeEvent(cancelToken: deleteMeToken));
+                                    BlocProvider.of<AuthBloc>(context).add(LogoutEvent(cancelToken: deleteMeToken));
                                   },
-                            child: Text('delete Account')),
+                            child: Text('log out')),
+                        SizedBox(height: 64),
                         CustomTextButton(
                             onPressed: state.isLoading
                                 ? null
                                 : () {
-                                    BlocProvider.of<AuthBloc>(context).add(LogoutEvent(cancelToken: deleteMeToken));
+                                    BlocProvider.of<AuthBloc>(context).add(DeleteMeEvent(cancelToken: deleteMeToken));
                                   },
-                            child: Text('log out'))
+                            child: Text('delete Account'))
                       ],
                     ),
                   ),

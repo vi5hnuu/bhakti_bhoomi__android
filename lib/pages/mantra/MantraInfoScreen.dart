@@ -4,6 +4,7 @@ import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class MantraInfoScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
                     })
                 : state.error != null
                     ? Center(child: Text(state.error!))
-                    : Center(child: CircularProgressIndicator()));
+                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class MahabharatBookInfoScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
                     )
                   : state.error != null
                       ? Center(child: Text(state.error!))
-                      : const Center(child: CircularProgressIndicator()),
+                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
             ));
   }
 
