@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class RamcharitmanasInfoScreen extends StatefulWidget {
@@ -30,47 +32,112 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
         final info = state.info;
         return Scaffold(
             appBar: AppBar(
-              title: Text('Ramcharitmanas'),
+              title: Text(
+                'Ramcharitmanas',
+                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: info != null
-                ? Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: ListView(
-                          children: state
-                              .getAllKands()
-                              .map((kand) => InkWell(
-                                    onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses, pathParameters: {"kand": kand}),
-                                    child: SizedBox(
-                                      height: 60,
-                                      child: Text(kand),
-                                    ),
-                                  ))
-                              .toList(),
+                ? Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Flexible(
+                          flex: 5,
+                          fit: FlexFit.tight,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Material(
+                                color: Theme.of(context).primaryColor,
+                                elevation: 8,
+                                shadowColor: Colors.black,
+                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                child: Text(
+                                  "-: Kands :-",
+                                  style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Material(
+                                  child: ListView.builder(
+                                    itemCount: state.getAllKands().length,
+                                    padding: const EdgeInsets.all(8),
+                                    itemBuilder: (context, index) {
+                                      final kand = state.getAllKands()[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                        child: RoundedListTile(
+                                          text: kand,
+                                          itemNo: index + 1,
+                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses, pathParameters: {"kand": kand}),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: ListView(
-                          children: state
-                              .getAllKands()
-                              .map((kand) => InkWell(
-                                    onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan, pathParameters: {"kand": kand}),
-                                    child: SizedBox(
-                                      height: 60,
-                                      child: Text("$kand Mangalacharan"),
-                                    ),
-                                  ))
-                              .toList(),
+                        const SizedBox(height: 7),
+                        Flexible(
+                          flex: 5,
+                          fit: FlexFit.tight,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Material(
+                                color: Theme.of(context).primaryColor,
+                                elevation: 8,
+                                shadowColor: Colors.black,
+                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                child: Text(
+                                  "-: Mangalacharan :-",
+                                  style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                child: Material(
+                                  child: ListView.builder(
+                                    itemCount: state.getAllKands().length,
+                                    padding: const EdgeInsets.all(8),
+                                    itemBuilder: (context, index) {
+                                      final kand = state.getAllKands()[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                        child: RoundedListTile(
+                                          text: '$kand Mangalacharan',
+                                          itemNo: index + 1,
+                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan, pathParameters: {"kand": kand}),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 : state.error != null
                     ? Center(child: Text(state.error!))
-                    : const RefreshProgressIndicator());
+                    : Center(
+                        child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
+                      ));
       },
     );
   }

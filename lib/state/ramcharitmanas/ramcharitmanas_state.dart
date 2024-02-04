@@ -55,6 +55,7 @@ class RamcharitmanasState extends Equatable {
 
   MapEntry<String, RamcharitmanasMangalacharanModel> getMangalacharanEntry(RamcharitmanasMangalacharanModel mangalacharan) =>
       MapEntry(_uniqueMangalacharanKey(kand: mangalacharan.kanda, lang: mangalacharan.language), mangalacharan);
+  int? totalVersesInKand(String kand) => info?.kandaInfo[kand];
 
   List<String> getAllKands() {
     final kands = info?.kandaMapping.entries.toList();
