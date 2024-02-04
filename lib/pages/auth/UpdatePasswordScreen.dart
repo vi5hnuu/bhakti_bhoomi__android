@@ -18,9 +18,9 @@ class UpdatePasswordScreen extends StatefulWidget {
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'updatePassword');
 
-  final TextEditingController oldPasswordCntrl = TextEditingController(text: '9876543210');
-  final TextEditingController newPasswordCntrl = TextEditingController(text: '1234567890');
-  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '1234567890');
+  final TextEditingController oldPasswordCntrl = TextEditingController(text: '');
+  final TextEditingController newPasswordCntrl = TextEditingController(text: '');
+  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '');
   final CancelToken cancelToken = CancelToken();
 
   @override

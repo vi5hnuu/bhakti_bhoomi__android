@@ -21,8 +21,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController usernameEmailController = TextEditingController(text: 'vishnuk');
-  final TextEditingController passwordController = TextEditingController(text: '1234567890');
+  final TextEditingController usernameEmailController = TextEditingController(text: '');
+  final TextEditingController passwordController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
