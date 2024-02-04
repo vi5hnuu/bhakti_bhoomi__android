@@ -1,9 +1,12 @@
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class YogaSutraScreen extends StatefulWidget {
   final String title;
@@ -32,7 +35,12 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Yoga Sutra'),
+            title: Text(
+              'YogaSutra | chapter No ${widget.chapterNo}',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -53,7 +61,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  DropdownMenu(
+                                  CustomDropDownMenu(
                                     dropdownMenuEntries: state.yogaSutraInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
                                     initialSelection: lang ?? RamcharitmanasState.defaultLang,
                                     onSelected: (value) => setState(() {
@@ -62,18 +70,26 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                       token?.cancel("cancelled");
                                       token = token = _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
                                     }),
+                                    label: 'select language',
                                   ),
-                                  Text(sutra.sutra.values.first)
+                                  Expanded(
+                                      child: Center(
+                                          child: Text(
+                                    sutra.sutra.values.first,
+                                    style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                  )))
                                 ],
                               ),
-                              const Positioned(
+                              Positioned(
                                 bottom: 45,
                                 right: 15,
                                 child: Column(
                                   children: [
-                                    IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
+                                    IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
                                     SizedBox(height: 10),
-                                    IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                    IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                    SizedBox(height: 10),
+                                    IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
                                   ],
                                 ),
                               )
@@ -83,7 +99,10 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                             ? Center(
                                 child: Text(state.error!),
                               )
-                            : const Center(child: CircularProgressIndicator())),
+                            : Center(
+                                child: SpinKitThreeBounce(
+                                color: Theme.of(context).primaryColor,
+                              ))),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
@@ -96,6 +115,10 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
             ),
           )),
     );
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   CancelToken _loadSutra({required int chapterNo, required int sutraNo, String? lang}) {

@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class YogaSutraChapters extends StatefulWidget {
@@ -30,22 +32,31 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
         final yogaSutraInfo = state.yogaSutraInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text('YogaSutra'),
+            title: Text(
+              'YogaSutra',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: yogaSutraInfo != null
               ? Column(
                   children: List.generate(
                       yogaSutraInfo.totalSutra.length,
-                      (index) => InkWell(
-                            onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra, pathParameters: {'chapterNo': '${index + 1}'}),
-                            child: Text("${index + 1} chapter"),
+                      (index) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
+                            child: RoundedListTile(
+                              itemNo: index + 1,
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra, pathParameters: {'chapterNo': '${index + 1}'}),
+                              text: "chapter",
+                            ),
                           )),
                 )
               : state.error != null
                   ? Center(
                       child: Text(state.error!),
                     )
-                  : const Center(child: CircularProgressIndicator()),
+                  : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
         );
       },
     );
