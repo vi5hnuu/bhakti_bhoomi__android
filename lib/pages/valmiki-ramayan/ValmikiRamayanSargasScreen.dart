@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class ValmikiRamayanSargasScreen extends StatefulWidget {
@@ -37,7 +41,12 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
       builder: (context, state) {
         return Scaffold(
             appBar: AppBar(
-              title: Text('Valmiki Ramayan sargas'),
+              title: Text(
+                'Ramcharitmanas | ${widget.kand} Sargas',
+                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: ListView.builder(
               controller: _scrollController,
@@ -45,13 +54,20 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
               itemBuilder: (context, index) {
                 final sargaInfo = state.getSargaInfo(kanda: widget.kand, sargaNo: index + 1);
                 return sargaInfo != null
-                    ? InkWell(
-                        onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok, pathParameters: {'kand': widget.kand, 'sargaNo': '${index + 1}'}),
-                        child: SizedBox(child: Text('Sarga ${index} - ${sargaInfo.sargaId}'), height: 120))
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                        child: RoundedListTile(
+                            itemNo: index + 1,
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok, pathParameters: {'kand': widget.kand, 'sargaNo': '${index + 1}'}),
+                            text: 'Sarga - Total verses ${sargaInfo.totalShloks.values.reduce(min)}'),
+                      )
                     : state.error != null
                         ? Center(child: Text(state.error!))
                         : Center(
-                            child: const CircularProgressIndicator(),
+                            child: SpinKitThreeBounce(
+                              color: Theme.of(context).primaryColor,
+                              size: 24,
+                            ),
                           );
               },
             ));

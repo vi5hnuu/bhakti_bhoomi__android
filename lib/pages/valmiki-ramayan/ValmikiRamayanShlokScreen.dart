@@ -1,8 +1,11 @@
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ValmikiRamayanShlokScreen extends StatefulWidget {
   final String title;
@@ -20,10 +23,11 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
   CancelToken? cancelToken;
+  int shlokNo = 1;
 
   @override
   initState() {
-    cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: 1, lang: lang);
+    cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: this.shlokNo, lang: lang);
     super.initState();
   }
 
@@ -33,7 +37,12 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('valmiki ramayan'),
+            title: Text(
+              'Valmiki Ramayan | Kand ${widget.kand} | Sarga No | ${widget.sargaNo}',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -41,47 +50,66 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.getSargaInfo(kanda: widget.kand, sargaNo: widget.sargaNo)!.totalShloks[lang ?? RamayanState.defaultLanguage],
+            itemCount: state.totalShlokInSarga(kand: widget.kand, sargaNo: widget.sargaNo, lang: lang),
             itemBuilder: (context, index) {
               final ramayanInfo = state.ramayanInfo;
               final shlok = state.getShlok(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: lang);
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15),
-                  child: ((state.isLoading || shlok == null) && state.error == null)
-                      ? const RefreshProgressIndicator()
-                      : state.error != null
-                          ? Text(state.error!)
-                          : Stack(
+                  child: shlok != null
+                      ? Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.max,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    DropdownMenu(
-                                      dropdownMenuEntries: ramayanInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
-                                      initialSelection: lang ?? RamayanState.defaultLanguage,
-                                      onSelected: (value) => setState(() {
-                                        if (!mounted) return;
-                                        lang = value;
-                                        cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: value);
-                                      }),
-                                    ),
-                                    Text(shlok!.translation)
-                                  ],
+                                CustomDropDownMenu(
+                                  dropdownMenuEntries: ramayanInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
+                                  initialSelection: lang ?? RamayanState.defaultLanguage,
+                                  onSelected: (value) => setState(() {
+                                    if (!mounted) return;
+                                    lang = value;
+                                    cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: value);
+                                  }),
+                                  label: 'select language',
                                 ),
-                                const Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: Column(
-                                    children: [
-                                      IconButton(onPressed: null, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                    ],
+                                const SizedBox(height: 24),
+                                Expanded(
+                                    child: SingleChildScrollView(
+                                  child: Text(
+                                    shlok.shlok,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                                   ),
-                                )
+                                )),
+                                SizedBox(
+                                  height: 24,
+                                  child: (shlokNo < state.totalShlokInSarga(kand: widget.kand, sargaNo: widget.sargaNo, lang: lang)!) ? Icon(Icons.drag_handle) : null,
+                                ),
                               ],
+                            ),
+                            Positioned(
+                              bottom: 45,
+                              right: 15,
+                              child: Column(
+                                children: [
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                  SizedBox(height: 10),
+                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : state.error != null
+                          ? Center(child: Text(state.error!))
+                          : Center(
+                              child: SpinKitThreeBounce(
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
                 ),
               );
@@ -90,11 +118,16 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
             onPageChanged: (pageNo) => setState(
               () {
                 cancelToken?.cancel("cancelled");
+                shlokNo = pageNo + 1;
                 cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: pageNo + 1, lang: lang);
               },
             ),
           )),
     );
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   CancelToken _loadShlok({required String kand, required int sargaNo, required int shlokNo, String? lang}) {

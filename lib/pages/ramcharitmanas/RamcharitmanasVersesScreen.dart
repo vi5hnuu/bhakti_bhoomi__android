@@ -21,11 +21,12 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
   CancelToken? token;
+  int verseNo = 1;
 
   @override
   initState() {
     super.initState();
-    token = _loadVerse(kand: widget.kand, verseNo: 1);
+    token = _loadVerse(kand: widget.kand, verseNo: this.verseNo);
   }
 
   @override
@@ -82,7 +83,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                   )),
                                   SizedBox(
                                     height: 24,
-                                    child: _controller.page?.toInt() != null && (_controller.page!.toInt() + 1 < state.totalVersesInKand(widget.kand)!) ? Icon(Icons.drag_handle) : null,
+                                    child: verseNo < state.totalVersesInKand(widget.kand)! ? Icon(Icons.drag_handle) : null,
                                   ),
                                 ],
                               ),
@@ -112,13 +113,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(
-              () {
-                print("token $token");
-                token?.cancel("cancelled");
-                token = _loadVerse(kand: widget.kand, verseNo: pageNo + 1, lang: lang);
-              },
-            ),
+            onPageChanged: _onPageChanged,
           )),
     );
   }
@@ -127,6 +122,17 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasVerseByKandaAndVerseNo(kanda: kand, verseNo: verseNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;
+  }
+
+  _onPageChanged(pageNo) {
+    setState(
+      () {
+        if (!mounted) return;
+        token?.cancel("cancelled");
+        verseNo = pageNo + 1;
+        token = _loadVerse(kand: widget.kand, verseNo: pageNo + 1, lang: lang);
+      },
+    );
   }
 
   _showNotImplementedMessage() {

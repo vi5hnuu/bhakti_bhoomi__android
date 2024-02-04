@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class ValmikiRamayanKandsScreen extends StatefulWidget {
@@ -31,21 +33,34 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
         final ramayanInfo = state.ramayanInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text('Valmiki Ramayan'),
+            title: Text(
+              'Valmiki Ramayan',
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Center(
             child: ramayanInfo != null
                 ? ListView(
                     children: state
                         .kandas()!
-                        .map((e) => InkWell(
-                              onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo, pathParameters: {'kand': e.key}),
-                              child: Text('${e.value} ${e.key}'),
+                        .map((e) => Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                              child: RoundedListTile(
+                                itemNo: e.value,
+                                onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo, pathParameters: {'kand': e.key}),
+                                text: '${e.key}',
+                              ),
                             ))
                         .toList())
                 : state.error != null
-                    ? Text(state.error!)
-                    : const CircularProgressIndicator(),
+                    ? Center(
+                        child: Text(state.error!),
+                      )
+                    : Center(
+                        child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
+                      ),
           ),
         );
       },

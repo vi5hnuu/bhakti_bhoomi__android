@@ -86,6 +86,10 @@ class RamayanState extends Equatable {
     return _sargaInfo[_uniqueSargaIdentifier(kanda: kanda, sargaNo: sargaNo)];
   }
 
+  int? totalShlokInSarga({required String kand, required int sargaNo, String? lang}) {
+    return getSargaInfo(kanda: kand, sargaNo: sargaNo)?.totalShloks[lang ?? RamayanState.defaultLanguage];
+  }
+
   RamayanShlokModel? getShlok({required String kanda, required int sargaNo, required int shlokNo, String? lang}) {
     return _shloks[_uniqueShlokIdentifier(kanda: kanda, sargaNo: sargaNo, shlokNo: shlokNo, lang: lang ?? defaultLanguage)];
   }
