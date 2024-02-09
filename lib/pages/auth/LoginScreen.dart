@@ -5,6 +5,7 @@ import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // debugPaintSizeEnabled = true;
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
@@ -48,81 +50,87 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 1,
           shadowColor: Colors.grey,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(15),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
           child: Center(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Text(
-                      "Spirtual Shakti",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
-                    ),
-                  ),
-                  CustomInputField(
-                      controller: usernameEmailController,
-                      labelText: 'Username/Email',
-                      hintText: 'xyz/xyz@gmail.com',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter username/email";
-                        }
-                        return null;
-                      }),
-                  const SizedBox(height: 12),
-                  CustomInputField(
-                    controller: passwordController,
-                    labelText: 'password',
-                    hintText: '**********',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter password";
-                      }
-                      return null;
-                    },
-                    obscureText: true,
-                    autoCorrect: false,
-                  ),
-                  const SizedBox(height: 18),
-                  state.isLoading
-                      ? SpinKitThreeBounce(
-                          color: Theme.of(context).primaryColor,
-                          size: 32,
-                        )
-                      : CustomElevatedButton(
-                          child: const Text(
-                            'Log-in',
-                            style: const TextStyle(color: Colors.white, fontSize: 18),
-                          ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: Text(
+                          "Spirtual Shakti",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                      CustomInputField(
+                          controller: usernameEmailController,
+                          labelText: 'Username/Email',
+                          hintText: 'xyz/xyz@gmail.com',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter username/email";
+                            }
+                            return null;
+                          }),
+                      const SizedBox(height: 12),
+                      CustomInputField(
+                        controller: passwordController,
+                        labelText: 'password',
+                        hintText: '**********',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter password";
+                          }
+                          return null;
+                        },
+                        obscureText: true,
+                        autoCorrect: false,
+                      ),
+                      const SizedBox(height: 18),
+                      state.isLoading
+                          ? SpinKitThreeBounce(
+                              color: Theme.of(context).primaryColor,
+                              size: 32,
+                            )
+                          : CustomElevatedButton(
+                              child: const Text(
+                                'Log-in',
+                                style: const TextStyle(color: Colors.white, fontSize: 18),
+                              ),
+                              onPressed: state.isLoading
+                                  ? null
+                                  : () {
+                                      if (!formKey.currentState!.validate()) return;
+                                      BlocProvider.of<AuthBloc>(context).add(
+                                        LoginEvent(
+                                          usernameEmail: usernameEmailController.text,
+                                          password: passwordController.text,
+                                          cancelToken: cancelToken,
+                                        ),
+                                      );
+                                    }),
+                      const SizedBox(height: 14),
+                      CustomTextButton(child: Text('Sign-up instead'), onPressed: state.isLoading ? null : () => context.goNamed(Routing.register)),
+                      CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.forgotPassword), child: Text('forgot-password')),
+                      CustomTextButton(
                           onPressed: state.isLoading
                               ? null
                               : () {
-                                  if (!formKey.currentState!.validate()) return;
-                                  BlocProvider.of<AuthBloc>(context).add(
-                                    LoginEvent(
-                                      usernameEmail: usernameEmailController.text,
-                                      password: passwordController.text,
-                                      cancelToken: cancelToken,
-                                    ),
-                                  );
-                                }),
-                  const SizedBox(height: 14),
-                  CustomTextButton(child: Text('Sign-up instead'), onPressed: state.isLoading ? null : () => context.goNamed(Routing.register)),
-                  CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.forgotPassword), child: Text('forgot-password')),
-                  CustomTextButton(
-                      onPressed: state.isLoading
-                          ? null
-                          : () {
-                              GoRouter.of(context).goNamed(Routing.verify);
-                            },
-                      child: Text('verify account'))
-                ],
+                                  GoRouter.of(context).goNamed(Routing.verify);
+                                },
+                          child: Text('verify account'))
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

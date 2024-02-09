@@ -41,7 +41,7 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
             ),
             body: allMantraInfo != null
                 ? ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
                     itemCount: allMantraInfo.length,
                     itemBuilder: (context, index) {
                       final mantraInfo = allMantraInfo.entries.toList()[index];
