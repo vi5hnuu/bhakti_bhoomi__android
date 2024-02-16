@@ -41,6 +41,10 @@ class BrahmaSutraState extends Equatable {
     return _brahmaSutras.containsKey(_uniqueIdentifier(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang));
   }
 
+  int? totalSutras({required int chapterNo, required int quaterNo}) {
+    return brahmasutraInfo?.chaptersInfo['$chapterNo']?.totalSutras['$quaterNo'];
+  }
+
   MapEntry<String, BrahmaSutraModel> getBrahmaSutraEntry({required BrahmaSutraModel brahmaSutra}) {
     return MapEntry<String, BrahmaSutraModel>(
         _uniqueIdentifier(chapterNo: brahmaSutra.chapterNo, quaterNo: brahmaSutra.quaterNo, sutraNo: brahmaSutra.sutraNo, lang: brahmaSutra.language), brahmaSutra);

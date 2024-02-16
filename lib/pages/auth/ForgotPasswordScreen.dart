@@ -20,7 +20,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController usernameEmailController = TextEditingController(text: 'vishnuk');
+  final TextEditingController usernameEmailController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       },
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text('Login', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold)),
+          title: Text('Forgot Password', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
           elevation: 10,

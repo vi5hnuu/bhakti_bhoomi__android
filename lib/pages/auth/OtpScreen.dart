@@ -18,10 +18,10 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  final formKey = GlobalKey<FormState>(debugLabel: 'registerForm');
-  final TextEditingController oldPassword = TextEditingController(text: 'vishnuk');
-  final TextEditingController passwordCntrl = TextEditingController(text: '9876543210');
-  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '9876543210');
+  final formKey = GlobalKey<FormState>(debugLabel: 'otpForm');
+  final TextEditingController usernameEmailCntrl = TextEditingController(text: '');
+  final TextEditingController passwordCntrl = TextEditingController(text: '');
+  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '');
   late List<FocusNode> _focusNodes;
   late List<TextEditingController> _Otpcontrollers;
   final CancelToken cancelToken = CancelToken();
@@ -29,6 +29,8 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     super.initState();
+    usernameEmailCntrl.text = widget.usernameEmail;
+
     _focusNodes = List.generate(6, (index) => FocusNode());
     _Otpcontrollers = List.generate(6, (index) => TextEditingController());
   }
@@ -61,15 +63,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        CustomInputField(
-                            controller: oldPassword,
-                            labelText: "Old Password",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter old password';
-                              }
-                              return null;
-                            }),
+                        CustomInputField(controller: usernameEmailCntrl, enabled: false, labelText: "Username/Email"),
                         const SizedBox(
                           height: 7,
                         ),
@@ -139,7 +133,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           onPressed: state.isLoading
                               ? null
                               : () async {
-                                  if (formKey.currentState?.validate() == false || _Otpcontrollers.where((otpCntrl) => otpCntrl.value.text.isNotEmpty).isNotEmpty) {
+                                  if (formKey.currentState?.validate() == false || _Otpcontrollers.where((otpCntrl) => otpCntrl.value.text.isEmpty).isNotEmpty) {
                                     return;
                                   }
                                   BlocProvider.of<AuthBloc>(context).add(ResetPasswordEvent(
@@ -177,7 +171,7 @@ class _OtpScreenState extends State<OtpScreen> {
     cancelToken.cancel("register cancelled");
     this._focusNodes.forEach((node) => node.dispose());
     this._Otpcontrollers.forEach((cntrl) => cntrl.dispose());
-    oldPassword.dispose();
+    usernameEmailCntrl.dispose();
     passwordCntrl.dispose();
     confirmPasswordCntrl.dispose();
 

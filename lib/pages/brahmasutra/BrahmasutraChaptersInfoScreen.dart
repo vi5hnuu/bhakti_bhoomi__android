@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,17 +28,28 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Mahabharat'),
+          title: Text('BrahmaSutra', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+          backgroundColor: Theme.of(context).primaryColor,
+          iconTheme: IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
           builder: (context, state) {
             final brahmasutraInfo = state.brahmasutraInfo;
             return brahmasutraInfo != null
-                ? Column(
-                    children: List.generate(
-                        state.brahmasutraInfo!.totalChapters,
-                        (index) =>
-                            InkWell(onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo, pathParameters: {'chapterNo': '${index + 1}'}), child: Text('${index + 1} chapter'))),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+                    child: Column(
+                      children: List.generate(
+                          state.brahmasutraInfo!.totalChapters,
+                          (index) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                child: RoundedListTile(
+                                  itemNo: index + 1,
+                                  text: "chapter",
+                                  onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo, pathParameters: {'chapterNo': '${index + 1}'}),
+                                ),
+                              )),
+                    ),
                   )
                 : state.error != null
                     ? Center(child: Text(state.error!))
