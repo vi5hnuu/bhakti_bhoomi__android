@@ -6,10 +6,10 @@ import '../../singletons/DioSingleton.dart';
 class MahabharatApi {
   static final MahabharatApi _instance = MahabharatApi._();
 
-  static final String _mahabharatInfoUrl = "${ApiConstants.baseUrl}/mahabharat/info"; //GET
-  static final String _mahabharatShlokByIdUrl = "${ApiConstants.baseUrl}/mahabharat/shlok"; //GET
-  static final String _mahabharatShloksByBookChapterUrl = "${ApiConstants.baseUrl}/mahabharat/book/%bookNo%/chapter/%chapterNo%"; //GET
-  static final String _mahabharatShlokByShlokNoUrl = "${ApiConstants.baseUrl}/mahabharat/book/%bookNo%/chapter/%chapterNo%/shlok/%shlokNo%"; //GET
+  static const String _mahabharatInfoUrl = "${ApiConstants.baseUrl}/mahabharat/info"; //GET
+  static const String _mahabharatShlokByIdUrl = "${ApiConstants.baseUrl}/mahabharat/shlok"; //GET
+  static const String _mahabharatShloksByBookChapterUrl = "${ApiConstants.baseUrl}/mahabharat/book/%bookNo%/chapter/%chapterNo%"; //GET
+  static const String _mahabharatShlokByShlokNoUrl = "${ApiConstants.baseUrl}/mahabharat/book/%bookNo%/chapter/%chapterNo%/shlok/%shlokNo%"; //GET
 
   MahabharatApi._();
   factory MahabharatApi() {

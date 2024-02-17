@@ -6,11 +6,11 @@ import '../../singletons/DioSingleton.dart';
 class BhagvadGeetaApi {
   static final BhagvadGeetaApi _instance = BhagvadGeetaApi._();
 
-  static final String _bhagvadGeetaChaptersUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter"; //GET
-  static final String _bhagvadGeetaShlokBychapterIdShlokIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokId/%shlokId%"; //GET
-  static final String _bhagvadGeetaShlokBychapterIdShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokNo/%shlokNo%"; //GET
-  static final String _bhagvadGeetaShlokBychapterNoShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterNo/%chapterNo%/shlokNo/%shlokNo%"; //GET
-  static final String _bhagvadGeetaShloksByChapterIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter/%chapterId%/shlok"; //GET
+  static const String _bhagvadGeetaChaptersUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter"; //GET
+  static const String _bhagvadGeetaShlokBychapterIdShlokIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokId/%shlokId%"; //GET
+  static const String _bhagvadGeetaShlokBychapterIdShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterId/%chapterId%/shlokNo/%shlokNo%"; //GET
+  static const String _bhagvadGeetaShlokBychapterNoShlokNoUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapterNo/%chapterNo%/shlokNo/%shlokNo%"; //GET
+  static const String _bhagvadGeetaShloksByChapterIdUrl = "${ApiConstants.baseUrl}/bhagavad_geeta/chapter/%chapterId%/shlok"; //GET
 
   BhagvadGeetaApi._();
   factory BhagvadGeetaApi() {

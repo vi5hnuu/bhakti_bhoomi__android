@@ -8,24 +8,24 @@ import 'package:dio/dio.dart';
 class AuthApi {
   static final AuthApi _instance = AuthApi._();
 
-  static final String _loginUrl = "${ApiConstants.baseUrl}/users/login"; //POST
-  static final String _registerUrl = "${ApiConstants.baseUrl}/users/register"; //POST
-  // static final String _verifyUrl = "${ApiConstants.baseUrl}/users/verify"; //GET (done on email itself)
-  static final String _reVerifyUrl = "${ApiConstants.baseUrl}/users/re-verify"; //GET
-  static final String _forgotPasswordUrl = "${ApiConstants.baseUrl}/users/forgot-password"; //POST
-  static final String _resetPaswordUrl = "${ApiConstants.baseUrl}/users/reset-password"; //POST
-  static final String _updateProfileImageUrl = "${ApiConstants.baseUrl}/users/profile"; //POST
-  static final String _updatePosterImageUrl = "${ApiConstants.baseUrl}/users/poster"; //POST
-  static final String _logoutUrl = "${ApiConstants.baseUrl}/users/logout"; //GET
-  static final String _meUrl = "${ApiConstants.baseUrl}/users/me"; //GET
-  static final String _deleteMeUrl = "${ApiConstants.baseUrl}/users"; //DELETE
-  static final String _updatePasswordUrl = "${ApiConstants.baseUrl}/users/password"; //PATCH
+  static const String _loginUrl = "${ApiConstants.baseUrl}/users/login"; //POST
+  static const String _registerUrl = "${ApiConstants.baseUrl}/users/register"; //POST
+  // static const String _verifyUrl = "${ApiConstants.baseUrl}/users/verify"; //GET (done on email itself)
+  static const String _reVerifyUrl = "${ApiConstants.baseUrl}/users/re-verify"; //GET
+  static const String _forgotPasswordUrl = "${ApiConstants.baseUrl}/users/forgot-password"; //POST
+  static const String _resetPaswordUrl = "${ApiConstants.baseUrl}/users/reset-password"; //POST
+  static const String _updateProfileImageUrl = "${ApiConstants.baseUrl}/users/profile"; //POST
+  static const String _updatePosterImageUrl = "${ApiConstants.baseUrl}/users/poster"; //POST
+  static const String _logoutUrl = "${ApiConstants.baseUrl}/users/logout"; //GET
+  static const String _meUrl = "${ApiConstants.baseUrl}/users/me"; //GET
+  static const String _deleteMeUrl = "${ApiConstants.baseUrl}/users"; //DELETE
+  static const String _updatePasswordUrl = "${ApiConstants.baseUrl}/users/password"; //PATCH
 
   //admin
-  static final String _allUsersUrl = "${ApiConstants.baseUrl}/users/all"; //GET
-  static final String _deleteUserUrl = "${ApiConstants.baseUrl}/users"; //DELETE
-  static final String _getUserUrl = "${ApiConstants.baseUrl}/users"; //GET
-  static final String _addRoleUrl = "${ApiConstants.baseUrl}/users/add-role"; //PATCH
+  static const String _allUsersUrl = "${ApiConstants.baseUrl}/users/all"; //GET
+  static const String _deleteUserUrl = "${ApiConstants.baseUrl}/users"; //DELETE
+  static const String _getUserUrl = "${ApiConstants.baseUrl}/users"; //GET
+  static const String _addRoleUrl = "${ApiConstants.baseUrl}/users/add-role"; //PATCH
 
   AuthApi._();
   factory AuthApi() {

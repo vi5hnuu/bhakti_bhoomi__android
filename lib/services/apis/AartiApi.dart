@@ -6,9 +6,9 @@ import '../../singletons/DioSingleton.dart';
 class AartiApi {
   static final AartiApi _instance = AartiApi._();
 
-  static final String _allAartiUrl = "${ApiConstants.baseUrl}/aarti/all"; //GET
-  static final String _allAartiInfoUrl = "${ApiConstants.baseUrl}/aarti/all/info"; //GET
-  static final String _aartiByIdOrTitleUrl = "${ApiConstants.baseUrl}/aarti"; //GET
+  static const String _allAartiUrl = "${ApiConstants.baseUrl}/aarti/all"; //GET
+  static const String _allAartiInfoUrl = "${ApiConstants.baseUrl}/aarti/all/info"; //GET
+  static const String _aartiByIdOrTitleUrl = "${ApiConstants.baseUrl}/aarti"; //GET
 
   AartiApi._();
   factory AartiApi() {

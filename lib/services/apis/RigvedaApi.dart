@@ -6,10 +6,10 @@ import '../../singletons/DioSingleton.dart';
 class RigvedaApi {
   static final RigvedaApi _instance = RigvedaApi._();
 
-  static final String _versesByMandalaUrl = "${ApiConstants.baseUrl}/rigveda/mandala/%mandalaNo%"; //GET
-  static final String _rigvedaInfoUrl = "${ApiConstants.baseUrl}/rigveda/info"; //GET
-  static final String _verseByMandalaSuktaUrl = "${ApiConstants.baseUrl}/rigveda/verse/mandala/%mandalaNo%/sukta/%suktaNo%"; //GET
-  static final String _verseBySuktaIdUrl = "${ApiConstants.baseUrl}/rigveda/verse"; //GET
+  static const String _versesByMandalaUrl = "${ApiConstants.baseUrl}/rigveda/mandala/%mandalaNo%"; //GET
+  static const String _rigvedaInfoUrl = "${ApiConstants.baseUrl}/rigveda/info"; //GET
+  static const String _verseByMandalaSuktaUrl = "${ApiConstants.baseUrl}/rigveda/verse/mandala/%mandalaNo%/sukta/%suktaNo%"; //GET
+  static const String _verseBySuktaIdUrl = "${ApiConstants.baseUrl}/rigveda/verse"; //GET
 
   RigvedaApi._();
   factory RigvedaApi() {

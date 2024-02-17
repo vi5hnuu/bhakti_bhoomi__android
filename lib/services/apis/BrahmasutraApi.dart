@@ -6,10 +6,10 @@ import '../../singletons/DioSingleton.dart';
 class BrahmasutraApi {
   static final BrahmasutraApi _instance = BrahmasutraApi._();
 
-  static final String _brahmasutraInfoUrl = "${ApiConstants.baseUrl}/brahmasutra/info"; //GET
-  static final String _brahmasutraBySutraIdUrl = "${ApiConstants.baseUrl}/brahmasutra/sutra"; //GET
-  static final String _brahmasutraByChapterNoQuaterNoSutraNoUrl = "${ApiConstants.baseUrl}/brahmasutra/chapter/%chapterNo%/quater/%quaterNo%/sutra/%sutraNo%"; //GET
-  static final String _brahmasutrasByChapterNoQuaterNoUrl = "${ApiConstants.baseUrl}/brahmasutra/chapter/%chapterNo%/quater/%quaterNo%"; //GET
+  static const String _brahmasutraInfoUrl = "${ApiConstants.baseUrl}/brahmasutra/info"; //GET
+  static const String _brahmasutraBySutraIdUrl = "${ApiConstants.baseUrl}/brahmasutra/sutra"; //GET
+  static const String _brahmasutraByChapterNoQuaterNoSutraNoUrl = "${ApiConstants.baseUrl}/brahmasutra/chapter/%chapterNo%/quater/%quaterNo%/sutra/%sutraNo%"; //GET
+  static const String _brahmasutrasByChapterNoQuaterNoUrl = "${ApiConstants.baseUrl}/brahmasutra/chapter/%chapterNo%/quater/%quaterNo%"; //GET
 
   BrahmasutraApi._();
   factory BrahmasutraApi() {

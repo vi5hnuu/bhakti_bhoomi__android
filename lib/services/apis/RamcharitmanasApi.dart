@@ -6,12 +6,12 @@ import '../../singletons/DioSingleton.dart';
 class RamcharitmanasApi {
   static final RamcharitmanasApi _instance = RamcharitmanasApi._();
 
-  static final String _ramcharitmanasInfoUrl = "${ApiConstants.baseUrl}/ramcharitmanas/info"; //GET
-  static final String _ramcharitmanasVerseByVerseIdUrl = "${ApiConstants.baseUrl}/ramcharitmanas/verse"; //GET
-  static final String _ramcharitmanasVerseByKandaAndVerseNoUrl = "${ApiConstants.baseUrl}/ramcharitmanas/kanda/%kanda%/verse/%verseNo%"; //GET
-  static final String _ramcharitmanasMangalaCharanByKandaUrl = "${ApiConstants.baseUrl}/ramcharitmanas/mangalacharan/kanda/%kanda%"; //GET
-  static final String _ramcharitmanasAllMangalacharanUrl = "${ApiConstants.baseUrl}/ramcharitmanas/mangalacharan/all"; //GET
-  static final String _ramcharitmanasVersesByKandaUrl = "${ApiConstants.baseUrl}/ramcharitmanas/verses/kanda"; //GET
+  static const String _ramcharitmanasInfoUrl = "${ApiConstants.baseUrl}/ramcharitmanas/info"; //GET
+  static const String _ramcharitmanasVerseByVerseIdUrl = "${ApiConstants.baseUrl}/ramcharitmanas/verse"; //GET
+  static const String _ramcharitmanasVerseByKandaAndVerseNoUrl = "${ApiConstants.baseUrl}/ramcharitmanas/kanda/%kanda%/verse/%verseNo%"; //GET
+  static const String _ramcharitmanasMangalaCharanByKandaUrl = "${ApiConstants.baseUrl}/ramcharitmanas/mangalacharan/kanda/%kanda%"; //GET
+  static const String _ramcharitmanasAllMangalacharanUrl = "${ApiConstants.baseUrl}/ramcharitmanas/mangalacharan/all"; //GET
+  static const String _ramcharitmanasVersesByKandaUrl = "${ApiConstants.baseUrl}/ramcharitmanas/verses/kanda"; //GET
 
   RamcharitmanasApi._();
   factory RamcharitmanasApi() {

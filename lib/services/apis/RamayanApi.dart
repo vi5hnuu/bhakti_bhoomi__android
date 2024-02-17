@@ -6,13 +6,13 @@ import '../../singletons/DioSingleton.dart';
 class RamayanApi {
   static final RamayanApi _instance = RamayanApi._();
 
-  static final String _ramayanInfoUrl = "${ApiConstants.baseUrl}/ramayan/info"; //GET
-  static final String _ramayanSargaInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sarga/%sargaNo%"; //GET
-  static final String _ramayanSargasInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargas"; //GET
-  static final String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
-  static final String _ramayanShlokByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
-  static final String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaNo/%sargaNo"; //GET
-  static final String _ramayanShlokasByKandSargaId = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaId/%sargaId%"; //GET
+  static const String _ramayanInfoUrl = "${ApiConstants.baseUrl}/ramayan/info"; //GET
+  static const String _ramayanSargaInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sarga/%sargaNo%"; //GET
+  static const String _ramayanSargasInfoUrl = "${ApiConstants.baseUrl}/ramayan/kanda/%kanda%/sargas"; //GET
+  static const String _ramayanShlokByKandSargaNoShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaNo/%sargaNo%/shlokNo/%shlokNo%"; //GET
+  static const String _ramayanShlokByKandSargaIdShlokNoUrl = "${ApiConstants.baseUrl}/ramayan/kand/%kanda%/sargaId/%sargaId%/shlokNo/%shlokNo%"; //GET
+  static const String _ramayanShlokasByKandSargaNo = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaNo/%sargaNo"; //GET
+  static const String _ramayanShlokasByKandSargaId = "${ApiConstants.baseUrl}/ramayan/kand/%kand%/sargaId/%sargaId%"; //GET
 
   RamayanApi._();
   factory RamayanApi() {

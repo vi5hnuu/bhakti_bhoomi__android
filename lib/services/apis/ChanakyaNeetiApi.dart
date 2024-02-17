@@ -6,9 +6,9 @@ import '../../singletons/DioSingleton.dart';
 class ChanakyaNeetiApi {
   static final ChanakyaNeetiApi _instance = ChanakyaNeetiApi._();
 
-  static final String _chanakyaNeetiChaptersInfoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapters/info"; //GET
-  static final String _chanakyaNeetiVersesByChapterNoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapterNo/%chapterNo%/verses"; //GET
-  static final String _chanakyaNeetiVerseByChapterNoVerseNoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapterNo/%chapterNo%/verseNo/%verseNo%"; //GET
+  static const String _chanakyaNeetiChaptersInfoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapters/info"; //GET
+  static const String _chanakyaNeetiVersesByChapterNoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapterNo/%chapterNo%/verses"; //GET
+  static const String _chanakyaNeetiVerseByChapterNoVerseNoUrl = "${ApiConstants.baseUrl}/chanakya_neeti/chapterNo/%chapterNo%/verseNo/%verseNo%"; //GET
 
   ChanakyaNeetiApi._();
   factory ChanakyaNeetiApi() {

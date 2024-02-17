@@ -6,10 +6,10 @@ import '../../singletons/DioSingleton.dart';
 class YogasutraApi {
   static final YogasutraApi _instance = YogasutraApi._();
 
-  static final String _yogasutraInfoUrl = "${ApiConstants.baseUrl}/yogasutra/info"; //GET
-  static final String _yogasutraBySutraIdUrl = "${ApiConstants.baseUrl}/yogasutra/sutra"; //GET
-  static final String _yogasutraByChapterNoSutraNoUrl = "${ApiConstants.baseUrl}/yogasutra/chapter/%chapterNo%/sutra/%sutraNo%"; //GET
-  static final String _yogasutrasByChapterNo = "${ApiConstants.baseUrl}/yogasutra/all/chapter"; //GET
+  static const String _yogasutraInfoUrl = "${ApiConstants.baseUrl}/yogasutra/info"; //GET
+  static const String _yogasutraBySutraIdUrl = "${ApiConstants.baseUrl}/yogasutra/sutra"; //GET
+  static const String _yogasutraByChapterNoSutraNoUrl = "${ApiConstants.baseUrl}/yogasutra/chapter/%chapterNo%/sutra/%sutraNo%"; //GET
+  static const String _yogasutrasByChapterNo = "${ApiConstants.baseUrl}/yogasutra/all/chapter"; //GET
 
   YogasutraApi._();
   factory YogasutraApi() {

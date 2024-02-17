@@ -1,6 +1,7 @@
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
+import 'package:bhakti_bhoomi/widgets/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -147,64 +148,12 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     );
   }
 
+  _commentForId({required String kanda, required int sargaNo, required int shlokNo, required String lang}) {
+    return 'kanda_${kanda}-sargaNo_$sargaNo-shlokNo_$shlokNo-lang_$lang';
+  }
+
   _onComment({required String id}) {
-    showModalBottomSheet(
-        context: context,
-        elevation: 5,
-        isDismissible: true,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (context) {
-          return DraggableScrollableSheet(
-            expand: false,
-            snap: true,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      height: 78,
-                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey, width: 1))),
-                      child: ListView(
-                        shrinkWrap: true,
-                        controller: scrollController,
-                        children: [
-                          Icon(
-                            Icons.horizontal_rule_rounded,
-                            size: 48,
-                          ),
-                          Text(
-                            'Comments',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            return SizedBox(
-                              height: 30,
-                              child: ListTile(
-                                title: Text('Comment $index'),
-                              ),
-                            );
-                          },
-                          itemCount: 50),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        });
+    showCommentModelBottomSheet(context: context, commentForId: _commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage));
   }
 
   _showNotImplementedMessage() {

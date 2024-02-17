@@ -6,9 +6,9 @@ import '../../singletons/DioSingleton.dart';
 class MantraApi {
   static final MantraApi _instance = MantraApi._();
 
-  static final String _allMantraUrl = "${ApiConstants.baseUrl}/mantra/all"; //GET
-  static final String _allMantraInfoUrl = "${ApiConstants.baseUrl}/mantra/all/info"; //GET
-  static final String _mantraByIdOrTitleUrl = "${ApiConstants.baseUrl}/mantra"; //GET
+  static const String _allMantraUrl = "${ApiConstants.baseUrl}/mantra/all"; //GET
+  static const String _allMantraInfoUrl = "${ApiConstants.baseUrl}/mantra/all/info"; //GET
+  static const String _mantraByIdOrTitleUrl = "${ApiConstants.baseUrl}/mantra"; //GET
 
   MantraApi._();
   factory MantraApi() {

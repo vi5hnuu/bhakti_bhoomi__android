@@ -6,9 +6,9 @@ import '../../singletons/DioSingleton.dart';
 class ChalisaApi {
   static final ChalisaApi _instance = ChalisaApi._();
 
-  static final String _allChalisaUrl = "${ApiConstants.baseUrl}/chalisa/all"; //GET
-  static final String _allChalisaInfoUrl = "${ApiConstants.baseUrl}/chalisa/all/info"; //GET
-  static final String _chalisaByIdOrTitleUrl = "${ApiConstants.baseUrl}/chalisa"; //GET
+  static const String _allChalisaUrl = "${ApiConstants.baseUrl}/chalisa/all"; //GET
+  static const String _allChalisaInfoUrl = "${ApiConstants.baseUrl}/chalisa/all/info"; //GET
+  static const String _chalisaByIdOrTitleUrl = "${ApiConstants.baseUrl}/chalisa"; //GET
 
   ChalisaApi._();
   factory ChalisaApi() {
