@@ -98,6 +98,10 @@ class RamayanState extends Equatable {
     return ramayanInfo?.kandaOrder.entries.toList(growable: false)?..sort((a, b) => a.value.compareTo(b.value));
   }
 
+  static String commentForId({required String kanda, required int sargaNo, required int shlokNo, required String lang}) {
+    return 'kanda_${kanda}-sargaNo_$sargaNo-shlokNo_$shlokNo-lang_$lang';
+  }
+
   @override
   List<Object?> get props => [
         isLoading,

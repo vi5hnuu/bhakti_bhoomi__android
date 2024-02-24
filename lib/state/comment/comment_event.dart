@@ -8,14 +8,10 @@ abstract class CommentEvent {
   const CommentEvent({this.cancelToken});
 }
 
-class LikeCommentEvent extends CommentEvent {
+class LikeUnlikeCommentEvent extends CommentEvent {
   final String id;
-  const LikeCommentEvent({required this.id, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
-}
-
-class UnlikeCommentEvent extends CommentEvent {
-  final String id;
-  const UnlikeCommentEvent({required this.id, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+  final bool like;
+  const LikeUnlikeCommentEvent({required this.id, required this.like, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
 class GetCommentEvent extends CommentEvent {
@@ -46,8 +42,4 @@ class GetCommentsEvent extends CommentEvent {
   final int? pageNo;
   final int? pageSize;
   const GetCommentsEvent({required this.commentForId, this.parentCommentId, this.pageNo, this.pageSize, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
-}
-
-class ClearStateEvent extends CommentEvent {
-  const ClearStateEvent();
 }

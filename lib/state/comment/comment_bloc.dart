@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
 import 'package:bhakti_bhoomi/services/comment/CommentRepository.dart';
@@ -8,28 +6,16 @@ import 'package:bhakti_bhoomi/state/comment/comment_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 
-//TODO : Add comments bloc,event and state -> comments are not cached...
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   CommentBloc({required CommentRepository commentRepository}) : super(CommentState.initial()) {
-    on<ClearStateEvent>((event, emit) {
-      emit(state.copyWith(comments: [], isLoading: false, error: null));
-    });
-
-    on<LikeCommentEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: false, error: null, comments: _likeUnlikeComment(comments: state.comments, id: event.id, like: true)));
+    on<LikeUnlikeCommentEvent>((event, emit) async {
+      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
       try {
-        await commentRepository.likeComment(id: event.id, cancelToken: event.cancelToken);
+        event.like ? await commentRepository.likeComment(id: event.id, cancelToken: event.cancelToken) : await commentRepository.unlikeComment(id: event.id, cancelToken: event.cancelToken);
+        bool done = _likeUnlikeComment(comments: state.comments, id: event.id, like: event.like);
+        emit(state.copyWith(error: null, loadingFor: state.loadingFor..remove(event), comments: state.comments.map((c) => c.copyWith()).toList()));
       } catch (e) {
-        emit(state.copyWith(error: e is DioException ? Utils.handleDioException(e) : 'something went wrong', comments: _likeUnlikeComment(comments: state.comments, id: event.id, like: false)));
-      }
-    });
-
-    on<UnlikeCommentEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: false, error: null, comments: _likeUnlikeComment(comments: state.comments, id: event.id, like: false)));
-      try {
-        await commentRepository.unlikeComment(id: event.id, cancelToken: event.cancelToken);
-      } catch (e) {
-        emit(state.copyWith(error: e is DioException ? Utils.handleDioException(e) : 'something went wrong', comments: _likeUnlikeComment(comments: state.comments, id: event.id, like: true)));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
@@ -38,26 +24,22 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     });
 
     on<CreateCommentEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
       try {
         final commentData = await commentRepository.createComment(newComment: event.newComment, cancelToken: event.cancelToken);
-        emit(state.copyWith(isLoading: false, comments: _addComment(comments: state.comments, newCmnts: [commentData.data!])));
-      } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), comments: _addComment(comments: state.comments, newCmnts: [commentData.data!])));
       } catch (e) {
-        emit(state.copyWith(isLoading: false, error: 'something went wrong'));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
     on<DeleteCommentEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
       try {
         await commentRepository.deleteComment(id: event.id, cancelToken: event.cancelToken);
-        emit(state.copyWith(isLoading: false, comments: _deleteComment(comments: state.comments, id: event.id)));
-      } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), comments: _deleteComment(comments: state.comments, id: event.id)));
       } catch (e) {
-        emit(state.copyWith(isLoading: false, error: 'something went wrong'));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
@@ -66,26 +48,27 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     });
 
     on<GetCommentsEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
       try {
-        // final comments = await commentRepository.getComments(
-        //     commentForId: event.commentForId, parentCommentId: event.parentCommentId, pageNo: event.pageNo, pageSize: event.pageSize, cancelToken: event.cancelToken);
-        // emit(state.copyWith(isLoading: false, comments: _addComment(comments: state.comments, newCmnts: comments.data!)));
-        final demoComments = List.generate(30, (index) {
-          final comment = getDemoCommet();
-          comment.childComments.clear();
-          comment.childComments.addAll(List.generate(Random().nextInt(comment.totalChildComments), (index) {
-            int cm = Random().nextInt(5);
-            return getDemoCommet(true)
-                .copyWith(totalChildComments: 5, childComments: List.generate(cm, (index) => getDemoCommet(true).copyWith(childComments: [], totalChildComments: 0, likeCount: Random().nextInt(10))));
-          }));
-          return comment;
-        });
-        emit(state.copyWith(isLoading: false, comments: demoComments));
-      } on DioException catch (e) {
-        emit(state.copyWith(isLoading: false, error: Utils.handleDioException(e)));
+        final comments = await commentRepository.getComments(
+            commentForId: event.commentForId, parentCommentId: event.parentCommentId, pageNo: event.pageNo, pageSize: event.pageSize, cancelToken: event.cancelToken);
+        emit(state.copyWith(
+            loadingFor: state.loadingFor..remove(event),
+            hasMoreComments: event.parentCommentId == null ? comments.data?.isNotEmpty : state.hasMoreComments,
+            comments: _addComment(comments: state.comments, newCmnts: comments.data!)));
+        // final demoComments = List.generate(5, (index) {
+        //   final comment = getDemoCommet();
+        //   comment.childComments.clear();
+        //   comment.childComments.addAll(List.generate(Random().nextInt(comment.totalChildComments), (index) {
+        //     int cm = Random().nextInt(5);
+        //     return getDemoCommet(true)
+        //         .copyWith(totalChildComments: 5, childComments: List.generate(cm, (index) => getDemoCommet(true).copyWith(childComments: [], totalChildComments: 0, likeCount: Random().nextInt(10))));
+        //   }));
+        //   return comment;
+        // });
+        // emit(state.copyWith(loadingFor:state.loadingFor..remove(event), comments: demoComments));
       } catch (e) {
-        emit(state.copyWith(isLoading: false, error: 'something went wrong'));
+        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
   }
@@ -109,7 +92,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   }
 
   List<CommentModel> _addComment({required List<CommentModel> comments, required List<CommentModel> newCmnts}) {
-    if (newCmnts.isEmpty) throw Exception('newComments cannot be empty');
+    if (newCmnts.isEmpty) return comments;
 
     if (newCmnts.first.parentCommentId == null) {
       return [...newCmnts, ...comments];
@@ -131,22 +114,17 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     return comments;
   }
 
-  List<CommentModel> _likeUnlikeComment({required List<CommentModel> comments, required String id, required bool like}) {
-    for (CommentModel comment in comments) {
+  bool _likeUnlikeComment({required List<CommentModel> comments, required String id, required bool like}) {
+    for (int i = 0; i < comments.length; i++) {
+      final comment = comments[i];
       if (comment.id == id) {
-        final commentIndex = comments.indexWhere((comment) => comment.id == id);
-        comments[commentIndex] = comments[commentIndex].copyWith(likeCount: comments[commentIndex].likeCount + (like ? 1 : -1));
-        return comments;
+        comments[i] = comment.copyWith(likedByMe: like, likeCount: comment.likeCount + (like ? 1 : -1));
+        return true;
       }
-      final oldLen = comment.childComments.length;
-      final newComments = _likeUnlikeComment(comments: comment.childComments, id: id, like: like);
-      if (oldLen != newComments.length) {
-        comment.childComments.clear();
-        comment.childComments.addAll(newComments);
-        break;
-      }
+      final done = _likeUnlikeComment(comments: comment.childComments, id: id, like: like);
+      if (done) return true;
     }
-    return comments;
+    return false;
   }
 
   CommentModel getDemoCommet([bool isChild = false]) {
@@ -155,6 +133,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         commentForId: "ascsasv",
         username: 'vishnu',
         userId: "userId",
+        likedByMe: false,
         parentCommentId: isChild ? "parentCommentId" : null,
         profileImageUrl: "https://res.cloudinary.com/dmzcpxynz/image/upload/v1706425748/bhaktiBhoomi/users/profile/kvishnu-845cebf7-a6dd-47b5-a10f-494891ca9e0a.jpg",
         content: "hare krishna hare krishna krishna krishna hare hare hare ram hare ram ram ram hare hare",

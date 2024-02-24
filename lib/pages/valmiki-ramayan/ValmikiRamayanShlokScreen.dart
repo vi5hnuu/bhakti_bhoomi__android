@@ -148,12 +148,8 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     );
   }
 
-  _commentForId({required String kanda, required int sargaNo, required int shlokNo, required String lang}) {
-    return 'kanda_${kanda}-sargaNo_$sargaNo-shlokNo_$shlokNo-lang_$lang';
-  }
-
   _onComment({required String id}) {
-    showCommentModelBottomSheet(context: context, commentForId: _commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage));
+    showCommentModelBottomSheet(context: context, commentForId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage));
   }
 
   _showNotImplementedMessage() {

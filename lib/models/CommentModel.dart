@@ -11,6 +11,7 @@ class CommentModel {
   final int totalChildComments;
   final String? parentCommentId;
   final DateTime createdAt;
+  final bool likedByMe;
 
   CommentModel({
     required this.id,
@@ -25,6 +26,7 @@ class CommentModel {
     required this.totalChildComments,
     this.parentCommentId,
     required this.createdAt,
+    required this.likedByMe,
   });
 
   CommentModel copyWith({
@@ -32,6 +34,7 @@ class CommentModel {
     int? likeCount,
     int? totalChildComments,
     List<CommentModel>? childComments,
+    bool? likedByMe,
   }) {
     return CommentModel(
       id: id,
@@ -46,11 +49,11 @@ class CommentModel {
       totalChildComments: totalChildComments ?? this.totalChildComments,
       parentCommentId: parentCommentId,
       createdAt: createdAt,
+      likedByMe: likedByMe ?? this.likedByMe,
     );
   }
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
-    const name = '';
     return CommentModel(
       id: json['id'],
       commentForId: json['comment_for_id'],
@@ -64,6 +67,7 @@ class CommentModel {
       totalChildComments: json['totalChildComments'],
       parentCommentId: json['parent_comment_id'],
       createdAt: DateTime.parse(json['created_at']),
+      likedByMe: json['likedByMe'],
     );
   }
 }

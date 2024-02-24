@@ -1,19 +1,20 @@
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
-import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CommentTile extends StatelessWidget {
   final CommentModel comment;
+  final bool isLikeUnlikeLoading;
   final String? parentCommentUsername;
-  final VoidCallback? onCommentLike;
   final VoidCallback? onCommentReply;
-  final VoidCallback? onLoadMoreComments;
-  const CommentTile({super.key, required this.comment, this.parentCommentUsername, this.onCommentLike, this.onCommentReply, this.onLoadMoreComments});
+  final VoidCallback? onCommentLike;
+  final CancelToken _likeCancelToken = CancelToken();
+
+  CommentTile({super.key, required this.comment, this.parentCommentUsername, this.isLikeUnlikeLoading = false, this.onCommentLike, this.onCommentReply});
 
   @override
   Widget build(BuildContext context) {
-    bool didILiked = BlocProvider.of<AuthBloc>(context).state.userInfo!.username == comment.username;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -40,7 +41,11 @@ class CommentTile extends StatelessWidget {
                 ),
               ),
               Column(children: [
-                IconButton(onPressed: this.onCommentLike, icon: Icon(didILiked ? Icons.favorite : Icons.favorite_border, color: didILiked ? Colors.red : Colors.grey)),
+                IconButton(
+                    onPressed: isLikeUnlikeLoading ? null : onCommentLike,
+                    icon: isLikeUnlikeLoading
+                        ? const SpinKitPumpingHeart(color: Colors.grey, size: 18)
+                        : Icon(comment.likedByMe ? Icons.favorite : Icons.favorite_border, color: comment.likedByMe ? Colors.red : Colors.grey)),
                 Text(comment.likeCount.toString())
               ])
             ],
