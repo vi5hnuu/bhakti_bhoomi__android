@@ -9,13 +9,13 @@ import 'package:dio/dio.dart';
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   CommentBloc({required CommentRepository commentRepository}) : super(CommentState.initial()) {
     on<LikeUnlikeCommentEvent>((event, emit) async {
-      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor}..add(event), error: null));
       try {
         event.like ? await commentRepository.likeComment(id: event.id, cancelToken: event.cancelToken) : await commentRepository.unlikeComment(id: event.id, cancelToken: event.cancelToken);
         bool done = _likeUnlikeComment(comments: state.comments, id: event.id, like: event.like);
-        emit(state.copyWith(error: null, loadingFor: state.loadingFor..remove(event), comments: state.comments.map((c) => c.copyWith()).toList()));
+        emit(state.copyWith(error: null, loadingFor: {...state.loadingFor}..remove(event), comments: state.comments.map((c) => c.copyWith()).toList()));
       } catch (e) {
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
@@ -24,22 +24,22 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     });
 
     on<CreateCommentEvent>((event, emit) async {
-      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor}..add(event), error: null));
       try {
         final commentData = await commentRepository.createComment(newComment: event.newComment, cancelToken: event.cancelToken);
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), comments: _addComment(comments: state.comments, newCmnts: [commentData.data!])));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), comments: _addComment(comments: state.comments, newCmnts: [commentData.data!], addToTotalChildCommentSize: true)));
       } catch (e) {
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
     on<DeleteCommentEvent>((event, emit) async {
-      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor}..add(event), error: null));
       try {
         await commentRepository.deleteComment(id: event.id, cancelToken: event.cancelToken);
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), comments: _deleteComment(comments: state.comments, id: event.id)));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), comments: _deleteComment(comments: state.comments, id: event.id)));
       } catch (e) {
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
 
@@ -48,14 +48,15 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     });
 
     on<GetCommentsEvent>((event, emit) async {
-      emit(state.copyWith(loadingFor: {...state.loadingFor, event}, error: null));
+      emit(state.copyWith(loadingFor: {...state.loadingFor}..add(event), error: null));
       try {
         final comments = await commentRepository.getComments(
             commentForId: event.commentForId, parentCommentId: event.parentCommentId, pageNo: event.pageNo, pageSize: event.pageSize, cancelToken: event.cancelToken);
         emit(state.copyWith(
-            loadingFor: state.loadingFor..remove(event),
+            loadingFor: {...state.loadingFor}..remove(event),
             hasMoreComments: event.parentCommentId == null ? comments.data?.isNotEmpty : state.hasMoreComments,
-            comments: _addComment(comments: state.comments, newCmnts: comments.data!)));
+            comments: _addComment(comments: state.comments, newCmnts: comments.data!).map((c) => c.copyWith()).toList()));
+
         // final demoComments = List.generate(5, (index) {
         //   final comment = getDemoCommet();
         //   comment.childComments.clear();
@@ -66,9 +67,9 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         //   }));
         //   return comment;
         // });
-        // emit(state.copyWith(loadingFor:state.loadingFor..remove(event), comments: demoComments));
+        // emit(state.copyWith(loadingFor:{...state.loadingFor}..remove(event), comments: demoComments));
       } catch (e) {
-        emit(state.copyWith(loadingFor: state.loadingFor..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
       }
     });
   }
@@ -91,25 +92,22 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     return comments;
   }
 
-  List<CommentModel> _addComment({required List<CommentModel> comments, required List<CommentModel> newCmnts}) {
+  List<CommentModel> _addComment({required List<CommentModel> comments, required List<CommentModel> newCmnts, CommentModel? parentComment, bool addToTotalChildCommentSize = false}) {
     if (newCmnts.isEmpty) return comments;
 
     if (newCmnts.first.parentCommentId == null) {
       return [...newCmnts, ...comments];
     }
 
-    for (CommentModel comment in comments) {
+    for (int cIdx = 0; cIdx < comments.length; cIdx++) {
+      final comment = comments[cIdx];
       if (comment.id == newCmnts.first.parentCommentId) {
-        return [...newCmnts, ...comments];
+        comments[cIdx] = comment.copyWith(childComments: [...newCmnts, ...comment.childComments], totalChildComments: comment.totalChildComments + (addToTotalChildCommentSize ? newCmnts.length : 0));
+        return comments;
       }
-
-      final curLen = comment.childComments.length;
-      final newComments = _addComment(comments: comment.childComments, newCmnts: newCmnts);
-      if (curLen != comment.childComments.length) {
-        comment.childComments.clear();
-        comment.childComments.addAll(newComments);
-        break;
-      }
+      final oldChilCommentsLen = comment.childComments.length;
+      final addedComments = _addComment(comments: comment.childComments, newCmnts: newCmnts);
+      if (addedComments.length != oldChilCommentsLen) return comments;
     }
     return comments;
   }

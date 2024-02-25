@@ -39,7 +39,7 @@ class CommentApi {
   }
 
   Future<Map<String, dynamic>> createComment({required NewComment newComment, CancelToken? cancelToken}) async {
-    var res = await DioSingleton().dio.post(_createComment, data: newComment, cancelToken: cancelToken);
+    var res = await DioSingleton().dio.post(_createComment, data: newComment, cancelToken: cancelToken, options: Options(contentType: 'application/json'));
     return res.data as Map<String, dynamic>;
   }
 

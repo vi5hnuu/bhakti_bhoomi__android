@@ -1,5 +1,4 @@
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -9,7 +8,6 @@ class CommentTile extends StatelessWidget {
   final String? parentCommentUsername;
   final VoidCallback? onCommentReply;
   final VoidCallback? onCommentLike;
-  final CancelToken _likeCancelToken = CancelToken();
 
   CommentTile({super.key, required this.comment, this.parentCommentUsername, this.isLikeUnlikeLoading = false, this.onCommentLike, this.onCommentReply});
 
@@ -22,7 +20,7 @@ class CommentTile extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              CircleAvatar(child: Image.network(comment.profileImageUrl)),
+              CircleAvatar(child: ClipOval(child: Image.network(comment.profileImageUrl))),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,7 +34,17 @@ class CommentTile extends StatelessWidget {
                       children: [
                         TextSpan(text: "${comment.content}", style: TextStyle(color: Colors.black)),
                       ],
-                    ))
+                    )),
+                    TextButton(
+                        style: ButtonStyle(
+                            minimumSize: MaterialStateProperty.all(Size.zero),
+                            padding: MaterialStateProperty.all(const EdgeInsets.only(top: 9)),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            foregroundColor: MaterialStateProperty.all(Colors.grey),
+                            splashFactory: NoSplash.splashFactory,
+                            overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                        onPressed: onCommentReply,
+                        child: const Text("reply"))
                   ],
                 ),
               ),

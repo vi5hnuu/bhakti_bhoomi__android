@@ -1,7 +1,7 @@
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
+import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
-import 'package:bhakti_bhoomi/widgets/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +37,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     return BlocBuilder<RamayanBloc, RamayanState>(
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: Text(
               'Valmiki Ramayan | Kand ${widget.kand} | Sarga No | ${widget.sargaNo}',
