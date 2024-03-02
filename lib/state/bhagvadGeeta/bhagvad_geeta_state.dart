@@ -37,6 +37,10 @@ class BhagvadGeetaState extends Equatable {
 
   BhagvadGeetaShlokModel? getShlok({required int chapterNo, required int shlokNo}) => _bhagvadGeetaShloks[_uniqueKey(chapterNo: chapterNo, shlokNo: shlokNo)];
 
+  static String commentForId({required int chapterNo, required int shlokNo}) {
+    return 'chapterNo_$chapterNo-shlokNo$shlokNo';
+  }
+
   @override
   List<Object?> get props => [isLoading, error, _bhagvadGeetaChapters, _bhagvadGeetaShloks];
 }

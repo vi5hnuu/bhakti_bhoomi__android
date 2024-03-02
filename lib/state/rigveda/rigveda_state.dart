@@ -36,6 +36,10 @@ class RigvedaState extends Equatable {
 
   RigvedaSuktaModel? getSukta({required int mandala, required int suktaNo}) => _suktas[_uniqueIdentifier(mandala: mandala, suktaNo: suktaNo)];
 
+  static String commentForId({required int mandala, required int suktaNo}) {
+    return 'mandalaNo_$mandala-suktaNo_$suktaNo';
+  }
+
   MapEntry<String, RigvedaSuktaModel> getSuktaEntry(RigvedaSuktaModel sukta) => MapEntry(_uniqueIdentifier(mandala: sukta.mandala, suktaNo: sukta.sukta), sukta);
 
   Map<String, RigvedaSuktaModel> get allSuktas => Map.unmodifiable(_suktas);

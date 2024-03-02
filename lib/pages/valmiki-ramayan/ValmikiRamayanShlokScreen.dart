@@ -110,7 +110,11 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                           isSelected: true,
                                           icon: Icon(Icons.favorite_border, size: 36)),
                                       SizedBox(height: 10),
-                                      IconButton(onPressed: () => _onComment(id: '${shlok.shlokNo}'), icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                      IconButton(
+                                          onPressed: () => onComment(
+                                              context: context,
+                                              commentFormId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage)),
+                                          icon: Icon(Icons.mode_comment_outlined, size: 36)),
                                       SizedBox(height: 10),
                                       IconButton(
                                         onPressed: () => this._showNotImplementedMessage(),
@@ -147,10 +151,6 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
             ),
           )),
     );
-  }
-
-  _onComment({required String id}) {
-    showCommentModelBottomSheet(context: context, commentForId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage));
   }
 
   _showNotImplementedMessage() {

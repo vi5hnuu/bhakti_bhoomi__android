@@ -4,7 +4,11 @@ import 'package:bhakti_bhoomi/widgets/comment/CommentSheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-Future<dynamic> showCommentModelBottomSheet({required BuildContext context, required String commentForId}) {
+void onComment({required String commentFormId, required BuildContext context}) {
+  _showCommentModelBottomSheet(context: context, commentForId: commentFormId);
+}
+
+Future<dynamic> _showCommentModelBottomSheet({required BuildContext context, required String commentForId}) {
   // debugPaintSizeEnabled = true;
 
   return showModalBottomSheet(

@@ -59,6 +59,10 @@ class MahabharatState extends Equatable {
     return allShloks[_keyIdentifier(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo)];
   }
 
+  static String commentForId({required int bookNo, required int chapterNo, required int shlokNo}) {
+    return 'bookNo_$bookNo-chapterNo_${chapterNo}-shlokNo_${shlokNo}';
+  }
+
   @override
   List<Object?> get props => [isLoading, error, _booksInfo, _shloks];
 }

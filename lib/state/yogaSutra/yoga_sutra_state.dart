@@ -49,6 +49,10 @@ class YogaSutraState extends Equatable {
     return _sutras[_uniqueSutraIdentifier(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang)];
   }
 
+  static String commentForId({required int chapterNo, required int sutraNo, required String lang}) {
+    return 'chapterNo_$chapterNo-sutraNo_$sutraNo-lang_${lang}';
+  }
+
   @override
   List<Object?> get props => [isLoading, error, yogaSutraInfo, _sutras];
 }

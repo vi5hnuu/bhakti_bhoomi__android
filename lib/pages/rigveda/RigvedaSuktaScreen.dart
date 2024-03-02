@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
@@ -64,16 +65,39 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                             Positioned(
                               bottom: 45,
                               right: 15,
-                              child: Column(
-                                children: [
-                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.favorite_border, size: 36)),
-                                  SizedBox(height: 10),
-                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                  SizedBox(height: 10),
-                                  IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.bookmark_border, size: 36)),
-                                ],
+                              child: Card(
+                                color: Colors.white,
+                                surfaceTintColor: Colors.white,
+                                elevation: 1,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Column(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () => this._showNotImplementedMessage(),
+                                          tooltip: 'Like',
+                                          selectedIcon: Icon(Icons.favorite, size: 36),
+                                          isSelected: true,
+                                          icon: Icon(Icons.favorite_border, size: 36)),
+                                      SizedBox(height: 10),
+                                      IconButton(
+                                          onPressed: () => onComment(context: context, commentFormId: RigvedaState.commentForId(mandala: widget.mandala, suktaNo: index + 1)),
+                                          icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                      SizedBox(height: 10),
+                                      IconButton(
+                                        onPressed: () => this._showNotImplementedMessage(),
+                                        icon: Icon(Icons.bookmark_border, size: 36),
+                                        tooltip: 'bookmark',
+                                        color: Colors.blue,
+                                        selectedIcon: Icon(Icons.bookmark_added_sharp, size: 36),
+                                        isSelected: true,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         )
                       : state.error != null

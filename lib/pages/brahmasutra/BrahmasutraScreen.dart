@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
+import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -77,13 +79,13 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                   child: Column(
                                     children: sutra.sutra.entries
                                         .map((e) => Padding(
-                                          padding: const EdgeInsets.only(bottom: 8.0),
-                                          child: Text(
+                                              padding: const EdgeInsets.only(bottom: 8.0),
+                                              child: Text(
                                                 e.value,
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                                               ),
-                                        ))
+                                            ))
                                         .toList(),
                                   ),
                                 )),
@@ -105,12 +107,22 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                   padding: const EdgeInsets.all(3.0),
                                   child: Column(
                                     children: [
-                                      IconButton(onPressed: null, tooltip: 'Like', selectedIcon: Icon(Icons.favorite, size: 36), isSelected: true, icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(onPressed: null, icon: Icon(Icons.mode_comment_outlined, size: 36)),
+                                      IconButton(
+                                          onPressed: () => this._showNotImplementedMessage(),
+                                          tooltip: 'Like',
+                                          selectedIcon: Icon(Icons.favorite, size: 36),
+                                          isSelected: true,
+                                          icon: Icon(Icons.favorite_border, size: 36)),
                                       SizedBox(height: 10),
                                       IconButton(
-                                        onPressed: () => null,
+                                          onPressed: () => onComment(
+                                              context: context,
+                                              commentFormId: BrahmaSutraState.commentForId(
+                                                  chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index + 1, lang: lang ?? BrahmaSutraState.defaultLang)),
+                                          icon: const Icon(Icons.mode_comment_outlined, size: 36)),
+                                      SizedBox(height: 10),
+                                      IconButton(
+                                        onPressed: () => this._showNotImplementedMessage(),
                                         icon: Icon(Icons.bookmark_border, size: 36),
                                         tooltip: 'bookmark',
                                         color: Colors.blue,
@@ -149,6 +161,10 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
     CancelToken cancelToken = CancelToken();
     BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: cancelToken));
     return cancelToken;
+  }
+
+  _showNotImplementedMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
   @override

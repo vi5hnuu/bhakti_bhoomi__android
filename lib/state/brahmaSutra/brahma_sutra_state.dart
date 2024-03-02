@@ -54,6 +54,10 @@ class BrahmaSutraState extends Equatable {
     return _brahmaSutras[_uniqueIdentifier(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang)];
   }
 
+  static String commentForId({required int chapterNo, required int quaterNo, required int sutraNo, required String lang}) {
+    return 'chapterNo_$chapterNo-quaterNo_$quaterNo-sutraNo_$sutraNo-lang_$lang';
+  }
+
   @override
   List<Object?> get props => [isLoading, error, brahmasutraInfo, _brahmaSutras];
 }

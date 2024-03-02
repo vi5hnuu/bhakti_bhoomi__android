@@ -49,6 +49,10 @@ class RamcharitmanasState extends Equatable {
 
   RamcharitmanasVerseModel? getVerse({required String kand, required int verseNo, String? lang}) => _verses[_uniqueVerseKey(kand: kand, verseNo: verseNo, lang: lang ?? defaultLang)];
 
+  static String commentForId({required String kand, int? verseNo, required String lang}) {
+    return 'kand_$kand-${verseNo != null ? 'verseNo_$verseNo' : ''}-lang_${lang}';
+  }
+
   RamcharitmanasMangalacharanModel? getMangalacharan({required String kand, String? lang}) => _mangalacharan[_uniqueMangalacharanKey(kand: kand, lang: lang ?? defaultLang)];
 
   MapEntry<String, RamcharitmanasVerseModel> getVerseEntry(RamcharitmanasVerseModel verse) => MapEntry(_uniqueVerseKey(kand: verse.kanda, verseNo: verse.versesNo, lang: verse.language), verse);

@@ -43,6 +43,10 @@ class ChanakyaNeetiState extends Equatable {
 
   ChanakyaNeetiVerseModel? getVerse({required int chapterNo, required int verseNo}) => _verses[_uniqueKey(chapterNo: chapterNo, verseNo: verseNo)];
 
+  static String commentForId({required int chapterNo, required int verseNo}) {
+    return 'chapterNo_$chapterNo-verseNo_$verseNo';
+  }
+
   @override
   List<Object?> get props => [isLoading, error, _chaptersInfo, _verses];
 }
