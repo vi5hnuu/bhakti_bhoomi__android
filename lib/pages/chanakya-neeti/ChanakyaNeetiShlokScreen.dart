@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
@@ -61,41 +62,13 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                               children: [Text(verse.translations['en']!)],
                             ),
                             Positioned(
-                              bottom: 45,
-                              right: 15,
-                              child: Card(
-                                color: Colors.white,
-                                surfaceTintColor: Colors.white,
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                          onPressed: () => this._showNotImplementedMessage(),
-                                          tooltip: 'Like',
-                                          selectedIcon: Icon(Icons.favorite, size: 36),
-                                          isSelected: true,
-                                          icon: Icon(Icons.favorite_border, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(
-                                          onPressed: () => onComment(context: context, commentFormId: ChanakyaNeetiState.commentForId(chapterNo: widget.chapterNo, verseNo: index + 1)),
-                                          icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                      SizedBox(height: 10),
-                                      IconButton(
-                                        onPressed: () => this._showNotImplementedMessage(),
-                                        icon: Icon(Icons.bookmark_border, size: 36),
-                                        tooltip: 'bookmark',
-                                        color: Colors.blue,
-                                        selectedIcon: Icon(Icons.bookmark_added_sharp, size: 36),
-                                        isSelected: true,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                                bottom: 45,
+                                right: 15,
+                                child: EngageActions(
+                                  onBookmark: () => {},
+                                  onLike: () => {},
+                                  onComment: () => onComment(context: context, commentFormId: ChanakyaNeetiState.commentForId(chapterNo: widget.chapterNo, verseNo: index + 1)),
+                                )),
                             Positioned(
                               top: 15,
                               right: 15,
