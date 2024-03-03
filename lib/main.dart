@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
         title: 'Spirtual Shakti',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.highContrastLight(primary: Colors.deepOrange),
           useMaterial3: true,
         ),
         routerConfig: GoRouter(
