@@ -1,5 +1,8 @@
+import 'package:bhakti_bhoomi/models/HttpState.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 class AartiInfoScreen extends StatefulWidget {
   final String title;
+
   const AartiInfoScreen({super.key, required this.title});
 
   @override
@@ -20,7 +24,7 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<AartiBloc>(context).add(FetchAartiInfoEvent(cancelToken: cancelToken));
+    initAartiInfo();
     super.initState();
   }
 
@@ -30,12 +34,17 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
       appBar: AppBar(
         title: Text(
           widget.title,
-          style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.white,
+              fontFamily: "Kalam",
+              fontSize: 32,
+              fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: BlocBuilder<AartiBloc, AartiState>(builder: (context, state) {
+        final httpState = state.httpState[Httpstates.AARTI_INFO];
         return state.aartisInfo.isNotEmpty
             ? ListView.builder(
                 itemCount: state.aartisInfo.length,
@@ -47,15 +56,25 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
                       itemNo: index + 1,
                       text: aartiInfo.title,
                       key: Key(aartiInfo.id),
-                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti, pathParameters: {"id": state.aartisInfo[index].id}),
+                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti,
+                          pathParameters: {"id": state.aartisInfo[index].id}),
                     ),
                   );
                 })
-            : state.error != null
-                ? Center(child: Text(state.error!))
-                : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));
+            : Center(
+                child: httpState?.error != null
+                    ? RetryAgain(onRetry: initAartiInfo,error: httpState!.error!)
+                    : (httpState?.loading == true
+                        ? SpinKitThreeBounce(
+                            color: Theme.of(context).primaryColor)
+                        : const Text("No Aarti found.")));
       }),
     );
+  }
+
+  initAartiInfo() {
+    BlocProvider.of<AartiBloc>(context)
+        .add(FetchAartiInfoEvent(cancelToken: cancelToken));
   }
 
   @override
@@ -64,3 +83,4 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
     super.dispose();
   }
 }
+
