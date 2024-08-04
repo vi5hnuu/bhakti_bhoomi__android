@@ -28,11 +28,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state.isLoading(forr: Httpstates.TRY_AUTH)) return;
-        if(state.isError(forr: Httpstates.TRY_AUTH) || !state.isAuthtenticated){
+        if (state.isLoading(forr: Httpstates.TRY_AUTH)){
+          return;
+        }else if(state.isError(forr: Httpstates.TRY_AUTH)){
           GoRouter.of(context).replaceNamed(Routing.login);
+        }else if(state.isAuthtenticated){
+          GoRouter.of(context).replaceNamed(Routing.home);
         }
-        GoRouter.of(context).replaceNamed(Routing.home);
       },
       listenWhen: (previous, current) => previous != current,
       buildWhen: (previous, current) => false,

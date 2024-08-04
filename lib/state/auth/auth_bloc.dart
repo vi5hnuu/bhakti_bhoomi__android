@@ -40,11 +40,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<TryAuthenticatingEvent>((event, emit) async {
+      print("state-event TryAuthenticatingEvent");
       emit(AuthState().copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.TRY_AUTH,const HttpState.loading())));
       try {
         final cookie = await _getCookie();
         final isValidCookie = _isCookieValid(cookie);
-        if(!isValidCookie) _clearCookies();
+        if(!isValidCookie) await _clearCookies();
         if(isValidCookie) DioSingleton().addCookie(Constants.jwtKey, cookie!); //add cookie for further requests
         ApiResponse<UserInfo> res = await authRepository.me(cancelToken: event.cancelToken);
         emit(AuthState(userInfo: res.data,httpStates:state.httpStates.clone()..remove(Httpstates.TRY_AUTH), success: res.success, message: res.success ? "logged in successfully" : null));
@@ -56,11 +57,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<FetchUserInfoEvent>((event, emit) async {
+      print("state-event FetchUserInfoEvent");
       if (state.userInfo != null) return emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.USER_INFO)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO,const HttpState.loading())));
       try {
         ApiResponse<UserInfo> res = await authRepository.me(cancelToken: event.cancelToken);
-        emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.USER_INFO), success: res.success, isAuthenticated: true, userInfo: res.data, message: res.message));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.USER_INFO), success: res.success, userInfo: res.data, message: res.message));
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
@@ -193,7 +195,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return cookie != null ? Cookie.fromSetCookieValue(cookie) : null;
   }
 
-  void _clearCookies() async {
+  _clearCookies() async {
     await _sStorage.storage.deleteAll();
   }
 

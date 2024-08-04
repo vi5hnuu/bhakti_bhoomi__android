@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
         ),
         routerConfig: GoRouter(
             debugLogDiagnostics: true,
-            errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
+            // errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
             redirect: (context, state) {
               // if (!whiteListedRoutes.contains(state.fullPath) && !BlocProvider.of<AuthBloc>(context).state.isAuthenticated) {
               //   return '/login';
@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
                 path: '/splash',
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
-                  child: SplashScreen(title: "Splash"),
+                  child: const SplashScreen(title: "Splash"),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),

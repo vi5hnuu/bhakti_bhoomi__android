@@ -3,6 +3,7 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -55,7 +56,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
                                     const SizedBox(
                                       height: 12,
                                     ),
-                                    ...verseGroup.verses.map((verse) => Text(verse, style: TextStyle(fontSize: 18)))
+                                    ...verseGroup.verses.map((verse) => Text(verse, style: const TextStyle(fontSize: 18)))
                                   ],
                                 ),
                               ))
