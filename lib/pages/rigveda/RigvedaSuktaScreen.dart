@@ -1,3 +1,4 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -20,12 +21,13 @@ class RigvedaSuktaScreen extends StatefulWidget {
 class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
   final pageStorageKey = const PageStorageKey('rigveda-mandala-suktas');
   final PageController _controller = PageController(initialPage: 0);
+  int currentPage=0;
   CancelToken? token;
 
   @override
   initState() {
+    loadCurrentSukta();
     super.initState();
-    token = _loadSukta(mandala: widget.mandala, suktaNo: 1);
   }
 
   @override
@@ -36,7 +38,7 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
           appBar: AppBar(
             title: Text(
               'RigVeda | Mandala - ${widget.mandala}',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
@@ -61,7 +63,7 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                                     child: Text(
                               sukta.text,
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 1, fontSize: 14),
+                              style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 1, fontSize: 14),
                             ))),
                             Positioned(
                                 bottom: 45,
@@ -73,8 +75,8 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                                 )),
                           ],
                         )
-                      : state.error != null
-                          ? Center(child: Text(state.error!))
+                      : state.isError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)
+                          ? Center(child: Text(state.getError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)!))
                           : Center(
                               child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                             ),
@@ -82,11 +84,9 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(
-              () {
-                print("token $token");
-                token?.cancel("cancelled");
-                token = _loadSukta(mandala: widget.mandala, suktaNo: pageNo + 1);
+            onPageChanged: (pageNo) => setState(() {
+                currentPage=pageNo;
+                _loadSukta(mandala: widget.mandala, suktaNo: pageNo + 1);
               },
             ),
           )),
@@ -97,10 +97,14 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
     ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
-  CancelToken _loadSukta({required int mandala, required int suktaNo}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<RigvedaBloc>(context).add(FetchVerseByMandalaSukta(mandalaNo: mandala, suktaNo: suktaNo, cancelToken: cancelToken));
-    return cancelToken;
+  void loadCurrentSukta() {
+    _loadSukta(mandala: widget.mandala, suktaNo: 1);
+  }
+
+  void _loadSukta({required int mandala, required int suktaNo}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<RigvedaBloc>(context).add(FetchVerseByMandalaSukta(mandalaNo: mandala, suktaNo: suktaNo, cancelToken: token));
   }
 
   @override

@@ -1,4 +1,6 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
@@ -23,7 +25,7 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
 
   @override
   initState() {
-    token = _loadMangalacharan(kand: widget.kand, lang: lang);
+    loadCurrentLangMangalaCharan();
     super.initState();
   }
 
@@ -62,13 +64,13 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                                     .toList(),
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Expanded(
                                 child: SingleChildScrollView(
                               child: Text(
                                 mangalacharan.text,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                               ),
                             ))
                           ],
@@ -90,18 +92,18 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                                       tooltip: 'Like',
                                       selectedIcon: Icon(Icons.favorite, size: 36),
                                       isSelected: true,
-                                      icon: Icon(Icons.favorite_border, size: 36)),
-                                  SizedBox(height: 10),
+                                      icon: const Icon(Icons.favorite_border, size: 36)),
+                                  const SizedBox(height: 10),
                                   IconButton(
                                       onPressed: () => onComment(context: context, commentFormId: RamcharitmanasState.commentForId(kand: widget.kand, lang: lang ?? RamcharitmanasState.defaultLang)),
-                                      icon: Icon(Icons.mode_comment_outlined, size: 36)),
-                                  SizedBox(height: 10),
+                                      icon: const Icon(Icons.mode_comment_outlined, size: 36)),
+                                  const SizedBox(height: 10),
                                   IconButton(
                                     onPressed: () => this._showNotImplementedMessage(),
-                                    icon: Icon(Icons.bookmark_border, size: 36),
+                                    icon: const Icon(Icons.bookmark_border, size: 36),
                                     tooltip: 'bookmark',
                                     color: Colors.blue,
-                                    selectedIcon: Icon(Icons.bookmark_added_sharp, size: 36),
+                                    selectedIcon: const Icon(Icons.bookmark_added_sharp, size: 36),
                                     isSelected: true,
                                   ),
                                 ],
@@ -112,9 +114,9 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                       ],
                     ),
                   )
-                : state.error != null
+                : state.isError(forr: Httpstates.RAMCHARITMANAS_ALL_MANGALACHARAN)
                     ? Center(
-                        child: Text(state.error!),
+                        child: RetryAgain(onRetry: loadCurrentLangMangalaCharan,error: state.getError(forr: Httpstates.RAMCHARITMANAS_ALL_MANGALACHARAN)!),
                       )
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
@@ -127,15 +129,18 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
     setState(() {
       if (!mounted || value == null) return;
       lang = value;
-      token?.cancel("cancelled");
-      token = _loadMangalacharan(kand: widget.kand, lang: value);
+      _loadLangMangalacharan(kand: widget.kand, lang: value);
     });
   }
 
-  CancelToken _loadMangalacharan({required String kand, String? lang}) {
-    CancelToken newToken = CancelToken();
-    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasMangalacharanByKanda(kanda: kand, lang: lang, cancelToken: newToken));
-    return newToken;
+  void loadCurrentLangMangalaCharan() {
+    _loadLangMangalacharan(kand: widget.kand, lang: lang);
+  }
+
+  void _loadLangMangalacharan({required String kand, String? lang}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasMangalacharanByKanda(kanda: kand, lang: lang, cancelToken: token));
   }
 
   _showNotImplementedMessage() {

@@ -1,35 +1,32 @@
 part of 'yoga_sutra_bloc.dart';
 
 @immutable
-class YogaSutraState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class YogaSutraState extends Equatable with WithHttpState {
   final YogaSutraInfoModel? yogaSutraInfo;
   final Map<String, YogaSutraModel> _sutras; //sutraId,sutra
   static final defaultLanguage = "dv";
 
-  const YogaSutraState({
-    this.isLoading = true,
-    this.error,
+  YogaSutraState({
+    Map<String,HttpState>? httpStates,
     this.yogaSutraInfo,
     Map<String, YogaSutraModel> sutras = const {},
-  }) : _sutras = sutras;
+  }) : _sutras = sutras{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   YogaSutraState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     YogaSutraInfoModel? yogaSutraInfo,
     Map<String, YogaSutraModel>? sutras,
   }) {
     return YogaSutraState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       yogaSutraInfo: yogaSutraInfo ?? this.yogaSutraInfo,
       sutras: sutras ?? this._sutras,
     );
   }
 
-  factory YogaSutraState.initial() => const YogaSutraState();
+  factory YogaSutraState.initial() => YogaSutraState();
 
   Map<String, YogaSutraModel> get sutras => Map.unmodifiable(_sutras);
 
@@ -54,5 +51,5 @@ class YogaSutraState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, error, yogaSutraInfo, _sutras];
+  List<Object?> get props => [httpStates, yogaSutraInfo, _sutras];
 }

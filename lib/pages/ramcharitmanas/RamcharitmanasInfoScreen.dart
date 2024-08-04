@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,19 +22,19 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasInfo(cancelToken: cancelToken));
+    initRamcharitmanasInfo();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RamcharitmanasBloc, RamcharitmanasState>(
-      buildWhen: (previous, current) => previous.info != current.info,
+      buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         final info = state.info;
         return Scaffold(
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'Ramcharitmanas',
                 style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -61,7 +63,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                                 elevation: 8,
                                 shadowColor: Colors.black,
                                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                child: Text(
+                                child: const Text(
                                   "-: Kands :-",
                                   style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
                                   textAlign: TextAlign.center,
@@ -102,7 +104,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                                 elevation: 8,
                                 shadowColor: Colors.black,
                                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                child: Text(
+                                child: const Text(
                                   "-: Mangalacharan :-",
                                   style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
                                   textAlign: TextAlign.center,
@@ -133,13 +135,17 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                       ],
                     ),
                   )
-                : state.error != null
-                    ? Center(child: Text(state.error!))
+                : state.isError(forr: Httpstates.RAMCHARITMANAS_INFO)
+                    ? Center(child: RetryAgain(onRetry: initRamcharitmanasInfo,error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!))
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                       ));
       },
     );
+  }
+
+  initRamcharitmanasInfo(){
+    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasInfo(cancelToken: cancelToken));
   }
 
   @override

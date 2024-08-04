@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
@@ -57,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text(
+                title: const Text(
                   'Registration',
                   style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
                 ),
@@ -197,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: 18,
                         ),
                         CustomElevatedButton(
-                            onPressed: state.isLoading
+                            onPressed: state.isLoading(forr: Httpstates.REGISTER)
                                 ? null
                                 : () async {
                                     if (formKey.currentState?.validate() == false) {
@@ -221,14 +222,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               'Register',
                               style: TextStyle(color: Colors.white, fontSize: 18),
                             )),
-                        if (state.error != null)
+                        if (state.isError(forr: Httpstates.REGISTER))
                           Text(
-                            state.error!,
+                            state.getError(forr: Httpstates.REGISTER)!,
                             textAlign: TextAlign.center,
                           ),
                         const SizedBox(height: 12),
                         CustomTextButton(
-                            onPressed: state.isLoading
+                            onPressed: state.isLoading(forr: Httpstates.REGISTER)
                                 ? null
                                 : () {
                                     GoRouter.of(context).goNamed(Routing.login);

@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,9 +21,9 @@ class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScr
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('BrahmaSutra | chapter ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+          title: Text('BrahmaSutra | chapter ${widget.chapterNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
           backgroundColor: Theme.of(context).primaryColor,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
           builder: (context, state) {
@@ -43,9 +44,9 @@ class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScr
                               )),
                     ),
                   )
-                : state.error != null
-                    ? Center(child: Text(state.error!))
-                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));
+                : state.isError(forr: Httpstates.BRAHMA_SUTRA_INFO)
+                    ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!))//useless..wont occur
+                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));//wont occur
           },
         ));
   }

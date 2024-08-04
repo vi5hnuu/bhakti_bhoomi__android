@@ -14,7 +14,7 @@ class LoginEvent extends AuthEvent {
 }
 
 class TryAuthenticatingEvent extends AuthEvent {
-  const TryAuthenticatingEvent();
+  const TryAuthenticatingEvent({CancelToken? token});
 }
 
 class RegisterEvent extends AuthEvent {

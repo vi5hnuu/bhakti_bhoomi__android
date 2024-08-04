@@ -1,35 +1,32 @@
 part of 'brahma_sutra_bloc.dart';
 
 @Immutable("instance BrahmaSutraState cannot be modified")
-class BrahmaSutraState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class BrahmaSutraState extends Equatable with WithHttpState {
   final BrahmasutraInfoModel? brahmasutraInfo;
   final Map<String, BrahmaSutraModel> _brahmaSutras; //_uniqueKey,brahmaSutraModel
   static final String defaultLang = "dv";
 
-  const BrahmaSutraState({
-    this.isLoading = true,
-    this.error,
+  BrahmaSutraState({
+    Map<String,HttpState>? httpStates,
     this.brahmasutraInfo,
     Map<String, BrahmaSutraModel> brahmaSutras = const {},
-  }) : _brahmaSutras = brahmaSutras;
+  }) : _brahmaSutras = brahmaSutras{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   BrahmaSutraState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     BrahmasutraInfoModel? brahmasutraInfo,
     Map<String, BrahmaSutraModel>? brahmaSutras,
   }) {
     return BrahmaSutraState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       brahmasutraInfo: brahmasutraInfo ?? this.brahmasutraInfo,
       brahmaSutras: brahmaSutras ?? this._brahmaSutras,
     );
   }
 
-  factory BrahmaSutraState.initial() => const BrahmaSutraState();
+  factory BrahmaSutraState.initial() => BrahmaSutraState();
 
   Map<String, BrahmaSutraModel> get brahmaSutras => Map.unmodifiable(_brahmaSutras);
 
@@ -59,5 +56,5 @@ class BrahmaSutraState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, error, brahmasutraInfo, _brahmaSutras];
+  List<Object?> get props => [httpStates, brahmasutraInfo, _brahmaSutras];
 }

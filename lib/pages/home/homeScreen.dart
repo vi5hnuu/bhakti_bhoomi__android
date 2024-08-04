@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    BlocProvider.of<AuthBloc>(context).add(FetchUserInfoEvent(cancelToken: cancelToken));
     super.initState();
   }
 
@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
         return Scaffold(
           appBar: AppBar(
             title: const Text(
-              'Spirtual Shakti',
+              'Spiritual Shakti',
               style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
             ),
             centerTitle: true,
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
                           CircleAvatar(
                             radius: 48,
                             foregroundImage: (state.userInfo?.profileMeta?.secure_url != null) ? NetworkImage(state.userInfo!.profileMeta!.secure_url) : null,
-                            child: state.isLoading
+                            child: state.isLoading(forr: Httpstates.USER_INFO)
                                 ? SpinKitPulse(
                                     color: Theme.of(context).primaryColor,
                                   )
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
                             Text(
                               '${state.userInfo!.firstName} ${state.userInfo!.lastName}',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                         ],
                       )),

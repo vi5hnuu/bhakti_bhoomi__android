@@ -1,5 +1,7 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
@@ -22,13 +24,13 @@ class ValmikiRamayanShlokScreen extends StatefulWidget {
 class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
   final pageStorageKey = const PageStorageKey('valmikiramayan-kand-sarga-shloks');
   final PageController _controller = PageController(initialPage: 0);
+  int currentPage=0;
   String? lang;
   CancelToken? cancelToken;
-  int shlokNo = 1;
 
   @override
   initState() {
-    cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: this.shlokNo, lang: lang);
+    loadCurrentShlok();
     super.initState();
   }
 
@@ -41,7 +43,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
         return Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
-              title: Text(
+              title: const Text(
                 'Valmiki Ramayan',
                 style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -78,11 +80,11 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                         children: [
                                           Text(
                                             widget.kand,
-                                            style: TextStyle(fontFamily: "Kalam", fontWeight: FontWeight.w700, fontSize: 24),
+                                            style: const TextStyle(fontFamily: "Kalam", fontWeight: FontWeight.w700, fontSize: 24),
                                           ),
                                           Text(
                                             "${widget.sargaNo}",
-                                            style: TextStyle(fontFamily: "Kalam", fontWeight: FontWeight.w700, fontSize: 18),
+                                            style: const TextStyle(fontFamily: "Kalam", fontWeight: FontWeight.w700, fontSize: 18),
                                           )
                                         ],
                                       ),
@@ -100,7 +102,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                         child: Text(
                                           shlok.shlok,
                                           textAlign: TextAlign.justify,
-                                          style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                          style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                                         ),
                                       ),
                                     ),
@@ -117,7 +119,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                 onLike: () => {},
                                 onComment: () => onComment(
                                     context: context,
-                                    commentFormId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage)),
+                                    commentFormId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: currentPage+1, lang: lang ?? RamayanState.defaultLanguage)),
                               ),
                             ),
                             Positioned(
@@ -130,6 +132,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                         builder: (context) {
                                           return Dialog(
                                             elevation: 5,
+                                            backgroundColor: Colors.transparent,
                                             child: FractionallySizedBox(
                                                 heightFactor: 0.7,
                                                 widthFactor: 1,
@@ -140,7 +143,6 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                                           lang = value;
                                                           cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: value);
                                                         }))),
-                                            backgroundColor: Colors.transparent,
                                           );
                                         })
                                   },
@@ -150,25 +152,22 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                     decoration: BoxDecoration(
                                         color: Colors.deepOrange.withOpacity(0.3),
                                         border: Border.all(color: Colors.deepOrange),
-                                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(100), bottomLeft: Radius.circular(100))),
-                                    child: Icon(Icons.translate),
+                                        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(100), bottomLeft: Radius.circular(100))),
+                                    child: const Icon(Icons.translate),
                                   ),
                                 )),
                           ],
                         )
-                      : state.error != null
-                          ? Text(state.error!)
-                          : SpinKitThreeBounce(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                      : state.isError(forr: Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO)
+                          ? RetryAgain(onRetry: loadCurrentShlok, error: state.getError(forr: Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO)!)
+                          : SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                 );
               },
               dragStartBehavior: DragStartBehavior.down,
               onPageChanged: (pageNo) => setState(
                 () {
-                  cancelToken?.cancel("cancelled");
-                  shlokNo = pageNo + 1;
-                  cancelToken = _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: pageNo + 1, lang: lang);
+                  currentPage=pageNo;
+                  _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: pageNo + 1, lang: lang);
                 },
               ),
             ));
@@ -180,10 +179,14 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
-  CancelToken _loadShlok({required String kand, required int sargaNo, required int shlokNo, String? lang}) {
-    CancelToken cancelToken = CancelToken();
+  void loadCurrentShlok() {
+    _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: currentPage+1, lang: lang);
+  }
+
+  _loadShlok({required String kand, required int sargaNo, required int shlokNo, String? lang}) {
+    cancelToken?.cancel("cancelled");
+    cancelToken = CancelToken();
     BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokByKandSargaNoShlokNo(kanda: kand, sargaNo: sargaNo, shlokNo: shlokNo, lang: lang, cancelToken: cancelToken));
-    return cancelToken;
   }
 
   @override

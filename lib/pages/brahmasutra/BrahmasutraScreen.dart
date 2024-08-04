@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -23,11 +24,12 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
   final pageStorageKey = const PageStorageKey('brahmasutra');
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
+  int currentPage=0;
   CancelToken? token;
 
   @override
   initState() {
-    token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: 0, lang: lang);
+    initCurrentSutr();
     super.initState();
   }
 
@@ -39,7 +41,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
           appBar: AppBar(
             title: Text(
               'Brahmasutra | chapter ${widget.chapterNo} | quater | ${widget.quaterNo}',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
@@ -69,8 +71,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                   onSelected: (value) => setState(() {
                                     if (!mounted) return;
                                     lang = value;
-                                    token?.cancel("cancelled");
-                                    token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index, lang: value);
+                                    _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index, lang: value);
                                   }),
                                   label: 'select language',
                                 ),
@@ -84,7 +85,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                               child: Text(
                                                 e.value,
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                                style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                                               ),
                                             ))
                                         .toList(),
@@ -92,7 +93,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                 )),
                                 SizedBox(
                                   height: 24,
-                                  child: (index + 1 < state.totalSutras(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo)!) ? Icon(Icons.drag_handle) : null,
+                                  child: (index + 1 < state.totalSutras(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo)!) ? const Icon(Icons.drag_handle) : null,
                                 ),
                               ],
                             ),
@@ -109,8 +110,8 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                 )),
                           ],
                         )
-                      : state.error != null
-                          ? Center(child: Text(state.error!))
+                      : state.isError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)
+                          ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)!))
                           : Center(
                               child: SpinKitThreeBounce(
                                 color: Theme.of(context).primaryColor,
@@ -120,20 +121,23 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(
-              () {
-                token?.cancel("cancelled");
-                token = _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: pageNo, lang: lang);
+            onPageChanged: (pageNo) => setState(() {
+              currentPage=pageNo;
+              _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: pageNo, lang: lang);
               },
             ),
           )),
     );
   }
 
-  CancelToken _loadSutra({required int chapterNo, required int quaterNo, required int sutraNo, String? lang}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: cancelToken));
-    return cancelToken;
+  void initCurrentSutr() {
+    _loadSutra(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: 0, lang: lang);
+  }
+
+  void _loadSutra({required int chapterNo, required int quaterNo, required int sutraNo, String? lang}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: token));
   }
 
   _showNotImplementedMessage() {

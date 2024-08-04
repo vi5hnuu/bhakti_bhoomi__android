@@ -1,4 +1,6 @@
 import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +20,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
 
   @override
   initState() {
-    BlocProvider.of<ChalisaBloc>(context).add(FetchChalisaById(id: widget.chalisaId, cancelToken: token));
+    initChalisa();
     super.initState();
   }
 
@@ -31,7 +33,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              state.isLoading || state.error != null || state.allChalisa[widget.chalisaId] == null ? 'Aarti' : state.allChalisa[widget.chalisaId]!.title,
+              state.hasHttpState(forr: Httpstates.CHALISA_BY_ID) || state.allChalisa[widget.chalisaId] == null ? 'Aarti' : state.allChalisa[widget.chalisaId]!.title,
               style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
@@ -49,8 +51,8 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
                                 padding: const EdgeInsets.only(bottom: 32),
                                 child: Column(
                                   children: [
-                                    Text(verseGroup.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'NotoSansDevanagari')),
-                                    SizedBox(
+                                    Text(verseGroup.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'NotoSansDevanagari')),
+                                    const SizedBox(
                                       height: 12,
                                     ),
                                     ...verseGroup.verses.map((verse) => Text(verse, style: TextStyle(fontSize: 18)))
@@ -59,12 +61,16 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
                               ))
                           .toList(),
                     )
-                  : state.error != null
-                      ? Center(child: Text(state.error!))
+                  : state.isError(forr: Httpstates.CHALISA_BY_ID)
+                      ? Center(child: RetryAgain(onRetry: initChalisa,error: state.getError(forr: Httpstates.CHALISA_BY_ID)!))
                       : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
         );
       },
     );
+  }
+
+  initChalisa(){
+    BlocProvider.of<ChalisaBloc>(context).add(FetchChalisaById(id: widget.chalisaId, cancelToken: token));
   }
 
   @override

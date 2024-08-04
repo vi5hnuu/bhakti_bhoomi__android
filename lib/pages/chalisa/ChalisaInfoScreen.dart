@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<ChalisaBloc>(context).add(FetchAllChalisaInfo(cancelToken: token));
+    initChalisaInfo();
     super.initState();
   }
 
@@ -34,7 +36,7 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
             appBar: AppBar(
               title: Text(
                 widget.title,
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
@@ -55,11 +57,15 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
                       );
                     },
                   )
-                : state.error != null
-                    ? Center(child: Text(state.error!))
+                : state.isError(forr: Httpstates.ALL_CHALISA_INFO)
+                    ? Center(child: RetryAgain(onRetry: initChalisaInfo,error: state.getError(forr: Httpstates.ALL_CHALISA_INFO)!))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );
+  }
+
+  initChalisaInfo(){
+    BlocProvider.of<ChalisaBloc>(context).add(FetchAllChalisaInfo(cancelToken: token));
   }
 
   @override

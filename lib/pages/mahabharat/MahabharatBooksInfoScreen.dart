@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,22 +23,22 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent(cancelToken: token));
+    initMahabharataInfo();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MahabharatBloc, MahabharatState>(
-        buildWhen: (previous, current) => previous.allBooksInfo != current.allBooksInfo,
+        buildWhen: (previous, current) =>previous != current,
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text(
+                title: const Text(
                   'Mahabharat',
                   style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 backgroundColor: Theme.of(context).primaryColor,
-                iconTheme: IconThemeData(color: Colors.white),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
               body: state.allBooksInfo != null
                   ? SingleChildScrollView(
@@ -54,10 +58,14 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
                             .toList(),
                       ),
                     )
-                  : state.error != null
-                      ? Center(child: Text(state.error!))
-                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
+                  : state.isError(forr: Httpstates.MAHABHARATA_INFO)
+                      ? Center(child: RetryAgain(onRetry: initMahabharataInfo,error: state.getError(forr: Httpstates.MAHABHARATA_INFO)!))
+                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))
             ));
+  }
+
+  initMahabharataInfo(){
+    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent(cancelToken: token));
   }
 
   @override

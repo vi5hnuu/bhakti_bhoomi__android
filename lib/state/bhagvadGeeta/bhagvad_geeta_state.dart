@@ -1,25 +1,23 @@
 part of 'bhagvad_geeta_bloc.dart';
 
 @immutable
-class BhagvadGeetaState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class BhagvadGeetaState extends Equatable with WithHttpState {
   final List<BhagvadGeetaChapterModel>? _bhagvadGeetaChapters; //bhagvadGeetaChapterId,bhagvadGeetaChapter
   final Map<String, BhagvadGeetaShlokModel> _bhagvadGeetaShloks; //bhagvadGeetaShlokId,bhagvadGeetaShlok
 
-  const BhagvadGeetaState({this.isLoading = true, this.error, List<BhagvadGeetaChapterModel>? bhagvadGeetaChapters, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
+  BhagvadGeetaState({Map<String,HttpState>? httpStates, List<BhagvadGeetaChapterModel>? bhagvadGeetaChapters, Map<String, BhagvadGeetaShlokModel> bhagvadGeetaShloks = const {}})
       : _bhagvadGeetaShloks = bhagvadGeetaShloks,
-        _bhagvadGeetaChapters = bhagvadGeetaChapters;
+        _bhagvadGeetaChapters = bhagvadGeetaChapters{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   BhagvadGeetaState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     List<BhagvadGeetaChapterModel>? bhagvadGeetaChapters,
     Map<String, BhagvadGeetaShlokModel>? bhagvadGeetaShloks,
   }) {
     return BhagvadGeetaState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       bhagvadGeetaChapters: bhagvadGeetaChapters ?? this._bhagvadGeetaChapters,
       bhagvadGeetaShloks: bhagvadGeetaShloks ?? this._bhagvadGeetaShloks,
     );
@@ -42,5 +40,5 @@ class BhagvadGeetaState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, error, _bhagvadGeetaChapters, _bhagvadGeetaShloks];
+  List<Object?> get props => [httpStates, _bhagvadGeetaChapters, _bhagvadGeetaShloks];
 }

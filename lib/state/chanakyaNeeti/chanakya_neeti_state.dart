@@ -1,35 +1,32 @@
 part of 'chanakya_neeti_bloc.dart';
 
 @immutable
-class ChanakyaNeetiState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class ChanakyaNeetiState extends Equatable with WithHttpState {
   final List<ChanakyaNeetiChapterInfoModel>? _chaptersInfo; //ChanakyaNeetiChapterInfoModel
   final Map<String, ChanakyaNeetiVerseModel> _verses; //id,ChanakyaNeetiVerseModel
 
-  const ChanakyaNeetiState({
-    this.isLoading = true,
-    this.error,
+  ChanakyaNeetiState({
+    Map<String,HttpState>? httpStates,
     List<ChanakyaNeetiChapterInfoModel>? chaptersInfo,
     Map<String, ChanakyaNeetiVerseModel> verses = const {},
   })  : _verses = verses,
-        _chaptersInfo = chaptersInfo;
+        _chaptersInfo = chaptersInfo{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   ChanakyaNeetiState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     List<ChanakyaNeetiChapterInfoModel>? chaptersInfo,
     Map<String, ChanakyaNeetiVerseModel>? verses,
   }) {
     return ChanakyaNeetiState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       chaptersInfo: chaptersInfo ?? this._chaptersInfo,
       verses: verses ?? this._verses,
     );
   }
 
-  factory ChanakyaNeetiState.initial() => const ChanakyaNeetiState();
+  factory ChanakyaNeetiState.initial() => ChanakyaNeetiState();
 
   List<ChanakyaNeetiChapterInfoModel>? get allChaptersInfo => _chaptersInfo != null ? List.unmodifiable(_chaptersInfo) : null;
 
@@ -48,5 +45,5 @@ class ChanakyaNeetiState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, error, _chaptersInfo, _verses];
+  List<Object?> get props => [httpStates, _chaptersInfo, _verses];
 }

@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
@@ -21,11 +22,12 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
   final pageStorageKey = const PageStorageKey('chanakya-neeti_screen');
   final PageController _controller = PageController(initialPage: 0);
   CancelToken? token;
+  int currentPage=0;
 
   @override
   initState() {
+    loadCurrentVerse();
     super.initState();
-    token = _loadVerse(chapterNo: widget.chapterNo, verseNo: 1);
   }
 
   @override
@@ -33,9 +35,9 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     return BlocBuilder<ChanakyaNeetiBloc, ChanakyaNeetiState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: Text('Chanakya Neeti | Chapter No - ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+            title: Text('Chanakya Neeti | Chapter No - ${widget.chapterNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
             backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -72,31 +74,34 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                             Positioned(
                               top: 15,
                               right: 15,
-                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
+                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
                             )
                           ],
                         ),
                       )
-                    : state.error != null
-                        ? Center(child: Text(state.error!))
+                    : state.isError(forr: Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)
+                        ? Center(child: Text(state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!))
                         : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(
-              () {
-                token?.cancel("cancelled");
-                token = _loadVerse(chapterNo: widget.chapterNo, verseNo: pageNo + 1);
+            onPageChanged: (pageNo) => setState(() {
+                currentPage=pageNo;
+                _loadVerse(chapterNo: widget.chapterNo, verseNo: pageNo + 1);
               },
             ),
           )),
     );
   }
 
-  CancelToken _loadVerse({required int chapterNo, required int verseNo}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiVerseByChapterNoVerseNo(chapterNo: chapterNo, verseNo: verseNo, cancelToken: cancelToken));
-    return cancelToken;
+  void loadCurrentVerse() {
+    _loadVerse(chapterNo: widget.chapterNo, verseNo: currentPage+1);
+  }
+
+  void _loadVerse({required int chapterNo, required int verseNo}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiVerseByChapterNoVerseNo(chapterNo: chapterNo, verseNo: verseNo, cancelToken: token));
   }
 
   _showNotImplementedMessage() {
@@ -109,4 +114,5 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     token?.cancel("cancelled");
     super.dispose();
   }
+
 }

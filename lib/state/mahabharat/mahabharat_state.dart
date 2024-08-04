@@ -1,29 +1,26 @@
 part of 'mahabharat_bloc.dart';
 
 @immutable
-class MahabharatState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class MahabharatState extends Equatable with WithHttpState{
   final List<MahabharatBookInfoModel>? _booksInfo; //bookInfo
   final Map<String, MahabharatShlokModel> _shloks; //bookNo_chapterNo_shlokNo,shlokInfo
 
   MahabharatState({
-    this.isLoading = true,
-    this.error,
+    Map<String,HttpState>? httpStates,
     List<MahabharatBookInfoModel>? bookInfo,
     Map<String, MahabharatShlokModel> shloks = const {},
   })  : _shloks = shloks,
-        _booksInfo = bookInfo;
+        _booksInfo = bookInfo{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   MahabharatState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     List<MahabharatBookInfoModel>? bookInfo,
     Map<String, MahabharatShlokModel>? shloks,
   }) {
     return MahabharatState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       bookInfo: bookInfo ?? this._booksInfo,
       shloks: shloks ?? this._shloks,
     );
@@ -64,5 +61,5 @@ class MahabharatState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, error, _booksInfo, _shloks];
+  List<Object?> get props => [httpStates, _booksInfo, _shloks];
 }

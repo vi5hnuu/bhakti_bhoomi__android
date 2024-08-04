@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
@@ -31,17 +32,17 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
-        if (state.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.error!, color: Colors.red));
+        if (state.isError(forr: Httpstates.LOGIN)) {
+          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.getError(forr: Httpstates.LOGIN)!, color: Colors.red));
         }
-        if (state.isAuthenticated) {
+        if (state.isAuthtenticated) {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "logged in successfully", color: Colors.green));
-          context.goNamed(Routing.home);
+          context.replaceNamed(Routing.home);
         }
       },
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Login',
             style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
           ),
@@ -50,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 1,
           shadowColor: Colors.grey,
         ),
-        body: Container(
+        body: SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: Center(
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
+                        padding: const EdgeInsets.symmetric(vertical: 24),
                         child: Text(
                           "Spirtual Shakti",
                           textAlign: TextAlign.center,
@@ -96,17 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         autoCorrect: false,
                       ),
                       const SizedBox(height: 18),
-                      state.isLoading
+                      state.isLoading(forr: Httpstates.LOGIN)
                           ? SpinKitThreeBounce(
                               color: Theme.of(context).primaryColor,
                               size: 32,
                             )
                           : CustomElevatedButton(
-                              child: const Text(
-                                'Log-in',
-                                style: const TextStyle(color: Colors.white, fontSize: 18),
-                              ),
-                              onPressed: state.isLoading
+                              onPressed: state.isLoading(forr: Httpstates.LOGIN)
                                   ? null
                                   : () {
                                       if (!formKey.currentState!.validate()) return;
@@ -117,17 +114,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                           cancelToken: cancelToken,
                                         ),
                                       );
-                                    }),
+                                    },
+                              child: const Text(
+                                'Log-in',
+                                style: TextStyle(color: Colors.white, fontSize: 18),
+                              )),
                       const SizedBox(height: 14),
-                      CustomTextButton(child: Text('Sign-up instead'), onPressed: state.isLoading ? null : () => context.goNamed(Routing.register)),
-                      CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.forgotPassword), child: Text('forgot-password')),
+                      CustomTextButton(onPressed: state.isLoading(forr: Httpstates.LOGIN) ? null : () => context.goNamed(Routing.register), child: const Text('Sign-up instead')),
+                      CustomTextButton(onPressed: state.isLoading(forr: Httpstates.LOGIN) ? null : () => context.goNamed(Routing.forgotPassword), child: const Text('forgot-password')),
                       CustomTextButton(
-                          onPressed: state.isLoading
+                          onPressed: state.isLoading(forr: Httpstates.LOGIN)
                               ? null
                               : () {
                                   GoRouter.of(context).goNamed(Routing.verify);
                                 },
-                          child: Text('verify account'))
+                          child: const Text('verify account'))
                     ],
                   ),
                 ),

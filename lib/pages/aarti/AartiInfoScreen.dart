@@ -44,7 +44,6 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: BlocBuilder<AartiBloc, AartiState>(builder: (context, state) {
-        final httpState = state.httpState[Httpstates.AARTI_INFO];
         return state.aartisInfo.isNotEmpty
             ? ListView.builder(
                 itemCount: state.aartisInfo.length,
@@ -62,9 +61,9 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
                   );
                 })
             : Center(
-                child: httpState?.error != null
-                    ? RetryAgain(onRetry: initAartiInfo,error: httpState!.error!)
-                    : (httpState?.loading == true
+                child: state.isError(forr: Httpstates.AARTI_INFO)
+                    ? RetryAgain(onRetry: initAartiInfo,error: state.getError(forr:  Httpstates.AARTI_INFO)!)
+                    : (state.isLoading(forr: Httpstates.AARTI_INFO)
                         ? SpinKitThreeBounce(
                             color: Theme.of(context).primaryColor)
                         : const Text("No Aarti found.")));

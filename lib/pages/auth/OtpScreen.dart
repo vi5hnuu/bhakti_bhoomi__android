@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
@@ -119,7 +120,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             controller: confirmPasswordCntrl,
                             obscureText: true,
                             labelText: "confirm password",
-                            suffixIcon: Icon(Icons.password),
+                            suffixIcon: const Icon(Icons.password),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter valid confirm password';
@@ -130,7 +131,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           height: 18,
                         ),
                         CustomElevatedButton(
-                          onPressed: state.isLoading
+                          onPressed: state.isLoading(forr: Httpstates.RESET_PASSWORD)
                               ? null
                               : () async {
                                   if (formKey.currentState?.validate() == false || _Otpcontrollers.where((otpCntrl) => otpCntrl.value.text.isEmpty).isNotEmpty) {
@@ -143,21 +144,21 @@ class _OtpScreenState extends State<OtpScreen> {
                                       confirmPassword: confirmPasswordCntrl.text,
                                       cancelToken: cancelToken));
                                 },
-                          child: Text(
+                          child: const Text(
                             'Update',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.error != null) Text(state.error!),
-                        if (passwordCntrl.value.text != confirmPasswordCntrl.value.text) Text("new password should be equal to confirm password"),
+                        if (state.isError(forr: Httpstates.RESET_PASSWORD)) Text(state.getError(forr: Httpstates.RESET_PASSWORD)!),
+                        if (passwordCntrl.value.text != confirmPasswordCntrl.value.text) const Text("new password should be equal to confirm password"),
                         const SizedBox(height: 12),
                         CustomTextButton(
-                            onPressed: state.isLoading
+                            onPressed: state.isLoading(forr: Httpstates.RESET_PASSWORD)
                                 ? null
                                 : () {
                                     GoRouter.of(context).goNamed(Routing.login);
                                   },
-                            child: Text('Sign-in instead'))
+                            child: const Text('Sign-in instead'))
                       ],
                     ),
                   ),

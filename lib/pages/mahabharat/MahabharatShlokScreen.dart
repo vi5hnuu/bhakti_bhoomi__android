@@ -1,5 +1,7 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
@@ -21,11 +23,12 @@ class MahabharatShlokScreen extends StatefulWidget {
 class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
   final pageStorageKey = const PageStorageKey('mahabharat_shlok_screen');
   final PageController _controller = PageController(initialPage: 0);
+  int currentPage=0;
   CancelToken? token;
 
   @override
   initState() {
-    token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: 1);
+    loadCurrentShlok();
     super.initState();
   }
 
@@ -75,30 +78,34 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                             Positioned(
                               top: 15,
                               right: 15,
-                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
+                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
                             )
                           ],
                         ),
                       )
-                    : state.error != null
-                        ? Center(child: Text(state.error!))
+                    : state.isError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)
+                        ? Center(child: RetryAgain(onRetry: loadCurrentShlok,error: state.getError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)!))
                         : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },
             dragStartBehavior: DragStartBehavior.down,
             onPageChanged: (pageNo) => setState(() {
               if (!mounted) return;
-              token?.cancel("cancelled");
-              token = loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
+              currentPage=pageNo;
+              loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
             }),
           )),
     );
   }
 
-  CancelToken loadShlok({required int bookNo, required int chapterNo, required int shlokNo}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: cancelToken));
-    return cancelToken;
+  loadCurrentShlok(){
+    loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: currentPage+1);
+  }
+
+  void loadShlok({required int bookNo, required int chapterNo, required int shlokNo}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: token));
   }
 
   _showNotImplementedMessage() {

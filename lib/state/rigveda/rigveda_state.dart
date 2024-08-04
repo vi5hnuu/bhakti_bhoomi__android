@@ -1,28 +1,25 @@
 part of 'rigveda_bloc.dart';
 
 @immutable
-class RigvedaState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class RigvedaState extends Equatable  with WithHttpState{
   final RigvedaInfoModel? rigvedaInfo;
   final Map<String, RigvedaSuktaModel> _suktas; //verseId,verse
 
   RigvedaState({
-    this.isLoading = true,
-    this.error,
+    Map<String,HttpState>? httpStates,
     this.rigvedaInfo,
     Map<String, RigvedaSuktaModel> suktas = const {},
-  }) : _suktas = suktas;
+  }) : _suktas = suktas{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   RigvedaState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     RigvedaInfoModel? rigvedaInfo,
     Map<String, RigvedaSuktaModel>? suktas,
   }) {
     return RigvedaState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       rigvedaInfo: rigvedaInfo ?? this.rigvedaInfo,
       suktas: suktas ?? this._suktas,
     );
@@ -45,5 +42,5 @@ class RigvedaState extends Equatable {
   Map<String, RigvedaSuktaModel> get allSuktas => Map.unmodifiable(_suktas);
 
   @override
-  List<Object?> get props => [isLoading, error, rigvedaInfo, _suktas];
+  List<Object?> get props => [httpStates, rigvedaInfo, _suktas];
 }

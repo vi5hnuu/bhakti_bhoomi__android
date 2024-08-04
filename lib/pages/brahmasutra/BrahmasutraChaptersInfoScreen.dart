@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
 
   @override
   void initState() {
-    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraInfo(cancelToken: cancelToken));
+    initBrahmaSutraInfo();
     super.initState();
   }
 
@@ -28,9 +30,9 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('BrahmaSutra', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+          title: const Text('BrahmaSutra', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
           backgroundColor: Theme.of(context).primaryColor,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<BrahmaSutraBloc, BrahmaSutraState>(
           builder: (context, state) {
@@ -51,11 +53,15 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
                               )),
                     ),
                   )
-                : state.error != null
-                    ? Center(child: Text(state.error!))
+                : state.isError(forr: Httpstates.BRAHMA_SUTRA_INFO)
+                    ? Center(child: RetryAgain(onRetry: initBrahmaSutraInfo,error: state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!,))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));
           },
         ));
+  }
+
+  initBrahmaSutraInfo(){
+    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraInfo(cancelToken: cancelToken));
   }
 
   @override

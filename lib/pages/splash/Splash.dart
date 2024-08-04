@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,12 +17,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  Timer? timer;
 
   @override
   void initState() {
-    timer =
-        Timer(const Duration(seconds: 3), () => BlocProvider.of<AuthBloc>(context).state.isAuthenticated ? GoRouter.of(context).goNamed(Routing.home) : GoRouter.of(context).goNamed(Routing.login));
     BlocProvider.of<AuthBloc>(context).add(const TryAuthenticatingEvent());
     super.initState();
   }
@@ -30,9 +28,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state.isLoading) return;
-        if (timer != null && timer!.isActive) return;
-        state.isAuthenticated ? GoRouter.of(context).goNamed(Routing.home) : GoRouter.of(context).goNamed(Routing.login);
+        if (state.isLoading(forr: Httpstates.TRY_AUTH)) return;
+        if(state.isError(forr: Httpstates.TRY_AUTH) || !state.isAuthtenticated){
+          GoRouter.of(context).replaceNamed(Routing.login);
+        }
+        GoRouter.of(context).replaceNamed(Routing.home);
       },
       listenWhen: (previous, current) => previous != current,
       buildWhen: (previous, current) => false,
@@ -49,10 +49,20 @@ class _SplashScreenState extends State<SplashScreen> {
                 fit: BoxFit.fill,
               ),
             ),
-            Text(
-              "Spirtual Shakti",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
+            Column(
+              children: [
+                Text(
+                  "Spiritual Shakti",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  "initializing...",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: "PermanentMarker", fontSize: 12, color: Theme.of(context).primaryColor),
+                )
+              ],
             ),
           ],
         ),
@@ -62,7 +72,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    timer?.cancel();
     super.dispose();
   }
 }

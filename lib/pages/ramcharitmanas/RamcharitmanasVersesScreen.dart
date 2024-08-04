@@ -1,6 +1,8 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
@@ -23,12 +25,12 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
   CancelToken? token;
-  int verseNo = 1;
+  int currentPage = 0;
 
   @override
   initState() {
+    initCurrentVerse();
     super.initState();
-    token = _loadVerse(kand: widget.kand, verseNo: this.verseNo);
   }
 
   @override
@@ -39,7 +41,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
           appBar: AppBar(
             title: Text(
               'Ramcharitmanas | ${widget.kand} Verses',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
@@ -70,22 +72,21 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                     onSelected: (value) => setState(() {
                                       if (!mounted) return;
                                       lang = value;
-                                      token?.cancel("cancelled");
-                                      token = _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
+                                      _loadVerse(kand: widget.kand, verseNo: index + 1, lang: value);
                                     }),
                                   ),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Expanded(
                                       child: SingleChildScrollView(
                                     child: Text(
                                       verse.text,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                      style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
                                     ),
                                   )),
                                   SizedBox(
                                     height: 24,
-                                    child: verseNo < state.totalVersesInKand(widget.kand)! ? Icon(Icons.drag_handle) : null,
+                                    child: (currentPage+1) < state.totalVersesInKand(widget.kand)! ? const Icon(Icons.drag_handle) : null,
                                   ),
                                 ],
                               ),
@@ -101,12 +102,12 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                               Positioned(
                                 top: 64,
                                 right: 7,
-                                child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: Icon(Icons.report_problem_outlined, size: 24)),
+                                child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
                               )
                             ],
                           )
-                        : state.error != null
-                            ? Center(child: Text(state.error!))
+                        : state.isError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)
+                            ? Center(child: RetryAgain(onRetry: initCurrentVerse,error: state.getError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)!))
                             : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
               );
             },
@@ -116,19 +117,23 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
     );
   }
 
-  CancelToken _loadVerse({required String kand, required int verseNo, String? lang}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasVerseByKandaAndVerseNo(kanda: kand, verseNo: verseNo, lang: lang, cancelToken: cancelToken));
-    return cancelToken;
+
+  void initCurrentVerse() {
+    _loadVerse(kand: widget.kand, verseNo: currentPage+1);
+  }
+
+  void _loadVerse({required String kand, required int verseNo, String? lang}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasVerseByKandaAndVerseNo(kanda: kand, verseNo: verseNo, lang: lang, cancelToken: token));
   }
 
   _onPageChanged(pageNo) {
     setState(
       () {
         if (!mounted) return;
-        token?.cancel("cancelled");
-        verseNo = pageNo + 1;
-        token = _loadVerse(kand: widget.kand, verseNo: pageNo + 1, lang: lang);
+        currentPage = pageNo;
+        _loadVerse(kand: widget.kand, verseNo: pageNo + 1, lang: lang);
       },
     );
   }

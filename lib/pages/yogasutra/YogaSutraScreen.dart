@@ -1,3 +1,4 @@
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
@@ -22,13 +23,14 @@ class YogaSutraScreen extends StatefulWidget {
 class _YogaSutraScreenState extends State<YogaSutraScreen> {
   final pageStorageKey = const PageStorageKey('ramcharitmanas-kand-verses');
   final PageController _controller = PageController(initialPage: 0);
+  int currentPage=0;
   String? lang;
   CancelToken? token;
 
   @override
   initState() {
+    loadCurrentSutra();
     super.initState();
-    token = _loadSutra(chapterNo: widget.chapterNo, sutraNo: 1, lang: lang);
   }
 
   @override
@@ -39,7 +41,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
           appBar: AppBar(
             title: Text(
               'YogaSutra | chapter No ${widget.chapterNo}',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
@@ -69,8 +71,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                     onSelected: (value) => setState(() {
                                       if (!mounted) return;
                                       lang = value;
-                                      token?.cancel("cancelled");
-                                      token = token = _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
+                                      _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
                                     }),
                                     label: 'select language',
                                   ),
@@ -93,9 +94,9 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                   )),
                             ],
                           )
-                        : state.error != null
+                        : state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)
                             ? Center(
-                                child: Text(state.error!),
+                                child: Text(state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!),
                               )
                             : Center(
                                 child: SpinKitThreeBounce(
@@ -104,11 +105,9 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
               );
             },
             dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(
-              () {
-                print("token $token");
-                token?.cancel("cancelled");
-                token = _loadSutra(chapterNo: widget.chapterNo, sutraNo: pageNo + 1, lang: lang);
+            onPageChanged: (pageNo) => setState(() {
+                currentPage=pageNo;
+                _loadSutra(chapterNo: widget.chapterNo, sutraNo: pageNo + 1, lang: lang);
               },
             ),
           )),
@@ -119,10 +118,14 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
     ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
   }
 
-  CancelToken _loadSutra({required int chapterNo, required int sutraNo, String? lang}) {
-    CancelToken cancelToken = CancelToken();
-    BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraByChapterNoSutraNo(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang, cancelToken: cancelToken));
-    return cancelToken;
+  void loadCurrentSutra() {
+    _loadSutra(chapterNo: widget.chapterNo, sutraNo: currentPage+1, lang: lang);
+  }
+
+  void _loadSutra({required int chapterNo, required int sutraNo, String? lang}) {
+    token?.cancel("cancelled");
+    token = CancelToken();
+    BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraByChapterNoSutraNo(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang, cancelToken: token));
   }
 
   @override

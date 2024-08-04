@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<RigvedaBloc>(context).add(FetchRigvedaInfo(cancelToken: cancelToken));
+    initRigvedaInfo();
     super.initState();
   }
 
@@ -31,7 +33,7 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'RigVeda',
               style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
             ),
@@ -48,8 +50,8 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
                                 itemNo: index + 1, onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas, pathParameters: {'mandala': '${index + 1}'}), text: "mandala"),
                           )),
                 )
-              : state.error != null
-                  ? Center(child: Text(state.error!))
+              : state.isError(forr: Httpstates.RIGVEDA_INFO)
+                  ? Center(child: RetryAgain(onRetry: initRigvedaInfo,error: state.getError(forr: Httpstates.RIGVEDA_INFO)!))
                   : Center(
                       child: SpinKitThreeBounce(
                         color: Theme.of(context).primaryColor,
@@ -58,6 +60,10 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
         );
       },
     );
+  }
+
+  initRigvedaInfo(){
+    BlocProvider.of<RigvedaBloc>(context).add(FetchRigvedaInfo(cancelToken: cancelToken));
   }
 
   @override

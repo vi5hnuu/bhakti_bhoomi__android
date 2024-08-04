@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +31,7 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
   @override
   void initState() {
     maxPageNo = BlocProvider.of<RamayanBloc>(context).state.maxPageNo(kand: widget.kand);
-    _loadPage(pageNo: pageNo);
+    loadCurrentPage();
     _scrollController.addListener(_loadNextPage);
     super.initState();
   }
@@ -43,7 +45,7 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
             appBar: AppBar(
               title: Text(
                 'Ramcharitmanas | ${widget.kand} Sargas',
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
@@ -61,18 +63,17 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
                             onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok, pathParameters: {'kand': widget.kand, 'sargaNo': '${index + 1}'}),
                             text: 'Sarga - Total verses ${sargaInfo.totalShloks.values.reduce(min)}'),
                       )
-                    : state.error != null
-                        ? Center(child: Text(state.error!))
-                        : Center(
-                            child: SpinKitThreeBounce(
-                              color: Theme.of(context).primaryColor,
-                              size: 24,
-                            ),
-                          );
+                    : Center(child: state.isError(forr: Httpstates.RAMAYANA_SARGAS_INFO)
+                    ? RetryAgain(onRetry: loadCurrentPage, error: state.getError(forr: Httpstates.RAMAYANA_SARGAS_INFO)!)
+                    : Padding(padding: const EdgeInsets.symmetric(vertical: 20),child: SpinKitThreeBounce(color: Theme.of(context).primaryColor, size: 24)));
               },
             ));
       },
     );
+  }
+
+  loadCurrentPage(){
+    _loadPage(pageNo: pageNo);
   }
 
   int _itemsCountUntillPage({required RamayanInfoModel ramayanInfo}) {

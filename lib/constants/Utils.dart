@@ -9,7 +9,7 @@ class Utils {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.sendTimeout:
-        return "please check your internet connection.";
+        return "Please check your internet connection.";
       case DioExceptionType.badResponse:
         return e.response?.data?['message'] ?? 'something went wrong';
       default:

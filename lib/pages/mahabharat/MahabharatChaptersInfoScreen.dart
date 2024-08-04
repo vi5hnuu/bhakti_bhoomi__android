@@ -14,9 +14,9 @@ class MahabharatChaptersInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Mahabharat | Book No - ${bookNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold)),
+          title: Text('Mahabharat | Book No - ${bookNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold)),
           backgroundColor: Theme.of(context).primaryColor,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<MahabharatBloc, MahabharatState>(
           builder: (context, state) => Padding(

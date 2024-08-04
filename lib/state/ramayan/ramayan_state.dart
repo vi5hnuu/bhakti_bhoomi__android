@@ -1,9 +1,7 @@
 part of 'ramayan_bloc.dart';
 
 @immutable
-class RamayanState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class RamayanState extends Equatable with WithHttpState {
   final RamayanInfoModel? ramayanInfo;
   final Map<String, RamayanSargaInfoModel> _sargaInfo; //_uniqueKey,sargaInfo
   final Map<String, RamayanShlokModel> _shloks; //uniqueKey,shlok
@@ -12,21 +10,21 @@ class RamayanState extends Equatable {
   final Map<String, bool> isPageLoaded; //kand_pageNo, isLoaded
 
   RamayanState(
-      {this.isLoading = true,
-      this.error,
-      Map<String, bool> loadedPages = const {},
+      {    Map<String,HttpState>? httpStates,
+        Map<String, bool> loadedPages = const {},
       this.ramayanInfo,
       Map<String, RamayanSargaInfoModel> sargaInfo = const {},
       Map<String, RamayanShlokModel> shloks = const {}})
       : _shloks = shloks,
         _sargaInfo = sargaInfo,
-        isPageLoaded = loadedPages;
+        isPageLoaded = loadedPages{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   RamayanState copyWith(
-      {bool? isLoading, String? error, Map<String, bool>? loadedPages, RamayanInfoModel? ramayanInfo, Map<String, RamayanSargaInfoModel>? sargaInfo, Map<String, RamayanShlokModel>? shloks}) {
+      {    Map<String, HttpState>? httpStates, Map<String, bool>? loadedPages, RamayanInfoModel? ramayanInfo, Map<String, RamayanSargaInfoModel>? sargaInfo, Map<String, RamayanShlokModel>? shloks}) {
     return RamayanState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       ramayanInfo: ramayanInfo ?? this.ramayanInfo,
       shloks: shloks ?? _shloks,
       loadedPages: loadedPages ?? isPageLoaded,
@@ -104,8 +102,7 @@ class RamayanState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
+        httpStates,
         ramayanInfo,
         _sargaInfo,
         _shloks,

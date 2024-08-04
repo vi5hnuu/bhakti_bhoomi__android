@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<MantraBloc>(context).add(FetchAllMantraInfo(cancelToken: token));
+    initAllMantraInfo();
     super.initState();
   }
 
@@ -34,7 +36,7 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
             appBar: AppBar(
               title: Text(
                 widget.title,
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
@@ -54,11 +56,15 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
                         ),
                       );
                     })
-                : state.error != null
-                    ? Center(child: Text(state.error!))
+                : state.isError(forr: Httpstates.ALL_MANTRA_INFO)
+                    ? Center(child: RetryAgain(onRetry: initAllMantraInfo,error: state.getError(forr: Httpstates.ALL_MANTRA_INFO)!))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );
+  }
+
+  initAllMantraInfo(){
+    BlocProvider.of<MantraBloc>(context).add(FetchAllMantraInfo(cancelToken: token));
   }
 
   @override

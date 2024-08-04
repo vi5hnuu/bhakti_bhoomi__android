@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/models/mantra/MantraModel.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +20,7 @@ class _MantraScreenState extends State<MantraScreen> {
 
   @override
   initState() {
-    BlocProvider.of<MantraBloc>(context).add(FetchMantraById(id: widget.mantraId, cancelToken: token));
+    initMantraById();
     super.initState();
   }
 
@@ -31,11 +33,11 @@ class _MantraScreenState extends State<MantraScreen> {
         return Scaffold(
             appBar: AppBar(
               title: Text(
-                state.isLoading || state.error != null || mantra == null ? 'Mantra' : mantra.title,
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+                state.hasHttpState(forr: Httpstates.MANTRA_BY_ID) || mantra == null ? 'Mantra' : mantra.title,
+                style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,
-              iconTheme: IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: mantra != null
                 ? SingleChildScrollView(
@@ -46,9 +48,9 @@ class _MantraScreenState extends State<MantraScreen> {
                       ),
                     ),
                   )
-                : state.error != null
-                    ? Center(child: Text(state.error!))
-                    : Center(child: CircularProgressIndicator()));
+                : state.isError(forr: Httpstates.MANTRA_BY_ID)
+                    ? Center(child: RetryAgain(onRetry: initMantraById,error: state.getError(forr: Httpstates.MANTRA_BY_ID)!))
+                    : const Center(child: CircularProgressIndicator()));
       },
     );
   }
@@ -65,7 +67,7 @@ class _MantraScreenState extends State<MantraScreen> {
                   collapsedTextColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  title: Text(mantra.title, style: TextStyle(color: Colors.white)),
+                  title: Text(mantra.title, style: const TextStyle(color: Colors.white)),
                   textColor: Colors.white,
                   iconColor: Colors.white,
                   collapsedIconColor: Colors.white,
@@ -92,29 +94,29 @@ class _MantraScreenState extends State<MantraScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Description', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
+        const Text('Description', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
         if (description['hi'] != null && description['hi']!.isNotEmpty) ...[
-          Text(
+          const Text(
             'Hindi : ',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 7),
           Text(
             description['hi']!,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           )
         ],
         if (_hasDescription(description)) const SizedBox(height: 12),
         if (description['eng'] != null && description['eng']!.isNotEmpty) ...[
-          Text(
+          const Text(
             'English : ',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 7),
           Text(
             description['eng']!,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           )
         ]
       ],
@@ -129,34 +131,38 @@ class _MantraScreenState extends State<MantraScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Translations', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 8),
+        const Text('Translations', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
         if (translations['hi'] != null && translations['hi']!.isNotEmpty) ...[
-          Text(
+          const Text(
             'Hindi : ',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 7),
           Text(
             translations['hi']!.join(''),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           )
         ],
         const SizedBox(height: 12),
         if (translations['eng'] != null && translations['eng']!.isNotEmpty) ...[
-          Text(
+          const Text(
             'English : ',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 7),
           Text(
             translations['eng']!.join(''),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           )
         ]
       ],
     );
     ;
+  }
+
+  initMantraById(){
+    BlocProvider.of<MantraBloc>(context).add(FetchMantraById(id: widget.mantraId, cancelToken: token));
   }
 
   @override

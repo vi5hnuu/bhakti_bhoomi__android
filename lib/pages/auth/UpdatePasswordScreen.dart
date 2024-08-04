@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -39,14 +40,14 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
         },
         builder: (context, state) => Scaffold(
               appBar: AppBar(
-                title: Text(
+                title: const Text(
                   'Update Password',
                   style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 centerTitle: true,
                 elevation: 10,
                 backgroundColor: Theme.of(context).primaryColor,
-                iconTheme: IconThemeData(color: Colors.white),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -66,7 +67,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
@@ -78,7 +79,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomInputField(
@@ -90,11 +91,11 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                               }
                               return null;
                             }),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         CustomElevatedButton(
-                          onPressed: state.isLoading
+                          onPressed: state.isLoading(forr: Httpstates.UPDATE_PASSWORD)
                               ? null
                               : () async {
                                   if (formKey.currentState?.validate() == false) {
@@ -104,12 +105,12 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                                   BlocProvider.of<AuthBloc>(context).add(UpdatePasswordEvent(
                                       oldPassword: oldPasswordCntrl.value.text, newPassword: newPasswordCntrl.value.text, confirmPassword: confirmPasswordCntrl.value.text, cancelToken: cancelToken));
                                 },
-                          child: Text(
+                          child: const Text(
                             'Update Password',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.error != null) Text(state.error!),
+                        if (state.isError(forr: Httpstates.UPDATE_PASSWORD)) Text(state.getError(forr: Httpstates.UPDATE_PASSWORD)!),
                       ],
                     ),
                   ),

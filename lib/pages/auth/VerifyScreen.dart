@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
@@ -31,13 +32,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verified successfully", color: Colors.green));
           context.goNamed(Routing.login);
         }
-        if (state.error != null) {
+        if (state.isError(forr: Httpstates.REVERIFY)) {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verification failed", color: Colors.red));
         }
       },
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'verify',
             style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
           ),
@@ -66,13 +67,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   ),
                   const SizedBox(height: 18),
                   CustomElevatedButton(
-                      onPressed: state.isLoading ? null : () => BlocProvider.of<AuthBloc>(context).add(ReVerifyEvent(email: this.emailCntrl.value.text, cancelToken: cancelToken)),
+                      onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => BlocProvider.of<AuthBloc>(context).add(ReVerifyEvent(email: this.emailCntrl.value.text, cancelToken: cancelToken)),
                       child: const Text(
                         "send verification email",
                         style: TextStyle(color: Colors.white),
                       )),
                   const SizedBox(height: 12),
-                  CustomTextButton(onPressed: state.isLoading ? null : () => context.goNamed(Routing.login), child: const Text('login instead')),
+                  CustomTextButton(onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => context.goNamed(Routing.login), child: const Text('login instead')),
                 ],
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
 
   @override
   void initState() {
-    BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraInfo(cancelToken: token));
+    initYogaSutraInfo();
     super.initState();
   }
 
@@ -32,7 +34,7 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
         final yogaSutraInfo = state.yogaSutraInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'YogaSutra',
               style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
             ),
@@ -52,13 +54,17 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
                             ),
                           )),
                 )
-              : state.error != null
+              : state.isError(forr: Httpstates.YOGASUTRA_INFO)
                   ? Center(
-                      child: Text(state.error!),
+                      child: RetryAgain(onRetry: initYogaSutraInfo,error: state.getError(forr: Httpstates.YOGASUTRA_INFO)!),
                     )
                   : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
         );
       },
     );
+  }
+
+  initYogaSutraInfo(){
+    BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraInfo(cancelToken: token));
   }
 }

@@ -1,29 +1,26 @@
 part of 'mantra_bloc.dart';
 
 @immutable
-class MantraState extends Equatable {
-  final bool isLoading;
-  final String? error;
+class MantraState extends Equatable with WithHttpState {
   final Map<String, MantraInfoModel>? _mantraInfo; //mantraInfo
   final Map<String, MantraGroupModel> _mantras; //mantraId,mantra
 
   MantraState({
-    this.isLoading = true,
-    this.error,
+    Map<String,HttpState>? httpStates,
     Map<String, MantraInfoModel>? mantraInfo,
     Map<String, MantraGroupModel> mantras = const {},
   })  : _mantras = mantras,
-        _mantraInfo = mantraInfo;
+        _mantraInfo = mantraInfo{
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
   MantraState copyWith({
-    bool? isLoading,
-    String? error,
+    Map<String, HttpState>? httpStates,
     Map<String, MantraInfoModel>? mantraInfo,
     Map<String, MantraGroupModel>? mantras,
   }) {
     return MantraState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+      httpStates: httpStates ?? this.httpStates,
       mantraInfo: mantraInfo ?? this._mantraInfo,
       mantras: mantras ?? this._mantras,
     );
@@ -42,5 +39,5 @@ class MantraState extends Equatable {
   MapEntry<String, MantraGroupModel> getMantraEntry({required MantraGroupModel mantra}) => MapEntry(mantra.id, mantra);
 
   @override
-  List<Object?> get props => [isLoading, error, _mantraInfo, _mantras];
+  List<Object?> get props => [httpStates, _mantraInfo, _mantras];
 }

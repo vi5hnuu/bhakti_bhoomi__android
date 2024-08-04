@@ -1,5 +1,7 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanInfo(cancelToken: token));
+    initRamayanaInfo();
     super.initState();
   }
 
@@ -33,7 +35,7 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
         final ramayanInfo = state.ramayanInfo;
         return Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'Valmiki Ramayan',
               style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -54,9 +56,9 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
                               ),
                             ))
                         .toList())
-                : state.error != null
+                : state.isError(forr: Httpstates.RAMAYANA_INFO)
                     ? Center(
-                        child: Text(state.error!),
+                        child: RetryAgain(onRetry: initRamayanaInfo,error: state.getError(forr: Httpstates.RAMAYANA_INFO)!),
                       )
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
@@ -65,6 +67,10 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
         );
       },
     );
+  }
+
+  initRamayanaInfo(){
+    BlocProvider.of<RamayanBloc>(context).add(FetchRamayanInfo(cancelToken: token));
   }
 
   @override

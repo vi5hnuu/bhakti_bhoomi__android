@@ -29,11 +29,10 @@ class _AartiScreenState extends State<AartiScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AartiBloc, AartiState>(
       builder: (context, state) {
-        final httpState=state.httpState[Httpstates.AARTIS];
         return Scaffold(
             appBar: AppBar(
               title: Text(
-                state.aartis[widget.aartiId] == null || httpState!=null ? 'Aarti' : state.aartis[widget.aartiId]!.title,
+                state.aartis[widget.aartiId] == null || state.hasHttpState(forr: Httpstates.AARTIS) ? 'Aarti' : state.aartis[widget.aartiId]!.title,
                 style: const TextStyle(color: Colors.white,
                     fontFamily: "Kalam",
                     fontSize: 18,
@@ -60,14 +59,15 @@ class _AartiScreenState extends State<AartiScreen> {
                           .map((verse) =>
                           Text(
                             verse,
-                            style: TextStyle(fontFamily: 'NotoSansDevanagari',
+                            style: const TextStyle(fontFamily: 'NotoSansDevanagari',
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700),
                           ))
                           .toList(),
                     ),
                   ),
-            ):(Center(child: httpState?.error!=null ? RetryAgain(onRetry: initAarti, error: httpState!.error!) : const CircularProgressIndicator())));
+            ):
+            (Center(child: state.isError(forr: Httpstates.AARTIS) ? RetryAgain(onRetry: initAarti, error: state.getError(forr: Httpstates.AARTIS)!) : const CircularProgressIndicator())));
       },
     );
   }

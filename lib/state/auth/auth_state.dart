@@ -1,23 +1,27 @@
 part of 'auth_bloc.dart';
 
 @immutable
-class AuthState {
+class AuthState extends Equatable with WithHttpState{
   final UserInfo? userInfo;
   final String? message;
   final bool success; //api call success fail
-  final String? error;
-  final bool isLoading;
-  final bool isAuthenticated;
 
-  const AuthState({this.isLoading = false, this.success = false, this.userInfo, this.error, this.message, this.isAuthenticated = false});
+  AuthState({Map<String,HttpState>? httpStates,this.success = false, this.userInfo, this.message}){
+    this.httpStates.addAll(httpStates ?? {});
+  }
 
-  AuthState copyWith({UserInfo? userInfo, String? message, bool? success, String? error, bool? isLoading, bool? isAuthenticated}) {
+  AuthState copyWith({UserInfo? userInfo, String? message, bool? success,Map<String, HttpState>? httpStates, bool? isAuthenticated}) {
     return AuthState(
         userInfo: userInfo ?? this.userInfo,
         message: message,
         success: success ?? false,
-        error: error,
-        isLoading: isLoading ?? this.isLoading,
-        isAuthenticated: isAuthenticated ?? this.isAuthenticated);
+        httpStates: httpStates ?? this.httpStates);
   }
+
+  get isAuthtenticated{
+    return userInfo!=null;
+  }
+
+  @override
+  List<Object?> get props => [httpStates, userInfo,message,success];
 }
