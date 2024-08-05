@@ -17,9 +17,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? timer;
 
   @override
   void initState() {
+    timer=Timer(const Duration(seconds: 3), () {
+      final state=BlocProvider.of<AuthBloc>(context).state;
+      handleTryAuth(state);
+    });
     BlocProvider.of<AuthBloc>(context).add(const TryAuthenticatingEvent());
     super.initState();
   }
@@ -27,15 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state.isLoading(forr: Httpstates.TRY_AUTH)){
-          return;
-        }else if(state.isError(forr: Httpstates.TRY_AUTH)){
-          GoRouter.of(context).replaceNamed(Routing.login);
-        }else if(state.isAuthtenticated){
-          GoRouter.of(context).replaceNamed(Routing.home);
-        }
-      },
+      listener: (context, state) =>handleTryAuth(state),
       listenWhen: (previous, current) => previous != current,
       buildWhen: (previous, current) => false,
       builder: (context, state) => Scaffold(
@@ -72,8 +69,20 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+  handleTryAuth(final AuthState state){
+    print("time ${timer?.isActive}");
+    if (state.isLoading(forr: Httpstates.TRY_AUTH) || timer?.isActive==true){
+      return;
+    }else if(state.isError(forr: Httpstates.TRY_AUTH)){
+      GoRouter.of(context).replaceNamed(Routing.login);
+    }else if(state.isAuthtenticated && timer?.isActive!=true){
+      GoRouter.of(context).replaceNamed(Routing.home);
+    }
+  }
+
   @override
   void dispose() {
+    timer?.cancel();
     super.dispose();
   }
 }
