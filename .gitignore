@@ -1,10 +1,13 @@
+#
+android/app/upload-keystore.jks
+
 # Miscellaneous
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
-.atom/
+.atom/x
 .buildlog/
 .history
 .svn/
