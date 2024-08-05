@@ -6,6 +6,7 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CameraIconButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,7 +39,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listenWhen: (previous, current) => previous != current,
+        listener: (context, state) {
+          if(!state.isAuthtenticated) GoRouter.of(context).replaceNamed(Routing.login);
+          if(state.anyError(forr: [Httpstates.LOG_OUT])){
+            ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
+          }
+        },
         buildWhen: (previous, current) => previous != current,
         builder: (context, state){
           final isAnyLoading=state.anyLoading(forr: [Httpstates.USER_INFO,Httpstates.LOG_OUT,Httpstates.DELETE_ME,Httpstates.UPDATE_PROFILE_PIC,Httpstates.UPDATE_POSTER_PIC]);

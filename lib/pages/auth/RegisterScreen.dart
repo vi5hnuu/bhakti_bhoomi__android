@@ -32,11 +32,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _defaultProfileImagePath = "assets/images/ram_dp_sm.jpg";
   late final ImageProvider defaultCoverImage;
   late final ImageProvider defaultProfileImage;
-  final TextEditingController firstNameCntrl = TextEditingController(text: 'vishnu');
-  final TextEditingController lastNameCntrl = TextEditingController(text: 'kumar');
-  final TextEditingController usernameControllerCntrl = TextEditingController(text: 'vishnuk');
-  final TextEditingController emailCntrl = TextEditingController(text: 'kum0rvishnu@gmail.com');
-  final TextEditingController passwordCntrl = TextEditingController(text: '1234567890');
+  final TextEditingController firstNameCntrl = TextEditingController(text: '');
+  final TextEditingController lastNameCntrl = TextEditingController(text: '');
+  final TextEditingController usernameControllerCntrl = TextEditingController(text: '');
+  final TextEditingController emailCntrl = TextEditingController(text: '');
+  final TextEditingController passwordCntrl = TextEditingController(text: '');
   final CancelToken cancelToken = CancelToken();
 
   @override

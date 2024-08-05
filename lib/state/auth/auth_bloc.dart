@@ -95,7 +95,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final res = await authRepository.logout(cancelToken: event.cancelToken);
         await _sStorage.storage.delete(key: Constants.jwtKey);
-        emit(AuthState(httpStates: state.httpStates.clone()..remove(Httpstates.LOG_OUT), success: res.success, message: res.message));
+        emit(AuthState());
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
