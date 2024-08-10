@@ -23,8 +23,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   CancelToken infoToken = CancelToken();
-  CancelToken profileToken = CancelToken();
-  CancelToken posterToken = CancelToken();
+  CancelToken profileMetaToken = CancelToken();
   CancelToken deleteMeToken = CancelToken();
 
   final formKey = GlobalKey<FormState>(debugLabel: 'registerForm');
@@ -43,13 +42,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if(!state.isAuthtenticated) GoRouter.of(context).replaceNamed(Routing.login);
-          if(state.anyError(forr: [Httpstates.LOG_OUT])){
-            ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
+          if(state.anyError(forr: [Httpstates.LOG_OUT,Httpstates.UPDATE_PROFILE_META,Httpstates.DELETE_ME])){
+            ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text:state.getAnyError(forr: [Httpstates.LOG_OUT,Httpstates.UPDATE_PROFILE_META,Httpstates.DELETE_ME])!, color: Colors.red));
           }
         },
         buildWhen: (previous, current) => previous != current,
         builder: (context, state){
-          final isAnyLoading=state.anyLoading(forr: [Httpstates.USER_INFO,Httpstates.LOG_OUT,Httpstates.DELETE_ME,Httpstates.UPDATE_PROFILE_PIC,Httpstates.UPDATE_POSTER_PIC]);
+          final isAnyLoading=state.anyLoading(forr: [Httpstates.USER_INFO,Httpstates.LOG_OUT,Httpstates.DELETE_ME,Httpstates.UPDATE_PROFILE_META]);
           return Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -139,15 +138,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       CustomInputField(labelText: "Email", initialValue: state.userInfo!.email, enabled: false),
                       const SizedBox(height: 7),
                       CustomTextButton(
-                          onPressed:isAnyLoading || (profileImage == null && coverImage == null)
+                          isLoading: state.isLoading(forr: Httpstates.UPDATE_PROFILE_META),
+                          onPressed: isAnyLoading ||
+                                  (profileImage == null && coverImage == null)
                               ? null
-                              : () {
-                            this.updateProfile();
-                            this.updatePoster();
-                          },
-                          child: const Text('Update Images')),
+                              : saveChanges,
+                          child: const Text('Save Changes')),
                       const SizedBox(height: 12),
                       CustomTextButton(
+                          isLoading: state.isLoading(forr: Httpstates.UPDATE_PASSWORD),
                           onPressed: isAnyLoading
                               ? null
                               : () {
@@ -155,6 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           child: const Text('Update Password')),
                       CustomTextButton(
+                          isLoading: state.isLoading(forr: Httpstates.LOG_OUT),
                           onPressed: isAnyLoading
                               ? null
                               : () {
@@ -163,6 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: const Text('log out')),
                       const SizedBox(height: 64),
                       CustomTextButton(
+                          isLoading: state.isLoading(forr: Httpstates.DELETE_ME),
                           onPressed: isAnyLoading
                               ? null
                               : () {
@@ -178,21 +179,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  updateProfile() async {
-    if (this.profileImage == null) return;
-    BlocProvider.of<AuthBloc>(context).add(UpdateProfilePic(profileImage: await MultipartFile.fromFile(this.profileImage!.path), cancelToken: profileToken));
-  }
-
-  updatePoster() async {
-    if (this.coverImage == null) return;
-    BlocProvider.of<AuthBloc>(context).add(UpdatePosterPicEvent(posterImage: await MultipartFile.fromFile(this.coverImage!.path), cancelToken: posterToken));
+  saveChanges() async{
+    if (this.profileImage == null && this.coverImage==null) throw Error();
+    BlocProvider.of<AuthBloc>(context).add(UpdateProfileMeta(profileImage: profileImage!=null ? await MultipartFile.fromFile(profileImage!.path):null,posterImage:coverImage!=null ? await MultipartFile.fromFile(coverImage!.path):null, cancelToken: profileMetaToken));
   }
 
   @override
   void dispose() {
     infoToken.cancel("cancelled");
-    profileToken.cancel("cancelled");
-    posterToken.cancel("cancelled");
+    profileMetaToken.cancel("cancelled");
     deleteMeToken.cancel("cancelled");
     super.dispose();
   }

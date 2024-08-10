@@ -21,6 +21,13 @@ mixin WithHttpState{
     return false;
   }
 
+  String? getAnyError({required final List<String> forr}){
+    for(final key in forr){
+      if(httpStates[key]?.error!=null) return httpStates[key]?.error;
+    }
+    return null;
+  }
+
   bool isError({required final String forr}){
     return httpStates.containsKey(forr) && httpStates[forr]!.error!=null;
   }

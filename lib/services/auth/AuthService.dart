@@ -21,6 +21,7 @@ abstract class AuthService {
   Future<ApiResponse> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken});
   Future<ApiResponse> updateProfilePic({required MultipartFile profileImage, required String userId, CancelToken? cancelToken});
   Future<ApiResponse> updatePosterPic({required MultipartFile posterImage, required String userId, CancelToken? cancelToken});
+  Future<ApiResponse> updateProfilePosterPic({required MultipartFile profileImage,required MultipartFile posterImage, required String userId, CancelToken? cancelToken});
   Future<ApiResponse> logout({CancelToken? cancelToken});
   Future<ApiResponse<UserInfo>> me({CancelToken? cancelToken});
   Future<ApiResponse> deleteMe({CancelToken? cancelToken});

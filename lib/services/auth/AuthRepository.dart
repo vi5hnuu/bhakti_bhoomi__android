@@ -102,14 +102,20 @@ class AuthRepository implements AuthService {
   }
 
   @override
-  Future<ApiResponse> updatePosterPic({required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
+  Future<ApiResponse<UserInfo>> updatePosterPic({required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
     var res = await _authApi.updatePosterPic(posterImage: posterImage, userId: userId, cancelToken: cancelToken);
-    return ApiResponse(success: res['success'], message: res['message']);
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message'],data: UserInfo.fromJson(res['data']));
   }
 
   @override
-  Future<ApiResponse> updateProfilePic({required MultipartFile profileImage, required String userId, CancelToken? cancelToken}) async {
+  Future<ApiResponse<UserInfo>> updateProfilePic({required MultipartFile profileImage, required String userId, CancelToken? cancelToken}) async {
     var res = await _authApi.updateProfilePic(profileImage: profileImage, userId: userId, cancelToken: cancelToken);
-    return ApiResponse(success: res['success'], message: res['message']);
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message'],data: UserInfo.fromJson(res['data']));
+  }
+
+  @override
+  Future<ApiResponse<UserInfo>> updateProfilePosterPic({required MultipartFile profileImage,required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
+    var res = await _authApi.updateProfilePosterPic(profileImage: profileImage,posterImage: posterImage, userId: userId, cancelToken: cancelToken);
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message'],data: UserInfo.fromJson(res['data']));
   }
 }

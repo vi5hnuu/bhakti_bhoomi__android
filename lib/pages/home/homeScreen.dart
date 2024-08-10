@@ -89,10 +89,7 @@ class _HomeState extends State<Home> {
                 ],
               )),
           body: GridView.count(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-            ItemCard(
-              title: "aarti",
-              onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo),
-            ),
+            ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo),),
             ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo)}, title: "brahmasutra"),
             ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo)}, title: "chalisa"),
             ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters)}, title: "chanakyaneeti"),

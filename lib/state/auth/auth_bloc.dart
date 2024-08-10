@@ -128,29 +128,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<UpdatePosterPicEvent>((event, emit) async {
-      if (state.userInfo == null) throw Error(); //developer fault
-      emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_POSTER_PIC,const HttpState.loading())));
+    on<UpdateProfileMeta>((event, emit) async {
+      if (state.userInfo == null || (event.posterImage==null && event.profileImage==null)) throw Error(); //developer fault
+      emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META,const HttpState.loading())));
       try {
-        final res = await authRepository.updatePosterPic(posterImage: event.posterImage, userId: state.userInfo!.id, cancelToken: event.cancelToken);
-        emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.UPDATE_POSTER_PIC), success: res.success, message: res.message));
+        final ApiResponse<UserInfo> res = (event.profileImage!=null && event.posterImage!=null)
+          ? await authRepository.updateProfilePosterPic(profileImage: event.profileImage!,posterImage: event.posterImage!, userId: state.userInfo!.id, cancelToken: event.cancelToken)
+          : (event.profileImage!=null ? await authRepository.updateProfilePic(profileImage: event.profileImage!,userId: state.userInfo!.id, cancelToken: event.cancelToken) :
+            await authRepository.updatePosterPic(posterImage: event.posterImage!, userId: state.userInfo!.id, cancelToken: event.cancelToken));
+        emit(state.copyWith(userInfo: res.data,httpStates: state.httpStates.clone()..remove(Httpstates.UPDATE_PROFILE_META), success: res.success, message: res.message));
       } on DioException catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_POSTER_PIC, HttpState.error(error: Utils.handleDioException(e)))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_POSTER_PIC, HttpState.error(error: e.toString()))));
-      }
-    });
-
-    on<UpdateProfilePic>((event, emit) async {
-      if (state.userInfo == null) throw Error(); //developer fault
-      emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_PIC,const HttpState.loading())));
-      try {
-        final res = await authRepository.updateProfilePic(profileImage: event.profileImage, userId: state.userInfo!.id, cancelToken: event.cancelToken);
-        emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.UPDATE_PROFILE_PIC), success: res.success, message: res.message));
-      } on DioException catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_PIC, HttpState.error(error: Utils.handleDioException(e)))));
-      } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_PIC, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META, HttpState.error(error: e.toString()))));
       }
     });
 

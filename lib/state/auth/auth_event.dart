@@ -65,14 +65,10 @@ class ResetPasswordEvent extends AuthEvent {
   const ResetPasswordEvent({required this.usernameEmail, required this.otp, required this.password, required this.confirmPassword, CancelToken? cancelToken});
 }
 
-class UpdateProfilePic extends AuthEvent {
-  final MultipartFile profileImage;
-  const UpdateProfilePic({required this.profileImage, CancelToken? cancelToken});
-}
-
-class UpdatePosterPicEvent extends AuthEvent {
-  final MultipartFile posterImage;
-  const UpdatePosterPicEvent({required this.posterImage, CancelToken? cancelToken});
+class UpdateProfileMeta extends AuthEvent {
+  final MultipartFile? profileImage;
+  final MultipartFile? posterImage;
+  const UpdateProfileMeta({this.profileImage,this.posterImage, CancelToken? cancelToken});
 }
 
 class DeleteMeEvent extends AuthEvent {

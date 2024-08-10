@@ -16,6 +16,7 @@ class AuthApi {
   static const String _resetPaswordUrl = "${ApiConstants.baseUrl}/users/reset-password"; //POST
   static const String _updateProfileImageUrl = "${ApiConstants.baseUrl}/users/profile"; //POST
   static const String _updatePosterImageUrl = "${ApiConstants.baseUrl}/users/poster"; //POST
+  static const String _updateProfilePosterImageUrl = "${ApiConstants.baseUrl}/users/profile-poster"; //POST
   static const String _logoutUrl = "${ApiConstants.baseUrl}/users/logout"; //GET
   static const String _meUrl = "${ApiConstants.baseUrl}/users/me"; //GET
   static const String _deleteMeUrl = "${ApiConstants.baseUrl}/users"; //DELETE
@@ -89,14 +90,20 @@ class AuthApi {
   }
 
   Future<Map<String, dynamic>> updateProfilePic({required MultipartFile profileImage, required String userId, CancelToken? cancelToken}) async {
-    final FormData formData = FormData.fromMap({"poster": profileImage});
+    final FormData formData = FormData.fromMap({"profile": profileImage});
     var res = await DioSingleton().dio.post('$_updateProfileImageUrl/$userId', data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
   Future<Map<String, dynamic>> updatePosterPic({required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
-    final FormData formData = FormData.fromMap({"profile": posterImage});
+    final FormData formData = FormData.fromMap({"poster": posterImage});
     var res = await DioSingleton().dio.post('$_updatePosterImageUrl/$userId', data: formData, cancelToken: cancelToken);
+    return res.data;
+  }
+
+  Future<Map<String, dynamic>> updateProfilePosterPic({required MultipartFile profileImage,required MultipartFile posterImage, required String userId, CancelToken? cancelToken}) async {
+    final FormData formData = FormData.fromMap({"poster": posterImage,"profile":profileImage});
+    var res = await DioSingleton().dio.post('$_updateProfilePosterImageUrl/$userId', data: formData, cancelToken: cancelToken);
     return res.data;
   }
 
