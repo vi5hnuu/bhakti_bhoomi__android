@@ -60,9 +60,11 @@ import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
-void main() {
+void main() async{
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

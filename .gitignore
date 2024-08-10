@@ -1,5 +1,7 @@
 #
 android/app/upload-keystore.jks
+google_signin.json
+*.env
 
 # Miscellaneous
 *.class
