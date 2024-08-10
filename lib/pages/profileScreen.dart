@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
@@ -41,12 +42,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if(!state.isAuthtenticated) GoRouter.of(context).replaceNamed(Routing.login);
+          if(!state.isAuthtenticated) GoRouter.of(context).goNamed(Routing.login);
           if(state.anyError(forr: [Httpstates.LOG_OUT,Httpstates.UPDATE_PROFILE_META,Httpstates.DELETE_ME])){
             ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text:state.getAnyError(forr: [Httpstates.LOG_OUT,Httpstates.UPDATE_PROFILE_META,Httpstates.DELETE_ME])!, color: Colors.red));
           }
         },
-        buildWhen: (previous, current) => previous != current,
+        buildWhen: (previous, current) => previous != current && current.userInfo!=null,
         builder: (context, state){
           final isAnyLoading=state.anyLoading(forr: [Httpstates.USER_INFO,Httpstates.LOG_OUT,Httpstates.DELETE_ME,Httpstates.UPDATE_PROFILE_META]);
           return Scaffold(
@@ -166,9 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           isLoading: state.isLoading(forr: Httpstates.DELETE_ME),
                           onPressed: isAnyLoading
                               ? null
-                              : () {
-                            BlocProvider.of<AuthBloc>(context).add(DeleteMeEvent(cancelToken: deleteMeToken));
-                          },
+                              : deleteAccountInit,
                           child: const Text('delete Account'))
                     ],
                   ),
@@ -182,6 +181,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
   saveChanges() async{
     if (this.profileImage == null && this.coverImage==null) throw Error();
     BlocProvider.of<AuthBloc>(context).add(UpdateProfileMeta(profileImage: profileImage!=null ? await MultipartFile.fromFile(profileImage!.path):null,posterImage:coverImage!=null ? await MultipartFile.fromFile(coverImage!.path):null, cancelToken: profileMetaToken));
+  }
+
+  deleteAccountInit(){
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(Icons.warning, color: Colors.red, size: 48),
+              const Text('The action is irreversible',textAlign: TextAlign.center,style: TextStyle(fontSize: 24,height: 2,color: Colors.red,fontWeight: FontWeight.bold)),
+              const Text('Are you sure you want to delete your account ?',textAlign: TextAlign.center,style: TextStyle(fontSize: 18,color: Colors.red,fontWeight: FontWeight.w900)),
+              const SizedBox(height: 15),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.grey)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Close',style: TextStyle(color: Colors.grey),),
+                  ),
+                  FilledButton(
+                    style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      BlocProvider.of<AuthBloc>(context).add(DeleteMeEvent(cancelToken: deleteMeToken));
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Delete'),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
