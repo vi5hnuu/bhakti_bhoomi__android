@@ -21,35 +21,19 @@ const Map<String, Object> _aboutUsInfo = {
         }
       },
       {
-        "name": "Vishnu Kumar",
+        "name": "Jyoti Maurya",
         "role":
-            "Senior Software Developer, Spiritual Advisor & Lead Content Curator",
+            "Psychologist in Training & Spiritual Seeker",
         "photo_url":
-            "https://res.cloudinary.com/dmzcpxynz/image/upload/v1723303768/contributors/vishnu_kumar.png",
+            "https://res.cloudinary.com/dmzcpxynz/image/upload/v1723358447/contributors/jyoti.jpg",
         "description": [
-          "Vishnu Kumar is a seasoned software developer with extensive experience in crafting high-quality, scalable applications. With a deep understanding of technology and a passion for solving complex problems, Vishnu has consistently delivered innovative solutions throughout his career.",
-          "Beyond his technical expertise, Vishnu is also deeply rooted in spirituality. He finds balance between the fast-paced world of software development and his spiritual practices, drawing inspiration from ancient wisdom to guide his modern-day work. His unique blend of technical prowess and spiritual insight allows him to approach projects with a holistic perspective, making meaningful contributions to both the digital and spiritual realms."
+          "Jyoti Maurya is a dedicated individual who has recently completed his 12th grade and is preparing to study psychology. Her journey into psychology is driven by a deep interest in understanding the human mind and behavior.",
+          "Alongside his academic pursuits, Jyoti follows a spiritual path, seeking balance and meaning through spiritual practices. Her approach to life combines psychological insights with spiritual wisdom, allowing him to connect deeply with both the scientific and spiritual aspects of the human experience."
         ],
         "social_links": {
-          "linkedin": "https://www.linkedin.com/in/vi5hnukumar/",
-          "instagram": "https://www.instagram.com/kvi5hnu/"
+          "instagram": "https://www.instagram.com/vyakti_04/"
         }
       },
-      {
-        "name": "Vishnu Kumar",
-        "role":
-            "Senior Software Developer, Spiritual Advisor & Lead Content Curator",
-        "photo_url":
-            "https://res.cloudinary.com/dmzcpxynz/image/upload/v1723303768/contributors/vishnu_kumar.png",
-        "description": [
-          "Vishnu Kumar is a seasoned software developer with extensive experience in crafting high-quality, scalable applications. With a deep understanding of technology and a passion for solving complex problems, Vishnu has consistently delivered innovative solutions throughout his career.",
-          "Beyond his technical expertise, Vishnu is also deeply rooted in spirituality. He finds balance between the fast-paced world of software development and his spiritual practices, drawing inspiration from ancient wisdom to guide his modern-day work. His unique blend of technical prowess and spiritual insight allows him to approach projects with a holistic perspective, making meaningful contributions to both the digital and spiritual realms."
-        ],
-        "social_links": {
-          "linkedin": "https://www.linkedin.com/in/vi5hnukumar/",
-          "instagram": "https://www.instagram.com/kvi5hnu/"
-        }
-      }
     ]
   },
   "contactInfo": {

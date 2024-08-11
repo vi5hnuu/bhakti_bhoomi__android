@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsScreen extends StatefulWidget {
   final String title;
@@ -18,6 +19,7 @@ class AboutUsScreen extends StatefulWidget {
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
   final CancelToken cancelToken = CancelToken();
+  Future<void>? _launched;
 
   @override
   void initState() {
@@ -54,11 +56,11 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       ,child: Column(
                     children: [
                       if(contributor.socialLinks.linkedin!=null) IconButton(
-                        onPressed: () => {},
+                        onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.linkedin!)),
                         icon:Icon(FontAwesomeIcons.linkedin,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                       if(contributor.socialLinks.instagram!=null)IconButton(
-                        onPressed: () => {},
+                        onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.instagram!)),
                         icon: Icon(FontAwesomeIcons.instagram,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                     ],
@@ -117,9 +119,14 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     cancelToken.cancel("cancelled");
     super.dispose();
   }
+
+  Future<void> _launchUrl(Uri url) async {//launch in app and fallback to browser else error
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView) || !await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }
-
-
-/*
-
-* */
