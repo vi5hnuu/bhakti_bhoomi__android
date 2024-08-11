@@ -37,7 +37,7 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
           appBar: AppBar(
             title: const Text(
               'Valmiki Ramayan',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),

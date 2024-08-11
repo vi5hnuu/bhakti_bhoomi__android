@@ -86,6 +86,13 @@ class _HomeState extends State<Home> {
                             ),
                         ],
                       )),
+                  ListTile(
+                    title: const Text("About Us",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
+                    splashColor: Theme.of(context).primaryColor,
+                    leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor,size: 24),
+                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
+                    onTap: () => GoRouter.of(context).pushNamed(Routing.aboutUs),
+                  )
                 ],
               )),
           body: GridView.count(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[

@@ -36,7 +36,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
             appBar: AppBar(
               title: const Text(
                 'Ramcharitmanas',
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),

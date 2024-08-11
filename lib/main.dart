@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
+import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/ForgotPasswordScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/auth/OtpScreen.dart';
@@ -114,6 +115,15 @@ class MyApp extends StatelessWidget {
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
                   child: const SplashScreen(title: "Splash"),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                ),
+              ),
+              GoRoute(
+                name: Routing.aboutUs,
+                path: '/about-us',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: const AboutUsScreen(title: "About Us"),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),

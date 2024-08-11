@@ -35,7 +35,7 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
           appBar: AppBar(
             title: const Text(
               'RigVeda',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),

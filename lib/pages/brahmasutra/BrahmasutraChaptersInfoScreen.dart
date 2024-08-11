@@ -30,7 +30,7 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('BrahmaSutra', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+          title: const Text('BrahmaSutra', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold)),
           backgroundColor: Theme.of(context).primaryColor,
           iconTheme: const IconThemeData(color: Colors.white),
         ),

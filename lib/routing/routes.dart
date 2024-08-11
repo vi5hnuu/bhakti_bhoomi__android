@@ -1,4 +1,6 @@
 class Routing {
+  static final String aboutUs = "aboutUs";
+
   static final String profile = "profile";
   static final String verify = "verify";
 
