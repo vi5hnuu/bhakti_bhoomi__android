@@ -150,7 +150,7 @@ class MyApp extends StatelessWidget {
                 path: '/forgot-password',
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
-                  child: ForgotPasswordScreen(),
+                  child: const ForgotPasswordScreen(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
                 ),
               ),
@@ -184,7 +184,7 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.profile,
                 path: '/profile',
-                builder: (context, state) => ProfileScreen(),
+                builder: (context, state) => const ProfileScreen(),
               ),
               GoRoute(
                 name: Routing.home,
@@ -306,7 +306,7 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.bhagvadGeetaChapters,
                 path: '/bhagvad-geeta-chapters',
-                builder: (context, state) => BhagvadGeetaChaptersScreen(title: 'Bhagvad Geeta'),
+                builder: (context, state) => const BhagvadGeetaChaptersScreen(title: 'Bhagvad Geeta'),
               ),
               GoRoute(
                 name: Routing.bhagvadGeetaChapterShloks,

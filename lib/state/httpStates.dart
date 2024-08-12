@@ -4,7 +4,9 @@ class Httpstates{
   static const String AARTI_INFO="AARTI_INFO";
 
   //AUTH STATE
-  static const String LOGIN="LOGIN";
+  static const String CUSTOM_LOGIN="CUSTOM_LOGIN";
+  static const String GOOGLE_LOGIN="GOOGLE_LOGIN";
+
   static const String TRY_AUTH="TRY_AUTH";
   static const String USER_INFO="USER_INFO";
   static const String REGISTER="REGISTER";

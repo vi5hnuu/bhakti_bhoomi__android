@@ -9,13 +9,13 @@ class NewComment {
 
   Map<String, String?> toJson() {
     return {
-      'commentForId': this.commentForId,
-      'username': this.username,
-      'userId': this.userId,
-      'parentCommentUserId': this.parentCommentUserId,
-      'profileImageUrl': this.profileImageUrl,
-      'content': this.content,
-      'parentCommentId': this.parentCommentId
+      'commentForId': commentForId,
+      'username': username,
+      'userId': userId,
+      'parentCommentUserId': parentCommentUserId,
+      'profileImageUrl': profileImageUrl,
+      'content': content,
+      'parentCommentId': parentCommentId
     };
   }
 

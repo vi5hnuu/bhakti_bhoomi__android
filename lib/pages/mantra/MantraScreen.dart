@@ -158,7 +158,6 @@ class _MantraScreenState extends State<MantraScreen> {
         ]
       ],
     );
-    ;
   }
 
   initMantraById(){

@@ -17,7 +17,8 @@ const Map<String, Object> _aboutUsInfo = {
         ],
         "social_links": {
           "linkedin": "https://www.linkedin.com/in/vi5hnukumar/",
-          "instagram": "https://www.instagram.com/kvi5hnu/"
+          "instagram": "https://www.instagram.com/kvi5hnu/",
+          "github": "https://github.com/vi5hnuu"
         }
       },
       {
@@ -96,13 +97,15 @@ class Contributor {
 class SocialLinks {
   String? linkedin;
   String? instagram;
+  String? github;
 
-  SocialLinks({this.linkedin, this.instagram});
+  SocialLinks({this.linkedin, this.instagram,this.github});
 
   factory SocialLinks.fromJson(Map<String, dynamic> json) {
     return SocialLinks(
       linkedin: json['linkedin'],
       instagram: json['instagram'],
+      github: json['github'],
     );
   }
 }

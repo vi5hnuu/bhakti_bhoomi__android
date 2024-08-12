@@ -13,7 +13,7 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/UserInfo.dart';
@@ -28,14 +28,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.authRepository}) : super(AuthState()) {
     on<LoginEvent>((event, emit) async {
-      emit(state.copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.LOGIN,const HttpState.loading())));
+      emit(state.copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN,const HttpState.loading())));
       try {
         ApiResponse<UserInfo> res = await authRepository.login(usernameEmail: event.usernameEmail, password: event.password, cancelToken: event.cancelToken);
-        emit(AuthState(success: res.success,userInfo: res.data, message: res.message,httpStates: state.httpStates.clone()..remove(Httpstates.LOGIN)));
+        emit(AuthState(success: res.success,userInfo: res.data, message: res.message,httpStates: state.httpStates.clone()..remove(Httpstates.CUSTOM_LOGIN)));
       } on DioException catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOGIN, HttpState.error(error: Utils.handleDioException(e)))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOGIN, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN, HttpState.error(error: e.toString()))));
       }
     });
 

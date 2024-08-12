@@ -19,7 +19,6 @@ class AboutUsScreen extends StatefulWidget {
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
   final CancelToken cancelToken = CancelToken();
-  Future<void>? _launched;
 
   @override
   void initState() {
@@ -62,6 +61,10 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       if(contributor.socialLinks.instagram!=null)IconButton(
                         onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.instagram!)),
                         icon: Icon(FontAwesomeIcons.instagram,color: Theme.of(context).primaryColor,size: 32,),
+                      ),
+                      if(contributor.socialLinks.github!=null)IconButton(
+                        onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.github!)),
+                        icon: Icon(FontAwesomeIcons.github,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                     ],
                   )),
