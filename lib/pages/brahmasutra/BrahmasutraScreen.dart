@@ -111,7 +111,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)
-                          ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)!))
+                          ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)!.message))
                           : Center(
                               child: SpinKitThreeBounce(
                                 color: Theme.of(context).primaryColor,

@@ -28,7 +28,7 @@ class MahabharatChaptersInfoScreen extends StatelessWidget {
                 child: RoundedListTile(
                   itemNo: index + 1,
                   text: 'Chapter ${index + 1} | total verses ${state.getBooksInfo(bookNo: bookNo)!.info['${index + 1}']!}',
-                  onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks, pathParameters: {'bookNo': '${bookNo}', 'chapterNo': '${index + 1}'}),
+                  onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks.name, pathParameters: {'bookNo': '${bookNo}', 'chapterNo': '${index + 1}'}),
                 ),
               ),
             ),

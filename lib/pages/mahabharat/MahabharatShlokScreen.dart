@@ -84,7 +84,7 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                         ),
                       )
                     : state.isError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)
-                        ? Center(child: RetryAgain(onRetry: loadCurrentShlok,error: state.getError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)!))
+                        ? Center(child: RetryAgain(onRetry: loadCurrentShlok,error: state.getError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)!.message))
                         : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },

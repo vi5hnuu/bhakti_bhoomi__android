@@ -26,7 +26,7 @@ class ChanakyaNeetiBloc extends Bloc<ChanakyaNeetiEvent, ChanakyaNeetiState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -42,7 +42,7 @@ class ChanakyaNeetiBloc extends Bloc<ChanakyaNeetiEvent, ChanakyaNeetiState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
   }

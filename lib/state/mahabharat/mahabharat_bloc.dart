@@ -33,7 +33,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -53,7 +53,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_ID, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_ID, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_ID, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -67,7 +67,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -82,7 +82,7 @@ class MahabharatBloc extends Bloc<MahabharatEvent, MahabharatState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOKS_BY_BOOKNO_CHAPTERNO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOKS_BY_BOOKNO_CHAPTERNO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MAHABHARATA_SHLOKS_BY_BOOKNO_CHAPTERNO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
   }

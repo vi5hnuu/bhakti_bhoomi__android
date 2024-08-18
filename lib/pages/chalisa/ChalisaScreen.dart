@@ -63,7 +63,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
                           .toList(),
                     )
                   : state.isError(forr: Httpstates.CHALISA_BY_ID)
-                      ? Center(child: RetryAgain(onRetry: initChalisa,error: state.getError(forr: Httpstates.CHALISA_BY_ID)!))
+                      ? Center(child: RetryAgain(onRetry: initChalisa,error: state.getError(forr: Httpstates.CHALISA_BY_ID)!.message))
                       : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
         );
       },

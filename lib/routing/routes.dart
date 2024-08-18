@@ -1,53 +1,59 @@
+class Route{
+  Route({required this.name,required this.path});
+  String name;
+  String path;
+}
+
 class Routing {
-  static final String aboutUs = "aboutUs";
+  static final Route aboutUs = Route(name:"aboutUs",path:"/about-us");
 
-  static final String profile = "profile";
-  static final String verify = "verify";
+  static final Route profile = Route(name:"profile",path:"/profile");
+  static final Route verify = Route(name:"verify",path:"/verify");
 
-  static final String home = "home";
-  static final String login = "login";
+  static final Route home = Route(name:"home",path:"/home");
+  static final Route login = Route(name:"login",path:"/login");
 
-  static final String forgotPassword = "forgot-password";
-  static final String otp = "otp";
+  static final Route forgotPassword = Route(name:"forgot-password",path:"/forgot-password");
+  static final Route otp = Route(name:"otp",path:"/otp/:usernameEmail");
 
-  static final String splash = "splash";
-  static final String register = "register";
-  static final String updatePassword = "update-password";
+  static final Route splash = Route(name:"splash",path:"/splash");
+  static final Route register = Route(name:"register",path:"/register");
+  static final Route updatePassword = Route(name:"update-password",path:"/update-password");
 
-  static final String aartiInfo = "aarti-info";
-  static final String aarti = "aarti";
+  static final Route aartiInfo = Route(name:"aarti-info",path:"/aarti-info");
+  static final Route aarti = Route(name:"aarti",path:"/aarti/:id");
 
-  static final String brahmasutraChaptersInfo = "brahmasutra-chapters-info";
-  static final String brahmasutraQuatersInfo = "brahmasutra-quaters-info";
-  static final String brahmasutra = "brahmasutra";
+  static final Route brahmasutraChaptersInfo = Route(name:"brahmasutra-chapters-info",path:"/brahmasutra-chapters-info");
+  static final Route brahmasutraQuatersInfo = Route(name:"brahmasutra-quaters-info",path:"/brahmasutra/chapter/:chapterNo/quaters/info");
+  static final Route brahmasutra = Route(name:"brahmasutra",path:"/brahmasutra/chapter/:chapterNo/quater/:quaterNo/sutras");
 
-  static final String chalisaInfo = "chalisa-info";
-  static final String chalisa = "chalisa";
+  static final Route chalisaInfo = Route(name:"chalisa-info",path:"/chalisa-info");
+  static final Route chalisa = Route(name:"chalisa",path:"/chalisa/:chalisaId");
 
-  static final String chanakyaNitiChapters = "chanakya-niti-chapters";
-  static final String chanakyaNitiChapterShlok = "chanakya-niti-chapter-shlok";
+  static final Route chanakyaNitiChapters = Route(name:"chanakya-niti-chapters",path:"/chanakya-niti-chapters");
+  static final Route chanakyaNitiChapterShlok = Route(name:"chanakya-niti-chapter-shlok",path:"/chanakya-niti/chapter/:chapterNo/shloks");
 
-  static final String mahabharatBookInfos = "mahabharat-book-info";
-  static final String mahabharatBookChaptersInfos = "mahabharat-book-chapters-info";
-  static final String mahabharatBookChapterShloks = "mahabharat-book-chapter-shloks";
+  static final Route mahabharatBookInfos = Route(name:"mahabharat-book-info",path:"/mahabharat-book-info");
+  static final Route mahabharatBookChaptersInfos = Route(name:"mahabharat-book-chapters-info",path:"/mahabharat/book/:bookNo/chapters");
+  static final Route mahabharatBookChapterShloks = Route(name:"mahabharat-book-chapter-shloks",path:"/mahabharat/book/:bookNo/chapter/:chapterNo/shloks");
 
-  static final String mantraInfo = "mantra-info";
-  static final String mantra = "mantra";
+  static final Route mantraInfo = Route(name:"mantra-info",path:"/mantra-info");
+  static final Route mantra = Route(name:"mantra",path:"/mantra/:mantraId");
 
-  static final String ramcharitmanasInfo = "ramcharitmanas-info";
-  static final String ramcharitmanasMangalaCharan = "ramcharitmanas-mangalacharan";
-  static final String ramcharitmanasKandVerses = "ramcharitmanas-kand-verses";
+  static final Route ramcharitmanasInfo = Route(name:"ramcharitmanas-info",path:"/ramcharitmanas-info");
+  static final Route ramcharitmanasMangalaCharan = Route(name:"ramcharitmanas-mangalacharan",path:"/ramcharitmanas/kand/:kand/mangalacharan");
+  static final Route ramcharitmanasKandVerses = Route(name:"ramcharitmanas-kand-verses",path:"/ramcharitmanas/kand/:kand/verses");
 
-  static final String rigvedaMandalasInfo = "rigveda-mandalas-info";
-  static final String rigvedaMandalaSuktas = "rigveda-mandala-suktas";
+  static final Route rigvedaMandalasInfo = Route(name:"rigveda-mandalas-info",path:"/rigveda-mandalas-info");
+  static final Route rigvedaMandalaSuktas = Route(name:"rigveda-mandala-suktas",path:"/rigveda/mandala/:mandala/suktas");
 
-  static final String valmikiRamayanKandsInfo = "valmiki-ramayan-info";
-  static final String valmikiRamayanSargasInfo = "valmiki-ramayan-kand-sargas-info";
-  static final String valmikiRamayanShlok = "valmiki-ramayan-kand-sarga-shlok";
+  static final Route valmikiRamayanKandsInfo = Route(name:"valmiki-ramayan-info",path:"/valmiki-ramayan-info");
+  static final Route valmikiRamayanSargasInfo = Route(name:"valmiki-ramayan-kand-sargas-info",path:"/valmiki-ramayan/kand/:kand/sargas");
+  static final Route valmikiRamayanShlok = Route(name:"valmiki-ramayan-kand-sarga-shlok",path:"/valmiki-ramayan/kand/:kand/sarga/:sargaNo");
 
-  static final String bhagvadGeetaChapters = "bhagvad-geeta-chapters";
-  static final String bhagvadGeetaChapterShloks = "bhagvad-geeta-Shlok";
+  static final Route bhagvadGeetaChapters = Route(name:"bhagvad-geeta-chapters",path:"/bhagvad-geeta-chapters");
+  static final Route bhagvadGeetaChapterShloks = Route(name:"bhagvad-geeta-Shlok",path:"/bhagvad-geeta/chapter/:chapterNo/shloks");
 
-  static final String yogaSutraChapters = "yoga-sutra-chapters";
-  static final String yogaSutra = "yoga-sutra-sutras";
+  static final Route yogaSutraChapters = Route(name:"yoga-sutra-chapters",path:"/yoga-sutra-chapters");
+  static final Route yogaSutra = Route(name:"yoga-sutra-sutras",path:"/yoga-sutra/chapter/:chapterNo");
 }

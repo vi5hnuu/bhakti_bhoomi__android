@@ -60,11 +60,11 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
                         child: RoundedListTile(
                             itemNo: index + 1,
-                            onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok, pathParameters: {'kand': widget.kand, 'sargaNo': '${index + 1}'}),
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok.name, pathParameters: {'kand': widget.kand, 'sargaNo': '${index + 1}'}),
                             text: 'Sarga - Total verses ${sargaInfo.totalShloks.values.reduce(min)}'),
                       )
                     : Center(child: state.isError(forr: Httpstates.RAMAYANA_SARGAS_INFO)
-                    ? RetryAgain(onRetry: loadCurrentPage, error: state.getError(forr: Httpstates.RAMAYANA_SARGAS_INFO)!)
+                    ? RetryAgain(onRetry: loadCurrentPage, error: state.getError(forr: Httpstates.RAMAYANA_SARGAS_INFO)!.message)
                     : Padding(padding: const EdgeInsets.symmetric(vertical: 20),child: SpinKitThreeBounce(color: Theme.of(context).primaryColor, size: 24)));
               },
             ));

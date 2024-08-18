@@ -26,7 +26,7 @@ class RigvedaBloc extends Bloc<RigvedaEvent, RigvedaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchVerseByMandalaSukta>((event, emit) async {
@@ -38,7 +38,7 @@ class RigvedaBloc extends Bloc<RigvedaEvent, RigvedaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchVerseBySuktaId>((event, emit) {

@@ -81,7 +81,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                                         child: RoundedListTile(
                                           text: kand,
                                           itemNo: index + 1,
-                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses, pathParameters: {"kand": kand}),
+                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses.name, pathParameters: {"kand": kand}),
                                         ),
                                       );
                                     },
@@ -122,7 +122,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                                         child: RoundedListTile(
                                           text: '$kand Mangalacharan',
                                           itemNo: index + 1,
-                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan, pathParameters: {"kand": kand}),
+                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan.name, pathParameters: {"kand": kand}),
                                         ),
                                       );
                                     },
@@ -136,7 +136,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                     ),
                   )
                 : state.isError(forr: Httpstates.RAMCHARITMANAS_INFO)
-                    ? Center(child: RetryAgain(onRetry: initRamcharitmanasInfo,error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!))
+                    ? Center(child: RetryAgain(onRetry: initRamcharitmanasInfo,error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!.message))
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                       ));

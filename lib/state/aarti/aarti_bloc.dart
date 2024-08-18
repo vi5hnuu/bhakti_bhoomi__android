@@ -3,6 +3,7 @@ import 'package:bhakti_bhoomi/extensions/map-entensions.dart';
 import 'package:bhakti_bhoomi/models/aarti/AartiInfoModel.dart';
 import 'package:bhakti_bhoomi/models/aarti/AartiModel.dart';
 import 'package:bhakti_bhoomi/services/aarti/AartiRepository.dart';
+import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/WithHttpState.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bloc/bloc.dart';
@@ -26,7 +27,7 @@ class AartiBloc extends Bloc<AartiEvent, AartiState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTI_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTI_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTI_INFO, HttpState.error(error: ErrorModel(message: e.toString())))));
       }
     });
 
@@ -39,7 +40,7 @@ class AartiBloc extends Bloc<AartiEvent, AartiState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTIS, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTIS, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.AARTIS, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
   }

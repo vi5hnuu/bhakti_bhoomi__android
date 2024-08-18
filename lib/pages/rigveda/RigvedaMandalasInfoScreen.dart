@@ -47,11 +47,11 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
                       (index) => Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
                             child: RoundedListTile(
-                                itemNo: index + 1, onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas, pathParameters: {'mandala': '${index + 1}'}), text: "mandala"),
+                                itemNo: index + 1, onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas.name, pathParameters: {'mandala': '${index + 1}'}), text: "mandala"),
                           )),
                 )
               : state.isError(forr: Httpstates.RIGVEDA_INFO)
-                  ? Center(child: RetryAgain(onRetry: initRigvedaInfo,error: state.getError(forr: Httpstates.RIGVEDA_INFO)!))
+                  ? Center(child: RetryAgain(onRetry: initRigvedaInfo,error: state.getError(forr: Httpstates.RIGVEDA_INFO)!.message))
                   : Center(
                       child: SpinKitThreeBounce(
                         color: Theme.of(context).primaryColor,

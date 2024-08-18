@@ -116,7 +116,7 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                   )
                 : state.isError(forr: Httpstates.RAMCHARITMANAS_ALL_MANGALACHARAN)
                     ? Center(
-                        child: RetryAgain(onRetry: loadCurrentLangMangalaCharan,error: state.getError(forr: Httpstates.RAMCHARITMANAS_ALL_MANGALACHARAN)!),
+                        child: RetryAgain(onRetry: loadCurrentLangMangalaCharan,error: state.getError(forr: Httpstates.RAMCHARITMANAS_ALL_MANGALACHARAN)!.message),
                       )
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),

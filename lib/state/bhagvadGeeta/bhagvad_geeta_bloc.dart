@@ -25,7 +25,7 @@ class BhagvadGeetaBloc extends Bloc<BhagvadGeetaEvent, BhagvadGeetaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_CHAPTERS, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_CHAPTERS, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_CHAPTERS, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -46,7 +46,7 @@ class BhagvadGeetaBloc extends Bloc<BhagvadGeetaEvent, BhagvadGeetaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 

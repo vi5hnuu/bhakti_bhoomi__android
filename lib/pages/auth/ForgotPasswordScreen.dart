@@ -29,11 +29,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.isError(forr: Httpstates.FORGOT_PASSWORD)) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.getError(forr: Httpstates.FORGOT_PASSWORD)!, color: Colors.red));
+          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.getError(forr: Httpstates.FORGOT_PASSWORD)!.message, color: Colors.red));
         }
         if (state.success) {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message!, color: Colors.green));
-          GoRouter.of(context).pushReplacementNamed(Routing.otp, pathParameters: {'usernameEmail': usernameEmailController.text});
+          GoRouter.of(context).pushReplacementNamed(Routing.otp.name, pathParameters: {'usernameEmail': usernameEmailController.text});
         }
       },
       builder: (context, state) {
@@ -81,7 +81,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           style: const TextStyle(color: Colors.white, fontSize: 18),
                         )),
                     const SizedBox(height: 12),
-                    CustomTextButton(onPressed: state.isLoading(forr: Httpstates.FORGOT_PASSWORD) ? null : () => context.goNamed(Routing.login), child: const Text('Sign-in instead'))
+                    CustomTextButton(onPressed: state.isLoading(forr: Httpstates.FORGOT_PASSWORD) ? null : () => context.goNamed(Routing.login.name), child: const Text('Sign-in instead'))
                   ],
                 ),
               ),

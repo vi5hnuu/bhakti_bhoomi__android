@@ -80,7 +80,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                         ),
                       )
                     : state.isError(forr: Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)
-                        ? Center(child: Text(state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!))
+                        ? Center(child: Text(state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!.message))
                         : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },

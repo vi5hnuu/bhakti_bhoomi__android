@@ -96,7 +96,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                           )
                         : state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)
                             ? Center(
-                                child: Text(state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!),
+                                child: Text(state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!.message),
                               )
                             : Center(
                                 child: SpinKitThreeBounce(

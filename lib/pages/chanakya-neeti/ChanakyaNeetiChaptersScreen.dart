@@ -60,14 +60,14 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
                               'Contains ${chapterInfo.versesCount} Verses',
                               style: TextStyle(color: Colors.white)),
                           onTap: () => GoRouter.of(context).pushNamed(
-                              Routing.chanakyaNitiChapterShlok,
+                              Routing.chanakyaNitiChapterShlok.name,
                               pathParameters: {
                                 'chapterNo': '${chapterInfo.chapterNo}'
                               }),
                         ));
                   })
               : state.isError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)
-                  ? Center(child: RetryAgain(onRetry: initChanakyaNeetiChaptersInfo,error: state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!))
+                  ? Center(child: RetryAgain(onRetry: initChanakyaNeetiChaptersInfo,error: state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!.message))
                   : Center(
                       child: SpinKitThreeBounce(
                       color: Theme.of(context).primaryColor,

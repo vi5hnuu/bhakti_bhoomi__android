@@ -49,7 +49,7 @@ class _MantraScreenState extends State<MantraScreen> {
                     ),
                   )
                 : state.isError(forr: Httpstates.MANTRA_BY_ID)
-                    ? Center(child: RetryAgain(onRetry: initMantraById,error: state.getError(forr: Httpstates.MANTRA_BY_ID)!))
+                    ? Center(child: RetryAgain(onRetry: initMantraById,error: state.getError(forr: Httpstates.MANTRA_BY_ID)!.message))
                     : const Center(child: CircularProgressIndicator()));
       },
     );

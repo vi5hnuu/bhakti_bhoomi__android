@@ -54,14 +54,14 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
                       itemNo: index + 1,
                       text: aartiInfo.title,
                       key: Key(aartiInfo.id),
-                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti,
+                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti.name,
                           pathParameters: {"id": state.aartisInfo[index].id}),
                     ),
                   );
                 })
             : Center(
                 child: state.isError(forr: Httpstates.AARTI_INFO)
-                    ? RetryAgain(onRetry: initAartiInfo,error: state.getError(forr:  Httpstates.AARTI_INFO)!)
+                    ? RetryAgain(onRetry: initAartiInfo,error: state.getError(forr:  Httpstates.AARTI_INFO)!.message)
                     : (state.isLoading(forr: Httpstates.AARTI_INFO)
                         ? SpinKitThreeBounce(
                             color: Theme.of(context).primaryColor)

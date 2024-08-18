@@ -42,7 +42,7 @@ class _NewCommentFormState extends State<NewCommentForm> {
             ),
           ),
         ListTile(
-          leading: CircleAvatar(child: widget.userInfo?.profileMeta?.secure_url != null ? Image.network(widget.userInfo!.profileMeta!.secure_url) : const Icon(Icons.favorite_outlined)),
+          leading: CircleAvatar(backgroundImage: widget.userInfo?.profileMeta?.secure_url != null ? NetworkImage(widget.userInfo!.profileMeta!.secure_url) : null,child: widget.userInfo?.profileMeta?.secure_url == null ? const Icon(Icons.favorite_outlined):null),
           title: TextFormField(
             controller: commentTextCntrl,
             autocorrect: true,

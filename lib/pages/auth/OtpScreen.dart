@@ -42,7 +42,7 @@ class _OtpScreenState extends State<OtpScreen> {
         listener: (ctx, state) {
           if (state.success) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message ?? "password changed successfully")));
-            GoRouter.of(context).goNamed(Routing.login);
+            GoRouter.of(context).goNamed(Routing.login.name);
           }
         },
         builder: (context, state) => Scaffold(
@@ -149,14 +149,14 @@ class _OtpScreenState extends State<OtpScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.isError(forr: Httpstates.RESET_PASSWORD)) Text(state.getError(forr: Httpstates.RESET_PASSWORD)!),
+                        if (state.isError(forr: Httpstates.RESET_PASSWORD)) Text(state.getError(forr: Httpstates.RESET_PASSWORD)!.message),
                         if (passwordCntrl.value.text != confirmPasswordCntrl.value.text) const Text("new password should be equal to confirm password"),
                         const SizedBox(height: 12),
                         CustomTextButton(
                             onPressed: state.isLoading(forr: Httpstates.RESET_PASSWORD)
                                 ? null
                                 : () {
-                                    GoRouter.of(context).goNamed(Routing.login);
+                                    GoRouter.of(context).goNamed(Routing.login.name);
                                   },
                             child: const Text('Sign-in instead'))
                       ],

@@ -25,7 +25,7 @@ class MantraBloc extends Bloc<MantraEvent, MantraState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_MANTRA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_MANTRA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_MANTRA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchAllMantra>((event, emit) {
@@ -40,7 +40,7 @@ class MantraBloc extends Bloc<MantraEvent, MantraState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MANTRA_BY_ID, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MANTRA_BY_ID, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MANTRA_BY_ID, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchMantraByTitle>((event, emit) {

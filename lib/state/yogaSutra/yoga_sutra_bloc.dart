@@ -27,7 +27,7 @@ class YogaSutraBloc extends Bloc<YogaSutraEvent, YogaSutraState> {
       }   on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchYogasutraBySutraId>((event, emit) {
@@ -43,7 +43,7 @@ class YogaSutraBloc extends Bloc<YogaSutraEvent, YogaSutraState> {
       }   on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<FetchYogasutrasByChapterNo>((event, emit) {

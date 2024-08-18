@@ -26,7 +26,7 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
       }   on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -46,7 +46,7 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SARGAS_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SARGAS_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SARGAS_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -60,7 +60,7 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 

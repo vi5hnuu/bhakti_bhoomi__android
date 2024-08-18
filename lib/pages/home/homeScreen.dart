@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
             actions: [
               if (state.userInfo != null)
                 GestureDetector(
-                  onTap: () => GoRouter.of(context).pushNamed(Routing.profile),
+                  onTap: () => GoRouter.of(context).pushNamed(Routing.profile.name),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: CircleAvatar(
@@ -91,22 +91,22 @@ class _HomeState extends State<Home> {
                     splashColor: Theme.of(context).primaryColor,
                     leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor,size: 24),
                     trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
-                    onTap: () => GoRouter.of(context).pushNamed(Routing.aboutUs),
+                    onTap: () => GoRouter.of(context).pushNamed(Routing.aboutUs.name),
                   )
                 ],
               )),
           body: GridView.count(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-            ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo),),
-            ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo)}, title: "brahmasutra"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo)}, title: "chalisa"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters)}, title: "chanakyaneeti"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos)}, title: "mahabharat"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo)}, title: "mantra"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo)}, title: "ramcharitmanas"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo)}, title: "rigveda"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo)}, title: "valmiikiramayan"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters)}, title: "bhagvadgeeta"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters)}, title: "yoga-sutra"),
+            ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
+            ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
+            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
           ]),
         );
       },

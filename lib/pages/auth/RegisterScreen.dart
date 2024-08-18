@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         listener: (ctx, state) {
           if (state.success) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message ?? "registered successfully")));
-            GoRouter.of(context).goNamed(Routing.login);
+            GoRouter.of(context).goNamed(Routing.login.name);
           }
         },
         builder: (context, state) => Scaffold(
@@ -224,7 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )),
                         if (state.isError(forr: Httpstates.REGISTER))
                           Text(
-                            state.getError(forr: Httpstates.REGISTER)!,
+                            state.getError(forr: Httpstates.REGISTER)!.message,
                             textAlign: TextAlign.center,
                           ),
                         const SizedBox(height: 12),
@@ -232,7 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onPressed: state.isLoading(forr: Httpstates.REGISTER)
                                 ? null
                                 : () {
-                                    GoRouter.of(context).goNamed(Routing.login);
+                                    GoRouter.of(context).goNamed(Routing.login.name);
                                   },
                             child: const Text('Sign-in instead')),
                       ],

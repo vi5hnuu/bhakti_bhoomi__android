@@ -39,13 +39,13 @@ class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScr
                                 child: RoundedListTile(
                                   itemNo: index + 1,
                                   text: "quater",
-                                  onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
+                                  onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra.name, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
                                 ),
                               )),
                     ),
                   )
                 : state.isError(forr: Httpstates.BRAHMA_SUTRA_INFO)
-                    ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!))//useless..wont occur
+                    ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!.message))//useless..wont occur
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));//wont occur
           },
         ));

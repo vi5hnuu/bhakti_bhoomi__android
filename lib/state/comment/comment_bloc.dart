@@ -15,7 +15,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         bool done = _likeUnlikeComment(comments: state.comments, id: event.id, like: event.like);
         emit(state.copyWith(error: null, loadingFor: {...state.loadingFor}..remove(event), comments: state.comments.map((c) => c.copyWith()).toList()));
       } catch (e) {
-        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e)?.message : 'something went wrong'));
       }
     });
 
@@ -29,7 +29,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         final commentData = await commentRepository.createComment(newComment: event.newComment, cancelToken: event.cancelToken);
         emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), comments: _addComment(comments: state.comments, newCmnts: [commentData.data!], addToTotalChildCommentSize: true)));
       } catch (e) {
-        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e)?.message : 'something went wrong'));
       }
     });
 
@@ -39,7 +39,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         await commentRepository.deleteComment(id: event.id, cancelToken: event.cancelToken);
         emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), comments: _deleteComment(comments: state.comments, id: event.id)));
       } catch (e) {
-        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e)?.message : 'something went wrong'));
       }
     });
 
@@ -69,7 +69,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         // });
         // emit(state.copyWith(loadingFor:{...state.loadingFor}..remove(event), comments: demoComments));
       } catch (e) {
-        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e) : 'something went wrong'));
+        emit(state.copyWith(loadingFor: {...state.loadingFor}..remove(event), error: e is DioException ? Utils.handleDioException(e)?.message : 'something went wrong'));
       }
     });
   }

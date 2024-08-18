@@ -30,7 +30,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       listener: (ctx, state) {
         if (state.success) {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verified successfully", color: Colors.green));
-          context.goNamed(Routing.login);
+          context.goNamed(Routing.login.name);
         }
         if (state.isError(forr: Httpstates.REVERIFY)) {
           ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verification failed", color: Colors.red));
@@ -73,7 +73,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         style: TextStyle(color: Colors.white),
                       )),
                   const SizedBox(height: 12),
-                  CustomTextButton(onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => context.goNamed(Routing.login), child: const Text('login instead')),
+                  CustomTextButton(onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => context.goNamed(Routing.login.name), child: const Text('login instead')),
                 ],
               ),
             ),

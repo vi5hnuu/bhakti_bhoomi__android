@@ -1,7 +1,8 @@
+import 'package:bhakti_bhoomi/models/HttpState.dart';
 import 'package:dio/dio.dart';
 
 class Utils {
-  static String? handleDioException(DioException e) {
+  static ErrorModel? handleDioException(DioException e) {
     switch (e.type) {
       case DioExceptionType.cancel:
         return null;
@@ -9,11 +10,11 @@ class Utils {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.sendTimeout:
-        return "Please check your internet connection.";
+        return ErrorModel(message: "Please check your internet connection.",statusCode: e.response?.statusCode);
       case DioExceptionType.badResponse:
-        return e.response?.data?['message'] ?? 'something went wrong';
+        return ErrorModel(message: e.response?.data?['message'] ?? 'something went wrong',statusCode: e.response?.statusCode);
       default:
-        return e.response?.data['message'] ?? e.message;
+        return ErrorModel(message: e.response?.data['message'] ?? e.message,statusCode: e.response?.statusCode);
     }
   }
 }

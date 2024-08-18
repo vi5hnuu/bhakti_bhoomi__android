@@ -110,7 +110,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.isError(forr: Httpstates.UPDATE_PASSWORD)) Text(state.getError(forr: Httpstates.UPDATE_PASSWORD)!),
+                        if (state.isError(forr: Httpstates.UPDATE_PASSWORD)) Text(state.getError(forr: Httpstates.UPDATE_PASSWORD)!.message),
                       ],
                     ),
                   ),

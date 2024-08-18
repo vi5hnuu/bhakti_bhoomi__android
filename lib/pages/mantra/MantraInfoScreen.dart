@@ -50,14 +50,14 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
                       return Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: RoundedListTile(
-                          onTap: () => GoRouter.of(context).pushNamed(Routing.mantra, pathParameters: {'mantraId': mantraInfo.key}),
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.mantra.name, pathParameters: {'mantraId': mantraInfo.key}),
                           itemNo: index + 1,
                           text: mantraInfo.value.title,
                         ),
                       );
                     })
                 : state.isError(forr: Httpstates.ALL_MANTRA_INFO)
-                    ? Center(child: RetryAgain(onRetry: initAllMantraInfo,error: state.getError(forr: Httpstates.ALL_MANTRA_INFO)!))
+                    ? Center(child: RetryAgain(onRetry: initAllMantraInfo,error: state.getError(forr: Httpstates.ALL_MANTRA_INFO)!.message))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );

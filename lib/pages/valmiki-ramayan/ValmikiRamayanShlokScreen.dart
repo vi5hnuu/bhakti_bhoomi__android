@@ -159,7 +159,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO)
-                          ? RetryAgain(onRetry: loadCurrentShlok, error: state.getError(forr: Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO)!)
+                          ? RetryAgain(onRetry: loadCurrentShlok, error: state.getError(forr: Httpstates.RAMAYANA_SHLOK_BY_KANDA_SARGANO_SHLOKNO)!.message)
                           : SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                 );
               },

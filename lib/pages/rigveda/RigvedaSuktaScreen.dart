@@ -76,7 +76,7 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)
-                          ? Center(child: Text(state.getError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)!))
+                          ? Center(child: Text(state.getError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)!.message))
                           : Center(
                               child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                             ),

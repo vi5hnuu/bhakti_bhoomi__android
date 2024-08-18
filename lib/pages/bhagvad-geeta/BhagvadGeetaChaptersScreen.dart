@@ -57,7 +57,7 @@ class _BhagvadGeetaChaptersScreenState
                                 itemNo: e.chapterNumber,
                                 text: "${e.chapterNumber} ${e.name}",
                                 onTap: () => GoRouter.of(context).pushNamed(
-                                    Routing.bhagvadGeetaChapterShloks,
+                                    Routing.bhagvadGeetaChapterShloks.name,
                                     pathParameters: {
                                       'chapterNo': '${e.chapterNumber}'
                                     }),
@@ -72,7 +72,7 @@ class _BhagvadGeetaChaptersScreenState
                     child: RetryAgain(
                         onRetry: initBhagvadGeetaChapters,
                         error: state.getError(
-                            forr: Httpstates.BHAGVAD_GEETA_CHAPTERS)!))
+                            forr: Httpstates.BHAGVAD_GEETA_CHAPTERS)!.message))
                 : Center(
                     child: SpinKitThreeBounce(
                         color: Theme.of(context).primaryColor)),

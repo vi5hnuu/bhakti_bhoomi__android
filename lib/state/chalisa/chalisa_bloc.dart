@@ -24,7 +24,7 @@ class ChalisaBloc extends Bloc<ChalisaEvent, ChalisaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_CHALISA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_CHALISA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.ALL_CHALISA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -41,7 +41,7 @@ class ChalisaBloc extends Bloc<ChalisaEvent, ChalisaState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHALISA_BY_ID, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHALISA_BY_ID, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHALISA_BY_ID, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 

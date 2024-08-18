@@ -50,14 +50,14 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
                                     leading: const Icon(Icons.menu_rounded, color: Colors.white),
                                     title: Text('Book ${bookInfo.bookNo}', style: const TextStyle(fontSize: 24, color: Colors.white)),
                                     subtitle: Text('Contains ${bookInfo.info.values.reduce((tShloks, shloks) => tShloks + shloks)} Shloks', style: TextStyle(color: Colors.white)),
-                                    onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
+                                    onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos.name, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
                                   ),
                                 ))
                             .toList(),
                       ),
                     )
                   : state.isError(forr: Httpstates.MAHABHARATA_INFO)
-                      ? Center(child: RetryAgain(onRetry: initMahabharataInfo,error: state.getError(forr: Httpstates.MAHABHARATA_INFO)!))
+                      ? Center(child: RetryAgain(onRetry: initMahabharataInfo,error: state.getError(forr: Httpstates.MAHABHARATA_INFO)!.message))
                       : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))
             ));
   }

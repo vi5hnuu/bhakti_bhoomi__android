@@ -66,7 +66,7 @@ class _AartiScreenState extends State<AartiScreen> {
                     ),
                   ),
             ):
-            (Center(child: state.isError(forr: Httpstates.AARTIS) ? RetryAgain(onRetry: initAarti, error: state.getError(forr: Httpstates.AARTIS)!) : const CircularProgressIndicator())));
+            (Center(child: state.isError(forr: Httpstates.AARTIS) ? RetryAgain(onRetry: initAarti, error: state.getError(forr: Httpstates.AARTIS)!.message) : const CircularProgressIndicator())));
       },
     );
   }

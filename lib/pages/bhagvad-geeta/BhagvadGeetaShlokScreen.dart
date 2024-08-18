@@ -88,7 +88,7 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)
-                          ? Center(child: RetryAgain(onRetry: reloadCurrentShlok, error: state.getError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)!))
+                          ? Center(child: RetryAgain(onRetry: reloadCurrentShlok, error: state.getError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)!.message))
                           : const Center(child: CircularProgressIndicator()),
                 ),
               );

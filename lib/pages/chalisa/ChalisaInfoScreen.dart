@@ -51,14 +51,14 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
                         padding: const EdgeInsets.all(5),
                         child: RoundedListTile(
                           itemNo: index + 1,
-                          onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa, pathParameters: {'chalisaId': chalisa.key}),
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa.name, pathParameters: {'chalisaId': chalisa.key}),
                           text: chalisa.value,
                         ),
                       );
                     },
                   )
                 : state.isError(forr: Httpstates.ALL_CHALISA_INFO)
-                    ? Center(child: RetryAgain(onRetry: initChalisaInfo,error: state.getError(forr: Httpstates.ALL_CHALISA_INFO)!))
+                    ? Center(child: RetryAgain(onRetry: initChalisaInfo,error: state.getError(forr: Httpstates.ALL_CHALISA_INFO)!.message))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );

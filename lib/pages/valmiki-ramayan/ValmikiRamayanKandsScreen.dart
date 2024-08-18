@@ -51,14 +51,14 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
                               child: RoundedListTile(
                                 itemNo: e.value,
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo, pathParameters: {'kand': e.key}),
+                                onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo.name, pathParameters: {'kand': e.key}),
                                 text: '${e.key}',
                               ),
                             ))
                         .toList())
                 : state.isError(forr: Httpstates.RAMAYANA_INFO)
                     ? Center(
-                        child: RetryAgain(onRetry: initRamayanaInfo,error: state.getError(forr: Httpstates.RAMAYANA_INFO)!),
+                        child: RetryAgain(onRetry: initRamayanaInfo,error: state.getError(forr: Httpstates.RAMAYANA_INFO)!.message),
                       )
                     : Center(
                         child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),

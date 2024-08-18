@@ -25,7 +25,7 @@ class BrahmaSutraBloc extends Bloc<BrahmaSutraEvent, BrahmaSutraState> {
       }   on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -43,7 +43,7 @@ class BrahmaSutraBloc extends Bloc<BrahmaSutraEvent, BrahmaSutraState> {
       }  on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 

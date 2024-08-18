@@ -49,14 +49,14 @@ class _YogaSutraChaptersState extends State<YogaSutraChapters> {
                             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
                             child: RoundedListTile(
                               itemNo: index + 1,
-                              onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra, pathParameters: {'chapterNo': '${index + 1}'}),
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': '${index + 1}'}),
                               text: "chapter",
                             ),
                           )),
                 )
               : state.isError(forr: Httpstates.YOGASUTRA_INFO)
                   ? Center(
-                      child: RetryAgain(onRetry: initYogaSutraInfo,error: state.getError(forr: Httpstates.YOGASUTRA_INFO)!),
+                      child: RetryAgain(onRetry: initYogaSutraInfo,error: state.getError(forr: Httpstates.YOGASUTRA_INFO)!.message),
                     )
                   : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
         );

@@ -24,7 +24,15 @@ class CommentTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                CircleAvatar(child: ClipOval(child: Image.network(comment.profileImageUrl))),
+                CircleAvatar(child: ClipOval(child: Image.network(comment.profileImageUrl,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return const SpinKitPumpingHeart(color: Colors.grey, size: 18);
+                    }
+                  },
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image_outlined),))),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

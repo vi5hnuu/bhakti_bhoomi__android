@@ -35,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -52,7 +52,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.TRY_AUTH, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.TRY_AUTH, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.TRY_AUTH, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -66,7 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -86,7 +86,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REGISTER, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REGISTER, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REGISTER, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -94,12 +94,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT,const HttpState.loading())));
       try {
         final res = await authRepository.logout(cancelToken: event.cancelToken);
+       }finally{
         await _sStorage.storage.delete(key: Constants.jwtKey);
         emit(AuthState());
-      } on DioException catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT, HttpState.error(error: Utils.handleDioException(e)))));
-      } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT, HttpState.error(error: e.toString()))));
       }
     });
 
@@ -111,7 +108,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.FORGOT_PASSWORD, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.FORGOT_PASSWORD, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.FORGOT_PASSWORD, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -124,7 +121,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RESET_PASSWORD, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RESET_PASSWORD, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RESET_PASSWORD, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -140,7 +137,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PROFILE_META, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
 
@@ -152,7 +149,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PASSWORD, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PASSWORD, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.UPDATE_PASSWORD, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<DeleteMeEvent>((event, emit) async {
@@ -164,7 +161,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.DELETE_ME, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.DELETE_ME, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.DELETE_ME, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
     on<ReVerifyEvent>((event, emit) async {
@@ -175,7 +172,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REVERIFY, HttpState.error(error: Utils.handleDioException(e)))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REVERIFY, HttpState.error(error: e.toString()))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.REVERIFY, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
   }

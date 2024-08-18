@@ -107,7 +107,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                             ],
                           )
                         : state.isError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)
-                            ? Center(child: RetryAgain(onRetry: initCurrentVerse,error: state.getError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)!))
+                            ? Center(child: RetryAgain(onRetry: initCurrentVerse,error: state.getError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)!.message))
                             : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
               );
             },
