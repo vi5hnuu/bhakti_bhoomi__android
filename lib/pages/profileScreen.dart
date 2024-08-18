@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ? FileImage(File(coverImage!.path))
                                     : NetworkImage(state.userInfo!.posterMeta!
                                         .secure_url)) as ImageProvider,
-                                fit: BoxFit.fitWidth,
+                                fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
                                 repeat: ImageRepeat.noRepeat,
                               )),
