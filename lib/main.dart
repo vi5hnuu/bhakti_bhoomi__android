@@ -18,6 +18,8 @@ import 'package:bhakti_bhoomi/pages/chalisa/ChalisaInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiShlokScreen.dart';
+import 'package:bhakti_bhoomi/pages/guru-granth-sahib/GuruGranthSahibRagaPartsScreen.dart';
+import 'package:bhakti_bhoomi/pages/guru-granth-sahib/GuruGranthSahibScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
@@ -43,6 +45,7 @@ import 'package:bhakti_bhoomi/services/bhagvadGeeta/BhagvadGeetaRepository.dart'
 import 'package:bhakti_bhoomi/services/brahmaSutra/BrahmaSutraRepository.dart';
 import 'package:bhakti_bhoomi/services/chalisa/ChalisaRepository.dart';
 import 'package:bhakti_bhoomi/services/chanakyaNeeti/ChanakyaNeetiRepository.dart';
+import 'package:bhakti_bhoomi/services/guruGranthSahib/GuruGranthSahibRepository.dart';
 import 'package:bhakti_bhoomi/services/mahabharat/MahabharatRepository.dart';
 import 'package:bhakti_bhoomi/services/mantra/MantraRepository.dart';
 import 'package:bhakti_bhoomi/services/ramayan/RamayanRepository.dart';
@@ -56,6 +59,7 @@ import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/state/guruGranthSahib/guru_granth_sahib_bloc.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
@@ -95,6 +99,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<RamayanBloc>(create: (ctx) => RamayanBloc(ramayanRepository: RamayanRepository())),
         BlocProvider<BhagvadGeetaBloc>(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository())),
         BlocProvider<YogaSutraBloc>(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository())),
+        BlocProvider<GuruGranthSahibBloc>(lazy: false, create: (ctx) => GuruGranthSahibBloc(guruGranthSahibRepository: GuruGranthSahibRepository())),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
       child: MaterialApp.router(
@@ -329,6 +334,16 @@ class MyApp extends StatelessWidget {
                 name: Routing.yogaSutra.name,
                 path: Routing.yogaSutra.path,
                 builder: (context, state) => YogaSutraScreen(title: 'Yoga Sutra', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
+              ),
+              GoRoute(
+                name: Routing.guruGranthSahibInfo.name,
+                path: Routing.guruGranthSahibInfo.path,
+                builder: (context, state) => const GuruGranthSahibInfoScreen(title: 'Guru Granth Sahib'),
+              ),
+              GoRoute(
+                name: Routing.guruGranthSahibRagaParts.name,
+                path: Routing.guruGranthSahibRagaParts.path,
+                builder: (context, state) => GuruGranthSahibRagaPartsScreen(ragaNo: int.parse(state.pathParameters['ragaNo']!),title: 'Guru Granth Sahib'),
               ),
             ]),
       ),

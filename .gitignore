@@ -1,5 +1,6 @@
 #
 android/app/upload-keystore.jks
+android/key.properties
 google_signin.json
 *.env
 

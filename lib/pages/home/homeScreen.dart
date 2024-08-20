@@ -16,7 +16,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final CancelToken cancelToken = CancelToken();
 
   @override
   void initState() {
@@ -95,19 +94,32 @@ class _HomeState extends State<Home> {
                   )
                 ],
               )),
-          body: GridView.count(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-            ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
-            ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
-            ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
-          ]),
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
+                GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
+                  ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
+                  ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
+                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
+                ]),
+                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
+                GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
+                  ItemCard(title: "Guru Granth Sahib", onPressed: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibInfo.name),),
+                ]),
+              ],
+            )
+          ),
         );
       },
     );
@@ -115,7 +127,6 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    cancelToken.cancel("cancelled");
     super.dispose();
   }
 }

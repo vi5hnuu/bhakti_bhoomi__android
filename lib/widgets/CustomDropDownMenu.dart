@@ -11,12 +11,13 @@ class CustomDropDownMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownMenu<String>(
       width: MediaQuery.of(context).size.width - 25,
+      menuHeight: 400,
       label: Text(this.label, style: TextStyle(color: Theme.of(context).primaryColor)),
       textStyle: TextStyle(color: Theme.of(context).primaryColor),
       leadingIcon: Icon(Icons.translate, color: Theme.of(context).primaryColor),
       menuStyle: MenuStyle(
-        surfaceTintColor: MaterialStateProperty.all(Colors.white),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(5))),
+        surfaceTintColor: WidgetStateProperty.all(Colors.white),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(5))),
       ),
       inputDecorationTheme: InputDecorationTheme(suffixIconColor: Theme.of(context).primaryColor, enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor))),
       enableSearch: true,
