@@ -107,7 +107,7 @@ class MyApp extends StatelessWidget {
         key: parentNavKey,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: const ColorScheme.highContrastLight(primary: Colors.deepOrange),
+          colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
           useMaterial3: true,
         ),
         routerConfig: GoRouter(
@@ -293,7 +293,8 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 name: Routing.rigvedaMandalasInfo.name,
                 path: Routing.rigvedaMandalasInfo.path,
-                builder: (context, state) => const RigvedaMandalasInfoScreen(title: 'RigVeda'),
+                builder: (context, state) => const RigvedaMandalasInfoScreen(title: ''
+                    'RigVeda'),
               ),
               GoRoute(
                 name: Routing.rigvedaMandalaSuktas.name,

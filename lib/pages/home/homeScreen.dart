@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                      height: MediaQuery.of(context).size.height * 0.30,
+                      height: MediaQuery.of(context).size.height * 0.25,
                       decoration: BoxDecoration(color: Theme.of(context).primaryColor),
                       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5, left: 5, right: 5, bottom: 5),
                       child: Column(
@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: 48,
+                            radius: 50,
                             foregroundImage: (state.userInfo?.profileMeta?.secure_url != null) ? NetworkImage(state.userInfo!.profileMeta!.secure_url) : null,
                             child: state.isLoading(forr: Httpstates.USER_INFO)
                                 ? SpinKitPulse(
@@ -101,21 +101,21 @@ class _HomeState extends State<Home> {
               children: [
                 Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
                 GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-                  ItemCard(title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
-                  ItemCard(onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
-                  ItemCard(onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
+                  ItemCard(imageProvider: const AssetImage("assets/home/aarti.webp"),title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
+                  ItemCard(imageProvider:const AssetImage("assets/home/brahmasutra.webp"),onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/chalisa.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/chanakyaneeti.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/mahabharat.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/mantra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/ramcharitmanas.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/rigved.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/valmikiramayan.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/bhagvadgeeta.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/yogasutra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
                 ]),
                 Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
                 GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-                  ItemCard(title: "Guru Granth Sahib", onPressed: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibInfo.name),),
+                  ItemCard(imageProvider:const AssetImage("assets/home/gurugranthsahib.webp"),title: "Guru Granth Sahib", onPressed: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibInfo.name),),
                 ]),
               ],
             )
@@ -134,27 +134,35 @@ class _HomeState extends State<Home> {
 class ItemCard extends StatelessWidget {
   final String title;
   final GestureTapCallback onPressed;
+  final ImageProvider? imageProvider;
 
   const ItemCard({
     super.key,
     required this.title,
+    this.imageProvider,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0.5,
-      color: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.5),
+    return Container(
+      padding: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        image: imageProvider==null ? null :  DecorationImage(
+            image: imageProvider!,
+            onError: (exception, stackTrace) => const Icon(Icons.image_not_supported_outlined),
+            fit: BoxFit.cover,
+            repeat: ImageRepeat.noRepeat,
+            filterQuality: FilterQuality.high
+        ),
       ),
-      clipBehavior: Clip.antiAlias,
       child: InkWell(
+        splashFactory: InkRipple.splashFactory,
         splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
-        overlayColor: MaterialStateProperty.all(Theme.of(context).primaryColor.withOpacity(0.2)),
+        overlayColor: WidgetStateProperty.all(Theme.of(context).primaryColor.withOpacity(0.1)),
         onTap: onPressed,
-        child: Center(child: Text(title, style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))),
+        borderRadius: BorderRadius.circular(12.5),
+        child: imageProvider!=null ? null : Center(child: Text(title, style: const TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))),
       ),
     );
   }

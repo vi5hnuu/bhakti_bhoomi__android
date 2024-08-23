@@ -76,6 +76,7 @@ flutter:
     - assets/images/
     - assets/header/
     - assets/lottie/
+    - assets/home/
     - .env
 
   fonts:
