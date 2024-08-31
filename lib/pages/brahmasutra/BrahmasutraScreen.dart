@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BrahmasutraScreen extends StatefulWidget {
   final String title;
@@ -101,8 +102,12 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                 bottom: 45,
                                 right: 15,
                                 child: EngageActions(
-                                  onBookmark: () => {},
-                                  onLike: () => {},
+                                  onShare: () async {
+                                    ShareResult shareResult = await Share.share("${sutra.sutra.values.join("\n")} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
+                                    if (shareResult.status == ShareResultStatus.success) {
+                                      ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "sutra shared successfully",color: Colors.green));
+                                    }
+                                  },
                                   onComment: () => onComment(
                                       context: context,
                                       commentFormId:

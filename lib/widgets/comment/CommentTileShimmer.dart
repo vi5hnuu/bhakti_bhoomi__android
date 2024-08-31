@@ -33,12 +33,12 @@ class CommentTileShimmer extends StatelessWidget {
                     )),
                     TextButton(
                         style: ButtonStyle(
-                            minimumSize: MaterialStateProperty.all(Size.zero),
-                            padding: MaterialStateProperty.all(const EdgeInsets.only(top: 9)),
+                            minimumSize: WidgetStateProperty.all(Size.zero),
+                            padding: WidgetStateProperty.all(const EdgeInsets.only(top: 9)),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            foregroundColor: MaterialStateProperty.all(Colors.grey),
+                            foregroundColor: WidgetStateProperty.all(Colors.grey),
                             splashFactory: NoSplash.splashFactory,
-                            overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                            overlayColor: WidgetStateProperty.all(Colors.transparent)),
                         onPressed: null,
                         child: const Text("reply"))
                   ],

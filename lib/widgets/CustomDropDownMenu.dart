@@ -29,5 +29,5 @@ class CustomDropDownMenu extends StatelessWidget {
 }
 
 DropdownMenuEntry<String> CustomDropDownEntry({required String label, required String value, required foreGroundColor}) {
-  return DropdownMenuEntry(value: value, label: label, style: ButtonStyle(foregroundColor: MaterialStateProperty.all(foreGroundColor)));
+  return DropdownMenuEntry(value: value, label: label, style: ButtonStyle(foregroundColor: WidgetStateProperty.all(foreGroundColor)));
 }

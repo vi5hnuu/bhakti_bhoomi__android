@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MahabharatShlokScreen extends StatefulWidget {
   final String title;
@@ -56,7 +57,7 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                     ? Container(
                         width: double.infinity,
                         height: double.infinity,
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(25),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -70,8 +71,12 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                               bottom: 45,
                               right: 15,
                               child: EngageActions(
-                                onBookmark: () => {},
-                                onLike: () => {},
+                                onShare: () async {
+                                  ShareResult shareResult = await Share.share("${shlok.text} https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
+                                  if (shareResult.status == ShareResultStatus.success) {
+                                    ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "shlok shared successfully",color: Colors.green));
+                                  }
+                                },
                                 onComment: () => onComment(context: context, commentFormId: MahabharatState.commentForId(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1)),
                               ),
                             ),

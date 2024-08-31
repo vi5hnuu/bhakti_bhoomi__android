@@ -2,9 +2,12 @@ import 'package:bhakti_bhoomi/models/mantra/MantraModel.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
+import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MantraScreen extends StatefulWidget {
   final String title;
@@ -70,6 +73,8 @@ class _MantraScreenState extends State<MantraScreen> {
                   title: Text(mantra.title, style: const TextStyle(color: Colors.white)),
                   textColor: Colors.white,
                   iconColor: Colors.white,
+                  dense: true,
+                  expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
                   collapsedIconColor: Colors.white,
                   expandedAlignment: Alignment.centerLeft,
                   children: [
@@ -84,6 +89,15 @@ class _MantraScreenState extends State<MantraScreen> {
                         padding: EdgeInsets.only(left: 12 + (inner ? 24 : 0)),
                         child: _getTransLations(mantra.translations!),
                       ),
+                    const SizedBox(height: 12),
+                    Align(alignment: Alignment.centerRight, child: IconButton(
+                        onPressed: () async {
+                          ShareResult shareResult = await Share.share("${_getSharableText(mantra)} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
+                          if (shareResult.status == ShareResultStatus.success) {
+                            ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "mantra shared successfully", color: Colors.green));
+                          }
+                        },
+                        icon: const Icon(Icons.share,color: Colors.white,))),
                     ..._getMantras(mantras: mantra.subMantras, inner: true)
                   ]),
             ))
@@ -140,7 +154,7 @@ class _MantraScreenState extends State<MantraScreen> {
           ),
           const SizedBox(height: 7),
           Text(
-            translations['hi']!.join(''),
+            translations['hi']!.join('\n'),
             style: const TextStyle(color: Colors.white),
           )
         ],
@@ -152,12 +166,16 @@ class _MantraScreenState extends State<MantraScreen> {
           ),
           const SizedBox(height: 7),
           Text(
-            translations['eng']!.join(''),
+            translations['eng']!.join('\n'),
             style: const TextStyle(color: Colors.white),
           )
         ]
       ],
     );
+  }
+  
+  String _getSharableText(MantraModel mantra){
+    return "${mantra.title.trim()}\n\n${_hasDescription(mantra.description) ? "${mantra.description.values.join("\n")}\n\n":""}${mantra.translations?["hi"]!=null ? "${mantra.translations?["hi"]?.join("\n")}\n\n":""}${mantra.translations?["eng"]!=null ? "${mantra.translations?["eng"]?.join("\n")}\n\n":""}";
   }
 
   initMantraById(){

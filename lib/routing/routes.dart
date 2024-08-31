@@ -57,6 +57,9 @@ class Routing {
   static final Route yogaSutraChapters = Route(name:"yoga-sutra-chapters",path:"/yoga-sutra-chapters");
   static final Route yogaSutra = Route(name:"yoga-sutra-sutras",path:"/yoga-sutra/chapter/:chapterNo");
 
+  static final Route vratKathaInfo = Route(name:"vrat-katha-infos",path:"/vrat-katha/info");
+  static final Route vratKatha = Route(name:"vrat-katha",path:"/vrat-katha/:kathaId");
+
   static final Route guruGranthSahibInfo = Route(name:"guru-granth-sahib_info",path:"/guru-granth-sahib_info");
   static final Route guruGranthSahibRagaParts= Route(name:"guru-granth-sahib_raga_parts",path:"/guru-granth-sahib_raga_parts/raga-no/:ragaNo");
 }

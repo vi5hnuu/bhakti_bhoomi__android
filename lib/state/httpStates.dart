@@ -86,4 +86,8 @@ class Httpstates{
   //GURU GRANTH SAHIB STATE
   static const String GURU_GRANTH_SAHIB_INFO="GURU_GRANTH_SAHIB_INFO";
   static const String GURU_GRANTH_SAHIB_RAGA="GURU_GRANTH_SAHIB_RAGA";
+
+  //VRAT KATHA STATE
+  static const String VRAT_KATHA="KATHA";
+  static const String VRAT_KATHA_INFO_PAGE="KATHA_INFO_PAGE";
 }

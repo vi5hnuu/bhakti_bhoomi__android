@@ -36,6 +36,8 @@ import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanKandsScreen.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanSargasScreen.dart';
 import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanShlokScreen.dart';
+import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaInfoScreen.dart';
+import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
@@ -51,6 +53,7 @@ import 'package:bhakti_bhoomi/services/mantra/MantraRepository.dart';
 import 'package:bhakti_bhoomi/services/ramayan/RamayanRepository.dart';
 import 'package:bhakti_bhoomi/services/ramcharitmanas/RamcharitmanasRepository.dart';
 import 'package:bhakti_bhoomi/services/rigveda/RigvedaRepository.dart';
+import 'package:bhakti_bhoomi/services/vratKatha/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/yogasutra/YogaSutraRepository.dart';
 import 'package:bhakti_bhoomi/state/WithHttpState.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
@@ -65,15 +68,22 @@ import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 void main() async{
   await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(MyApp());
 }
 
@@ -100,6 +110,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<BhagvadGeetaBloc>(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository())),
         BlocProvider<YogaSutraBloc>(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository())),
         BlocProvider<GuruGranthSahibBloc>(lazy: false, create: (ctx) => GuruGranthSahibBloc(guruGranthSahibRepository: GuruGranthSahibRepository())),
+        BlocProvider<VratKathaBloc>(lazy: false, create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
       child: MaterialApp.router(
@@ -340,6 +351,16 @@ class MyApp extends StatelessWidget {
                 name: Routing.guruGranthSahibInfo.name,
                 path: Routing.guruGranthSahibInfo.path,
                 builder: (context, state) => const GuruGranthSahibInfoScreen(title: 'Guru Granth Sahib'),
+              ),
+              GoRoute(
+                name: Routing.vratKathaInfo.name,
+                path: Routing.vratKathaInfo.path,
+                builder: (context, state) => VratKathaInfoScreen(title: "Vrat Katha's"),
+              ),
+              GoRoute(
+                name: Routing.vratKatha.name,
+                path: Routing.vratKatha.path,
+                builder: (context, state) => VratKathaScreen(kathaId: state.pathParameters['kathaId']!,title: 'Vrat Katha'),
               ),
               GoRoute(
                 name: Routing.guruGranthSahibRagaParts.name,

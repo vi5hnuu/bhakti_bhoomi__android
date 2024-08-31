@@ -1,7 +1,6 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -99,7 +98,7 @@ class _HomeState extends State<Home> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
+                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",height: 50,fit: BoxFit.fitHeight)),
                 GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
                   ItemCard(imageProvider: const AssetImage("assets/home/aarti.webp"),title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
                   ItemCard(imageProvider:const AssetImage("assets/home/brahmasutra.webp"),onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
@@ -112,8 +111,9 @@ class _HomeState extends State<Home> {
                   ItemCard(imageProvider:const AssetImage("assets/home/valmikiramayan.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
                   ItemCard(imageProvider:const AssetImage("assets/home/bhagvadgeeta.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
                   ItemCard(imageProvider:const AssetImage("assets/home/yogasutra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
+                  ItemCard(imageProvider:const AssetImage("assets/home/vratkatha.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.vratKathaInfo.name)}, title: "Vrat Katha's"),
                 ]),
-                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",width: double.infinity,height: 70,fit: BoxFit.cover)),
+                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",height: 50,fit: BoxFit.fitHeight)),
                 GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
                   ItemCard(imageProvider:const AssetImage("assets/home/gurugranthsahib.webp"),title: "Guru Granth Sahib", onPressed: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibInfo.name),),
                 ]),

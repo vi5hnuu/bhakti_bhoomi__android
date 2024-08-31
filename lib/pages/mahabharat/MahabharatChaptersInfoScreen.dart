@@ -24,7 +24,7 @@ class MahabharatChaptersInfoScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: state.getBooksInfo(bookNo: bookNo)!.info.length,
               itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 5),
+                padding: const EdgeInsets.only(bottom: 5),
                 child: RoundedListTile(
                   itemNo: index + 1,
                   text: 'Chapter ${index + 1} | total verses ${state.getBooksInfo(bookNo: bookNo)!.info['${index + 1}']!}',

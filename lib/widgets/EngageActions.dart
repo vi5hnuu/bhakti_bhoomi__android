@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class EngageActions extends StatelessWidget {
-  final VoidCallback onLike;
-  final VoidCallback onComment;
-  final VoidCallback onBookmark;
+  final VoidCallback? onLike;
+  final VoidCallback? onComment;
+  final VoidCallback? onBookmark;
+  final VoidCallback? onShare;
   final bool isLiked;
   final bool isBookmarked;
 
   const EngageActions({
     super.key,
-    required this.onLike,
-    required this.onComment,
-    required this.onBookmark,
+    this.onLike,
+    this.onComment,
+    this.onBookmark,
+    this.onShare,
     this.isLiked = false,
     this.isBookmarked = false,
   });
@@ -44,6 +46,13 @@ class EngageActions extends StatelessWidget {
               tooltip: 'bookmark',
               selectedIcon: const Icon(Icons.bookmark_added_sharp, size: 38),
               isSelected: isBookmarked,
+            ),
+            const SizedBox(height: 10),
+            IconButton(
+              style: IconButton.styleFrom(elevation: 7),
+              onPressed: onShare,
+              icon: const Icon(Icons.share_outlined, size: 38),
+              tooltip: 'share',
             ),
           ],
         ),
