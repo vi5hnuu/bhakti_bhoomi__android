@@ -9,15 +9,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
-class YogaSutraChapters extends StatefulWidget {
+class YogaSutraChaptersScreen extends StatefulWidget {
   final String title;
-  const YogaSutraChapters({super.key, required this.title});
+  const YogaSutraChaptersScreen({super.key, required this.title});
 
   @override
-  State<YogaSutraChapters> createState() => _YogaSutraChaptersState();
+  State<YogaSutraChaptersScreen> createState() => _YogaSutraChaptersScreenState();
 }
 
-class _YogaSutraChaptersState extends State<YogaSutraChapters> {
+class _YogaSutraChaptersScreenState extends State<YogaSutraChaptersScreen> {
   final CancelToken token = CancelToken();
 
   @override

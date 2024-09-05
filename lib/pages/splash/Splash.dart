@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) =>handleTryAuth(state),
       listenWhen: (previous, current) => previous != current,
-      buildWhen: (previous, current) => false,
+      buildWhen: (previous, current) => previous != current,
       builder: (context, state) => Scaffold(
           body: Center(
         child: Column(
@@ -70,10 +70,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   handleTryAuth(final AuthState state){
-    print("time ${timer?.isActive}");
+    print("time ${timer?.isActive}, isLoading : ${state.isLoading(forr: Httpstates.TRY_AUTH)}, isError : ${state.isError(forr: Httpstates.TRY_AUTH)}, authenticated : ${state.isAuthtenticated && timer?.isActive!=true}");
     if (state.isLoading(forr: Httpstates.TRY_AUTH) || timer?.isActive==true){
       return;
-    }else if(state.isError(forr: Httpstates.TRY_AUTH)){
+    }else if(state.isError(forr: Httpstates.TRY_AUTH) || (!state.isAuthtenticated && timer?.isActive==false)){
       GoRouter.of(context).replaceNamed(Routing.login.name);
     }else if(state.isAuthtenticated && timer?.isActive!=true){
       GoRouter.of(context).replaceNamed(Routing.home.name);

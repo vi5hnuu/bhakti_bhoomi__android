@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
 import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
@@ -40,7 +39,21 @@ import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraChaptersScreen.dart';
 import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
-import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
+import 'package:bhakti_bhoomi/routing/routes/aartiRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/authRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/bhagvadGeetaRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/brahmasutraRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/chalisaRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/chanakyaNeetiRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/guruGranthSahibRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/mahabharatRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/mantraRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/ramcharitmanasRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/rigVedaRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/valmikiRamayanRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/vratKathaRoutes.dart';
+import 'package:bhakti_bhoomi/routing/routes/yogaSutraRoutes.dart';
 import 'package:bhakti_bhoomi/services/aarti/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/auth/AuthRepository.dart';
 import 'package:bhakti_bhoomi/services/bhagvadGeeta/BhagvadGeetaRepository.dart';
@@ -55,7 +68,7 @@ import 'package:bhakti_bhoomi/services/ramcharitmanas/RamcharitmanasRepository.d
 import 'package:bhakti_bhoomi/services/rigveda/RigvedaRepository.dart';
 import 'package:bhakti_bhoomi/services/vratKatha/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/yogasutra/YogaSutraRepository.dart';
-import 'package:bhakti_bhoomi/state/WithHttpState.dart';
+import 'package:bhakti_bhoomi/singletons/GlobalEventDispatcherSingleton.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
@@ -77,6 +90,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 void main() async{
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,12 +100,22 @@ void main() async{
     DeviceOrientation.portraitDown,
   ]);
   runApp(MyApp());
+  (globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
+    if(event is LogOutEvent){
+      scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
+    }
+  });
 }
 
-class MyApp extends StatelessWidget {
-  final whiteListedRoutes = [Routing.login.path, Routing.register.path, Routing.forgotPassword.path, Routing.splash.path, Routing.otp.path];
-
+class MyApp extends StatefulWidget {
   MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final whiteListedRoutes = [BBR.Routing.login.path, BBR.Routing.register.path, BBR.Routing.forgotPassword.path, BBR.Routing.splash.path, BBR.Routing.otp.path];
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +138,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<VratKathaBloc>(lazy: false, create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
-      child: MaterialApp.router(
+      child:MaterialApp.router(
+        scaffoldMessengerKey: scaffoldMessengerKey,
         title: 'Spirtual Shakti',
         key: parentNavKey,
         debugShowCheckedModeBanner: false,
@@ -125,16 +151,18 @@ class MyApp extends StatelessWidget {
             debugLogDiagnostics: true,
             // errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
             redirect: (context, state) {
-              if (whiteListedRoutes.contains(state.path) && !BlocProvider.of<AuthBloc>(context).state.isAuthtenticated) {
-                return Routing.login.path;
+              final authState=BlocProvider.of<AuthBloc>(context).state;
+              if (whiteListedRoutes.contains(state.path) && !authState.isAuthtenticated) {
+                return BBR.Routing.login.path;
               }
               return null;
             },
-            initialLocation: Routing.splash.path,
+            observers: [GoRouterObserver()],
+            initialLocation: BBR.Routing.splash.path,
             routes: [
               GoRoute(
-                name: Routing.splash.name,
-                path: Routing.splash.path,
+                name: BBR.Routing.splash.name,
+                path: BBR.Routing.splash.path,
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
                   child: const SplashScreen(title: "Splash"),
@@ -142,8 +170,8 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               GoRoute(
-                name: Routing.aboutUs.name,
-                path: Routing.aboutUs.path,
+                name: BBR.Routing.aboutUs.name,
+                path: BBR.Routing.aboutUs.path,
                 pageBuilder: (context, state) => CustomTransitionPage<void>(
                   key: state.pageKey,
                   child: const AboutUsScreen(title: "About Us"),
@@ -151,224 +179,34 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               GoRoute(
-                name: Routing.login.name,
-                path: Routing.login.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: LoginScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.verify.name,
-                path: Routing.verify.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: VerifyScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.forgotPassword.name,
-                path: Routing.forgotPassword.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const ForgotPasswordScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.otp.name,
-                path: Routing.otp.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: OtpScreen(usernameEmail: state.pathParameters['usernameEmail']!),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.updatePassword.name,
-                path: Routing.updatePassword.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const UpdatePasswordScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.register.name,
-                path: Routing.register.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const RegisterScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: Routing.profile.name,
-                path: Routing.profile.path,
-                builder: (context, state) => const ProfileScreen(),
-              ),
-              GoRoute(
-                name: Routing.home.name,
-                path: Routing.home.path,
+                name: BBR.Routing.home.name,
+                path: BBR.Routing.home.path,
                 builder: (context, state) => const Home(title: 'Spirtual Shakti'),
               ),
-              GoRoute(
-                name: Routing.aartiInfo.name,
-                path: Routing.aartiInfo.path,
-                builder: (context, state) => AartiInfoScreen(title: "Aarti's"),
-              ),
-              GoRoute(
-                name: Routing.aarti.name,
-                path: Routing.aarti.path,
-                builder: (context, state) => AartiScreen(title: 'Aartis', aartiId: state.pathParameters['id']!),
-              ),
-              GoRoute(
-                name: Routing.brahmasutraChaptersInfo.name,
-                path: Routing.brahmasutraChaptersInfo.path,
-                builder: (context, state) => const BrahmasutraChaptersInfoScreen(title: 'Brahmasutra'),
-              ),
-              GoRoute(
-                name: Routing.brahmasutraQuatersInfo.name,
-                path: Routing.brahmasutraQuatersInfo.path,
-                builder: (context, state) => BrahmasutraQuatersInfoScreen(title: 'Brahmasutra', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
-              ),
-              GoRoute(
-                name: Routing.brahmasutra.name,
-                path: Routing.brahmasutra.path,
-                builder: (context, state) => BrahmasutraScreen(title: 'Brahmasutra', chapterNo: int.parse(state.pathParameters['chapterNo']!), quaterNo: int.parse(state.pathParameters['quaterNo']!)),
-              ),
-              GoRoute(
-                name: Routing.chalisaInfo.name,
-                path: Routing.chalisaInfo.path,
-                builder: (context, state) => const ChalisaInfoScreen(title: 'Chalisa'),
-              ),
-              GoRoute(
-                name: Routing.chalisa.name,
-                path: Routing.chalisa.path,
-                builder: (context, state) => ChalisaScreen(title: 'Chalisa', chalisaId: state.pathParameters['chalisaId']!),
-              ),
-              GoRoute(
-                name: Routing.chanakyaNitiChapters.name,
-                path: Routing.chanakyaNitiChapters.path,
-                builder: (context, state) => const ChanakyaNeetiChaptersScreen(title: 'ChanaKya Niti'),
-              ),
-              GoRoute(
-                name: Routing.chanakyaNitiChapterShlok.name,
-                path: Routing.chanakyaNitiChapterShlok.path,
-                builder: (context, state) => ChanakyaNeetiShlokScreen(title: 'ChanaKya Niti', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
-              ),
-              GoRoute(
-                name: Routing.mahabharatBookInfos.name,
-                path: Routing.mahabharatBookInfos.path,
-                builder: (context, state) => MahabharatBookInfoScreen(title: 'MahaBharat'),
-              ),
-              GoRoute(
-                  name: Routing.mahabharatBookChaptersInfos.name,
-                  path: Routing.mahabharatBookChaptersInfos.path,
-                  builder: (context, state) => MahabharatChaptersInfoScreen(title: 'Mahabharat', bookNo: int.parse(state.pathParameters['bookNo']!))),
-              GoRoute(
-                  name: Routing.mahabharatBookChapterShloks.name,
-                  path: Routing.mahabharatBookChapterShloks.path,
-                  builder: (context, state) => MahabharatShlokScreen(
-                        title: 'Mahabharat',
-                        bookNo: int.parse(state.pathParameters['bookNo']!),
-                        chapterNo: int.parse(state.pathParameters['chapterNo']!),
-                      )),
-              GoRoute(
-                name: Routing.mantraInfo.name,
-                path: Routing.mantraInfo.path,
-                builder: (context, state) => const MantraInfoScreen(title: 'Mantra'),
-              ),
-              GoRoute(
-                name: Routing.mantra.name,
-                path: Routing.mantra.path,
-                builder: (context, state) => MantraScreen(title: 'Mantra', mantraId: state.pathParameters['mantraId']!),
-              ),
-              GoRoute(
-                name: Routing.ramcharitmanasInfo.name,
-                path: Routing.ramcharitmanasInfo.path,
-                builder: (context, state) => const RamcharitmanasInfoScreen(title: 'RamCharitManas'),
-              ),
-              GoRoute(
-                name: Routing.ramcharitmanasKandVerses.name,
-                path: Routing.ramcharitmanasKandVerses.path,
-                builder: (context, state) => RamcharitmanasVersesScreen(title: 'RamCharitManas', kand: state.pathParameters['kand']!),
-              ),
-              GoRoute(
-                name: Routing.ramcharitmanasMangalaCharan.name,
-                path: Routing.ramcharitmanasMangalaCharan.path,
-                builder: (context, state) => RamcharitmanasMangalacharanScreen(title: 'RamCharitManas', kand: state.pathParameters['kand']!),
-              ),
-              GoRoute(
-                name: Routing.rigvedaMandalasInfo.name,
-                path: Routing.rigvedaMandalasInfo.path,
-                builder: (context, state) => const RigvedaMandalasInfoScreen(title: ''
-                    'RigVeda'),
-              ),
-              GoRoute(
-                name: Routing.rigvedaMandalaSuktas.name,
-                path: Routing.rigvedaMandalaSuktas.path,
-                builder: (context, state) => RigvedaSuktaScreen(title: 'RigVeda', mandala: int.parse(state.pathParameters['mandala']!)),
-              ),
-              GoRoute(
-                name: Routing.valmikiRamayanKandsInfo.name,
-                path: Routing.valmikiRamayanKandsInfo.path,
-                builder: (context, state) => const ValmikiRamayanKandsScreen(title: 'Valmiki Ramayan kanda'),
-              ),
-              GoRoute(
-                name: Routing.valmikiRamayanSargasInfo.name,
-                path: Routing.valmikiRamayanSargasInfo.path,
-                builder: (context, state) => ValmikiRamayanSargasScreen(title: 'Valmiki Ramayan', kand: state.pathParameters['kand']!),
-              ),
-              GoRoute(
-                name: Routing.valmikiRamayanShlok.name,
-                path: Routing.valmikiRamayanShlok.path,
-                builder: (context, state) => ValmikiRamayanShlokScreen(title: 'Valmiki Ramayan', kand: state.pathParameters['kand']!, sargaNo: int.parse(state.pathParameters['sargaNo']!)),
-              ),
-              GoRoute(
-                name: Routing.bhagvadGeetaChapters.name,
-                path: Routing.bhagvadGeetaChapters.path,
-                builder: (context, state) => const BhagvadGeetaChaptersScreen(title: 'Bhagvad Geeta'),
-              ),
-              GoRoute(
-                name: Routing.bhagvadGeetaChapterShloks.name,
-                path: Routing.bhagvadGeetaChapterShloks.path,
-                builder: (context, state) => BhagvadGeetaShlokScreen(title: 'Bhagvad Geeta shlok', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
-              ),
-              GoRoute(
-                name: Routing.yogaSutraChapters.name,
-                path: Routing.yogaSutraChapters.path,
-                builder: (context, state) => const YogaSutraChapters(title: 'Yoga Sutra'),
-              ),
-              GoRoute(
-                name: Routing.yogaSutra.name,
-                path: Routing.yogaSutra.path,
-                builder: (context, state) => YogaSutraScreen(title: 'Yoga Sutra', chapterNo: int.parse(state.pathParameters['chapterNo']!)),
-              ),
-              GoRoute(
-                name: Routing.guruGranthSahibInfo.name,
-                path: Routing.guruGranthSahibInfo.path,
-                builder: (context, state) => const GuruGranthSahibInfoScreen(title: 'Guru Granth Sahib'),
-              ),
-              GoRoute(
-                name: Routing.vratKathaInfo.name,
-                path: Routing.vratKathaInfo.path,
-                builder: (context, state) => VratKathaInfoScreen(title: "Vrat Katha's"),
-              ),
-              GoRoute(
-                name: Routing.vratKatha.name,
-                path: Routing.vratKatha.path,
-                builder: (context, state) => VratKathaScreen(kathaId: state.pathParameters['kathaId']!,title: 'Vrat Katha'),
-              ),
-              GoRoute(
-                name: Routing.guruGranthSahibRagaParts.name,
-                path: Routing.guruGranthSahibRagaParts.path,
-                builder: (context, state) => GuruGranthSahibRagaPartsScreen(ragaNo: int.parse(state.pathParameters['ragaNo']!),title: 'Guru Granth Sahib'),
-              ),
+              authRoutes,
+              aartiRoutes,
+              brahmasutraRoutes,
+              chalisaRoutes,
+              chanakyaNeetiRoutes,
+              mahabharatRoutes,
+              mantraRoutes,
+              ramcharitmanasRoutes,
+              rigVedaRoutes,
+              valmikiRamayanRoutes,
+              bhagvadGeetaRoutes,
+              yogaSutraRoutes,
+              guruGranthSahibRoutes,
+              vratKathaRoutes
             ]),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+}
+
+class GoRouterObserver extends NavigatorObserver {
 }

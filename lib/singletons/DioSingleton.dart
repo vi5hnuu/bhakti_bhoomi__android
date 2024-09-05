@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bhakti_bhoomi/constants/Constants.dart';
+import 'package:bhakti_bhoomi/singletons/GlobalEventDispatcherSingleton.dart';
 import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
@@ -44,6 +45,7 @@ class DioSingleton {
         onError: (DioException e, handler) {
       print(
           'ERROR [${e.response?.statusCode}] => PATH: ${e.requestOptions.path}');
+      if(e.response?.statusCode==401) globalEventDispatcher.dispatch(event: LogOutEvent());
       return handler.next(e);
     }));
   }

@@ -7,6 +7,7 @@ import 'package:bhakti_bhoomi/models/HttpState.dart';
 import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/services/auth/AuthRepository.dart';
 import 'package:bhakti_bhoomi/singletons/DioSingleton.dart';
+import 'package:bhakti_bhoomi/singletons/GlobalEventDispatcherSingleton.dart';
 import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/WithHttpState.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
@@ -27,6 +28,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final _sStorage = SecureStorage();
 
   AuthBloc({required this.authRepository}) : super(AuthState()) {
+    (globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event) {
+      if(event is LogOutEvent) add(const LogoutEvent());
+    });
     on<LoginEvent>((event, emit) async {
       emit(state.copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN,const HttpState.loading())));
       try {
@@ -40,7 +44,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<TryAuthenticatingEvent>((event, emit) async {
-      print("state-event TryAuthenticatingEvent");
       emit(AuthState().copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.TRY_AUTH,const HttpState.loading())));
       try {
         final cookie = await _getCookie();
@@ -57,7 +60,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<FetchUserInfoEvent>((event, emit) async {
-      print("state-event FetchUserInfoEvent");
       if (state.userInfo != null) return emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.USER_INFO)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.USER_INFO,const HttpState.loading())));
       try {
