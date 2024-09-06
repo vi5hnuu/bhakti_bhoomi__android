@@ -130,9 +130,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     subscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
-      if(event is LogOutInitEvent){
+      final onSplashYet=router.routeInformationProvider.value.uri.path==BBR.Routing.splash.path;
+      if((event is LogOutInitEvent) && !onSplashYet){
         scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
-      }else if(event is LogOutCompleteEvent){
+      }else if((event is LogOutCompleteEvent)){
         router.goNamed(BBR.Routing.login.name);
       }
     });

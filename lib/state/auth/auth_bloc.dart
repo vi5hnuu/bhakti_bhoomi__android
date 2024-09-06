@@ -95,6 +95,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>((event, emit) async {
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT,const HttpState.loading())));
       try {
+        await Future.delayed(const Duration(seconds: 2));
         final res = await authRepository.logout(cancelToken: event.cancelToken);
        }finally{
         await _sStorage.storage.delete(key: Constants.jwtKey);

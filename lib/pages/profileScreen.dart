@@ -244,9 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: isAnyLoading
                                 ? null
                                 : () {
-                                    BlocProvider.of<AuthBloc>(context).add(
-                                        LogoutEvent(
-                                            cancelToken: deleteMeToken));
+                                    BlocProvider.of<AuthBloc>(context).add(LogoutEvent(cancelToken: deleteMeToken));
                                   },
                             child: const Text('log out')),
                         const SizedBox(height: 64),
