@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
-
 sealed class GlobalEvent{}
 
-class LogOutEvent extends GlobalEvent{}
+class LogOutInitEvent extends GlobalEvent{}
+class LogOutCompleteEvent extends GlobalEvent{}
 
 class GlobalEventDispatcherSingleton {
   final StreamController<GlobalEvent> _streamController;

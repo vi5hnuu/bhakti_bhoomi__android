@@ -45,7 +45,7 @@ class DioSingleton {
         onError: (DioException e, handler) {
       print(
           'ERROR [${e.response?.statusCode}] => PATH: ${e.requestOptions.path}');
-      if(e.response?.statusCode==401) globalEventDispatcher.dispatch(event: LogOutEvent());
+      if(e.response?.statusCode==401) globalEventDispatcher.dispatch(event: LogOutInitEvent());
       return handler.next(e);
     }));
   }

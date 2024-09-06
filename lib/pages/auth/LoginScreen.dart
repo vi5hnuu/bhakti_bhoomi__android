@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/services/apis/loginApis/GoogleApi.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -12,9 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../widgets/notificationSnackbar.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -47,7 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       builder: (context, state) => Scaffold(
+
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text(
             'Login',
             style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),

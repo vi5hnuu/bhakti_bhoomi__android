@@ -1,44 +1,7 @@
 import 'dart:async';
-import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
 import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/ForgotPasswordScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/OtpScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/RegisterScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/UpdatePasswordScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/VerifyScreen.dart';
-import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaChaptersScreen.dart';
-import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
-import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraChaptersInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraQuatersInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
-import 'package:bhakti_bhoomi/pages/chalisa/ChalisaInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
-import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiChaptersScreen.dart';
-import 'package:bhakti_bhoomi/pages/chanakya-neeti/ChanakyaNeetiShlokScreen.dart';
-import 'package:bhakti_bhoomi/pages/guru-granth-sahib/GuruGranthSahibRagaPartsScreen.dart';
-import 'package:bhakti_bhoomi/pages/guru-granth-sahib/GuruGranthSahibScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
-import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatBooksInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatChaptersInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
-import 'package:bhakti_bhoomi/pages/mantra/MantraInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
-import 'package:bhakti_bhoomi/pages/profileScreen.dart';
-import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasMagalaCharanScreen.dart';
-import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.dart';
-import 'package:bhakti_bhoomi/pages/rigveda/RigvedaMandalasInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/rigveda/RigvedaSuktaScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
-import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanKandsScreen.dart';
-import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanSargasScreen.dart';
-import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanShlokScreen.dart';
-import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaInfoScreen.dart';
-import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaScreen.dart';
-import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraChaptersScreen.dart';
-import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
 import 'package:bhakti_bhoomi/routing/routes/aartiRoutes.dart';
 import 'package:bhakti_bhoomi/routing/routes/authRoutes.dart';
@@ -100,11 +63,6 @@ void main() async{
     DeviceOrientation.portraitDown,
   ]);
   runApp(MyApp());
-  (globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
-    if(event is LogOutEvent){
-      scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
-    }
-  });
 }
 
 class MyApp extends StatefulWidget {
@@ -115,7 +73,71 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final whiteListedRoutes = [BBR.Routing.login.path, BBR.Routing.register.path, BBR.Routing.forgotPassword.path, BBR.Routing.splash.path, BBR.Routing.otp.path];
+  static final _whiteListedRoutes = [BBR.Routing.login.path, BBR.Routing.register.path, BBR.Routing.forgotPassword.path, BBR.Routing.splash.path, BBR.Routing.otp.path];
+  final router=GoRouter(
+      debugLogDiagnostics: true,
+      // errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
+      redirect: (context, state) {
+        final authState=BlocProvider.of<AuthBloc>(context).state;
+        if (!_whiteListedRoutes.contains(state.fullPath) && !authState.isAuthtenticated) {
+          return "/auth/${BBR.Routing.login.path}";
+        }
+        return null;
+      },
+      observers: [GoRouterObserver()],
+      initialLocation: BBR.Routing.splash.path,
+      routes: [
+        GoRoute(
+          name: BBR.Routing.splash.name,
+          path: BBR.Routing.splash.path,
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const SplashScreen(title: "Splash"),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          name: BBR.Routing.aboutUs.name,
+          path: BBR.Routing.aboutUs.path,
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const AboutUsScreen(title: "About Us"),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
+          name: BBR.Routing.home.name,
+          path: BBR.Routing.home.path,
+          builder: (context, state) => const Home(title: 'Spirtual Shakti'),
+        ),
+        authRoutes,
+        aartiRoutes,
+        brahmasutraRoutes,
+        chalisaRoutes,
+        chanakyaNeetiRoutes,
+        mahabharatRoutes,
+        mantraRoutes,
+        ramcharitmanasRoutes,
+        rigVedaRoutes,
+        valmikiRamayanRoutes,
+        bhagvadGeetaRoutes,
+        yogaSutraRoutes,
+        guruGranthSahibRoutes,
+        vratKathaRoutes
+      ]);
+  StreamSubscription<GlobalEvent>? subscription;
+
+  @override
+  void initState() {
+    subscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
+      if(event is LogOutInitEvent){
+        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
+      }else if(event is LogOutCompleteEvent){
+        router.goNamed(BBR.Routing.login.name);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +156,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<RamayanBloc>(create: (ctx) => RamayanBloc(ramayanRepository: RamayanRepository())),
         BlocProvider<BhagvadGeetaBloc>(create: (ctx) => BhagvadGeetaBloc(bhagvadGeetaRepository: BhagvadGeetaRepository())),
         BlocProvider<YogaSutraBloc>(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository())),
-        BlocProvider<GuruGranthSahibBloc>(lazy: false, create: (ctx) => GuruGranthSahibBloc(guruGranthSahibRepository: GuruGranthSahibRepository())),
-        BlocProvider<VratKathaBloc>(lazy: false, create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
+        BlocProvider<GuruGranthSahibBloc>(create: (ctx) => GuruGranthSahibBloc(guruGranthSahibRepository: GuruGranthSahibRepository())),
+        BlocProvider<VratKathaBloc>(create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
       child:MaterialApp.router(
@@ -147,66 +169,22 @@ class _MyAppState extends State<MyApp> {
           colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
           useMaterial3: true,
         ),
-        routerConfig: GoRouter(
-            debugLogDiagnostics: true,
-            // errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
-            redirect: (context, state) {
-              final authState=BlocProvider.of<AuthBloc>(context).state;
-              if (whiteListedRoutes.contains(state.path) && !authState.isAuthtenticated) {
-                return BBR.Routing.login.path;
-              }
-              return null;
-            },
-            observers: [GoRouterObserver()],
-            initialLocation: BBR.Routing.splash.path,
-            routes: [
-              GoRoute(
-                name: BBR.Routing.splash.name,
-                path: BBR.Routing.splash.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const SplashScreen(title: "Splash"),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: BBR.Routing.aboutUs.name,
-                path: BBR.Routing.aboutUs.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const AboutUsScreen(title: "About Us"),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-                ),
-              ),
-              GoRoute(
-                name: BBR.Routing.home.name,
-                path: BBR.Routing.home.path,
-                builder: (context, state) => const Home(title: 'Spirtual Shakti'),
-              ),
-              authRoutes,
-              aartiRoutes,
-              brahmasutraRoutes,
-              chalisaRoutes,
-              chanakyaNeetiRoutes,
-              mahabharatRoutes,
-              mantraRoutes,
-              ramcharitmanasRoutes,
-              rigVedaRoutes,
-              valmikiRamayanRoutes,
-              bhagvadGeetaRoutes,
-              yogaSutraRoutes,
-              guruGranthSahibRoutes,
-              vratKathaRoutes
-            ]),
+        routerConfig: router,
       ),
     );
   }
 
   @override
   void dispose() {
+    subscription?.cancel();
     super.dispose();
   }
 }
 
 class GoRouterObserver extends NavigatorObserver {
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+  }
 }

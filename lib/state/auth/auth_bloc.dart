@@ -29,7 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.authRepository}) : super(AuthState()) {
     (globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event) {
-      if(event is LogOutEvent) add(const LogoutEvent());
+      if(event is LogOutInitEvent) add(const LogoutEvent());
     });
     on<LoginEvent>((event, emit) async {
       emit(state.copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.CUSTOM_LOGIN,const HttpState.loading())));
@@ -99,6 +99,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        }finally{
         await _sStorage.storage.delete(key: Constants.jwtKey);
         emit(AuthState());
+        globalEventDispatcher.dispatch(event:LogOutCompleteEvent());
       }
     });
 
