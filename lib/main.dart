@@ -47,6 +47,7 @@ import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
 import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,16 +126,28 @@ class _MyAppState extends State<MyApp> {
         guruGranthSahibRoutes,
         vratKathaRoutes
       ]);
-  StreamSubscription<GlobalEvent>? subscription;
+  StreamSubscription<GlobalEvent>? globalEventSubscription;
+  StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
 
   @override
   void initState() {
-    subscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
+    globalEventSubscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
       final onSplashYet=router.routeInformationProvider.value.uri.path==BBR.Routing.splash.path;
       if((event is LogOutInitEvent) && !onSplashYet){
         scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
       }else if((event is LogOutCompleteEvent)){
         router.goNamed(BBR.Routing.login.name);
+      }
+    });
+
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> connectivityResult) {
+      if (connectivityResult.contains(ConnectivityResult.mobile) ||
+          connectivityResult.contains(ConnectivityResult.wifi) ||
+          connectivityResult.contains(ConnectivityResult.ethernet) ||
+          connectivityResult.contains(ConnectivityResult.vpn)) {
+        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(color: Colors.green,text: "Connected to mobile internet 😀"));
+      }else if (connectivityResult.contains(ConnectivityResult.none)) {
+        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(duration: const Duration(seconds: 5),text: "No Internet Connection 😥"));
       }
     });
     super.initState();
@@ -177,7 +190,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    subscription?.cancel();
+    connectivitySubscription?.cancel();
+    globalEventSubscription?.cancel();
     super.dispose();
   }
 }
