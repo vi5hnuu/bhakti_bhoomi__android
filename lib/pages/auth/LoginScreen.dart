@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/notificationSnackbar.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -36,10 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.isError(forr: Httpstates.CUSTOM_LOGIN)) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.getError(forr: Httpstates.CUSTOM_LOGIN)!.message, color: Colors.red));
+          NotificationService.showSnackbar(text: state.getError(forr: Httpstates.CUSTOM_LOGIN)!.message, color: Colors.red);
         }
         if (state.isAuthtenticated) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "logged in successfully", color: Colors.green));
+          NotificationService.showSnackbar(text: state.message ?? "logged in successfully", color: Colors.green);
           context.replaceNamed(Routing.home.name);
         }
       },

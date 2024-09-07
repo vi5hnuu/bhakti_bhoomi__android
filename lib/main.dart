@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
+import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
+import 'package:bhakti_bhoomi/pages/createPost/CreatePostScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
@@ -32,6 +35,7 @@ import 'package:bhakti_bhoomi/services/rigveda/RigvedaRepository.dart';
 import 'package:bhakti_bhoomi/services/vratKatha/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/yogasutra/YogaSutraRepository.dart';
 import 'package:bhakti_bhoomi/singletons/GlobalEventDispatcherSingleton.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
@@ -46,7 +50,6 @@ import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
 import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,7 +57,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+final parentNavKey=GlobalKey<NavigatorState>();
 
 void main() async{
   await dotenv.load(fileName: ".env");
@@ -74,14 +77,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static final _whiteListedRoutes = [BBR.Routing.login.path, BBR.Routing.register.path, BBR.Routing.forgotPassword.path, BBR.Routing.splash.path, BBR.Routing.otp.path];
+  static final _whiteListedRoutes = [BBR.Routing.login.fullPath,BBR.Routing.verify.fullPath, BBR.Routing.register.fullPath, BBR.Routing.forgotPassword.fullPath, BBR.Routing.splash.fullPath, BBR.Routing.otp.fullPath];
   final router=GoRouter(
       debugLogDiagnostics: true,
-      // errorBuilder: (context, state) => const Home(title: 'Spirtual Shakti Error'),
       redirect: (context, state) {
         final authState=BlocProvider.of<AuthBloc>(context).state;
         if (!_whiteListedRoutes.contains(state.fullPath) && !authState.isAuthtenticated) {
           return "/auth/${BBR.Routing.login.path}";
+        }else if(state.fullPath?.startsWith("/admin")==true && !authState.isAdmin){
+          return "/home";
         }
         return null;
       },
@@ -107,9 +111,19 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         GoRoute(
+          name: BBR.Routing.createPost.name,
+          path: BBR.Routing.createPost.path,
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const CreatePostScreen(title: "Create Post"),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+        GoRoute(
           name: BBR.Routing.home.name,
           path: BBR.Routing.home.path,
           builder: (context, state) => const Home(title: 'Spirtual Shakti'),
+
         ),
         authRoutes,
         aartiRoutes,
@@ -132,9 +146,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     globalEventSubscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
-      final onSplashYet=router.routeInformationProvider.value.uri.path==BBR.Routing.splash.path;
-      if((event is LogOutInitEvent) && !onSplashYet){
-        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(text: "Session expired, Please log-in again"));
+      final onWhiteListedUrl=router.routerDelegate.currentConfiguration.matches.any((loc) => loc.matchedLocation.startsWith("/auth") || loc.matchedLocation=='/splash');
+      if((event is LogOutInitEvent) && !onWhiteListedUrl){
+        NotificationService.showSnackbar(text: "Session expired, Please log-in again");
       }else if((event is LogOutCompleteEvent)){
         router.goNamed(BBR.Routing.login.name);
       }
@@ -145,9 +159,9 @@ class _MyAppState extends State<MyApp> {
           connectivityResult.contains(ConnectivityResult.wifi) ||
           connectivityResult.contains(ConnectivityResult.ethernet) ||
           connectivityResult.contains(ConnectivityResult.vpn)) {
-        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(color: Colors.green,text: "Connected to mobile internet 😀"));
+        NotificationService.showSnackbar(color: Colors.green,text: "Connected to mobile internet 😀");
       }else if (connectivityResult.contains(ConnectivityResult.none)) {
-        scaffoldMessengerKey.currentState?.showSnackBar(notificationSnackbar(duration: const Duration(seconds: 5),text: "No Internet Connection 😥"));
+        NotificationService.showSnackbar(duration: const Duration(seconds: 5),text: "No Internet Connection 😥");
       }
     });
     super.initState();
@@ -155,7 +169,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final parentNavKey=GlobalKey<NavigatorState>();
 
     return MultiBlocProvider(
       providers: [
@@ -175,7 +188,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
       child:MaterialApp.router(
-        scaffoldMessengerKey: scaffoldMessengerKey,
+        scaffoldMessengerKey: NotificationService.messengerKey,
         title: 'Spirtual Shakti',
         key: parentNavKey,
         debugShowCheckedModeBanner: false,
@@ -201,5 +214,10 @@ class GoRouterObserver extends NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    super.didPush(route, previousRoute);
   }
 }

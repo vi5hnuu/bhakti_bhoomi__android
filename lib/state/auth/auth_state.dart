@@ -22,6 +22,10 @@ class AuthState extends Equatable with WithHttpState{
     return userInfo!=null;
   }
 
+  get isAdmin{
+    return userInfo?.role.contains(UserRole.roleAdmin)==true;
+  }
+
   @override
   List<Object?> get props => [httpStates, userInfo,message,success];
 }

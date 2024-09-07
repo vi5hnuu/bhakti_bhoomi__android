@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -52,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
         listener: (ctx, state) {
           if (state.success) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message ?? "registered successfully")));
+            NotificationService.showSnackbar(text: state.message ?? "registered successfully");
             GoRouter.of(context).goNamed(Routing.login.name);
           }
         },

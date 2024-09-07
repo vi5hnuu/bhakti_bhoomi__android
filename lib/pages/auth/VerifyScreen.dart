@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -8,8 +9,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../widgets/notificationSnackbar.dart';
 
 class VerifyScreen extends StatefulWidget {
   VerifyScreen({super.key});
@@ -21,7 +20,7 @@ class VerifyScreen extends StatefulWidget {
 class _VerifyScreenState extends State<VerifyScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController emailCntrl = TextEditingController(text: 'kum0rvishnu@gmail.com');
+  final TextEditingController emailCntrl = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +28,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.success) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verified successfully", color: Colors.green));
+          NotificationService.showSnackbar(text: state.message ?? "verified successfully", color: Colors.green);
           context.goNamed(Routing.login.name);
         }
         if (state.isError(forr: Httpstates.REVERIFY)) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message ?? "verification failed", color: Colors.red));
+          NotificationService.showSnackbar(text: state.message ?? "verification failed", color: Colors.red);
         }
       },
       builder: (context, state) => Scaffold(

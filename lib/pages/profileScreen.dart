@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CameraIconButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,20 +47,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if (!state.isAuthtenticated)
-            GoRouter.of(context).goNamed(Routing.login.name);
+          if (!state.isAuthtenticated) {
+            router.goNamed(Routing.login.name);
+          }
           if (state.anyError(forr: [
             Httpstates.LOG_OUT,
             Httpstates.UPDATE_PROFILE_META,
             Httpstates.DELETE_ME
           ])) {
-            ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(
+            NotificationService.showSnackbar(
                 text: state.getAnyError(forr: [
                   Httpstates.LOG_OUT,
                   Httpstates.UPDATE_PROFILE_META,
                   Httpstates.DELETE_ME
                 ])!.message,
-                color: Colors.red));
+                color: Colors.red);
           }
         },
         buildWhen: (previous, current) =>
@@ -77,14 +76,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return PopScope(
             canPop: !isAnyLoading || (_lastBackPressedAt != null && DateTime.now().difference(_lastBackPressedAt!) <= const Duration(seconds: 2)),
             onPopInvoked: (shouldInvoke) {
-              if (shouldInvoke) {
-                return router.pop();
+              if(!mounted) return;
+              if(shouldInvoke && router.canPop()) {
+                return WidgetsBinding.instance.addPostFrameCallback((_){
+                if(shouldInvoke && router.canPop())router.pop();
+              });
               }
-              if(mounted) {
-                setState(() =>_lastBackPressedAt = DateTime.now());
-              }
-              ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(
-                  text: "Press back again to exit | Do not quit"));
+              setState(() =>_lastBackPressedAt = DateTime.now());
+              NotificationService.showSnackbar(text: "Press back again to exit | Do not quit");
             },
             child: Scaffold(
               appBar: AppBar(

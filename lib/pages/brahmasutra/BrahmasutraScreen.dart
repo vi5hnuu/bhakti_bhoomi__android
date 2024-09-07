@@ -1,9 +1,9 @@
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +105,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                   onShare: () async {
                                     ShareResult shareResult = await Share.share("${sutra.sutra.values.join("\n")} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
                                     if (shareResult.status == ShareResultStatus.success) {
-                                      ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "sutra shared successfully",color: Colors.green));
+                                      NotificationService.showSnackbar(text: "sutra shared successfully",color: Colors.green);
                                     }
                                   },
                                   onComment: () => onComment(
@@ -146,7 +146,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
   }
 
   _showNotImplementedMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
+    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

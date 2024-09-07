@@ -1,8 +1,8 @@
 import 'package:bhakti_bhoomi/models/mantra/MantraModel.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -94,7 +94,7 @@ class _MantraScreenState extends State<MantraScreen> {
                         onPressed: () async {
                           ShareResult shareResult = await Share.share("${_getSharableText(mantra)} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
                           if (shareResult.status == ShareResultStatus.success) {
-                            ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "mantra shared successfully", color: Colors.green));
+                            NotificationService.showSnackbar(text: "mantra shared successfully", color: Colors.green);
                           }
                         },
                         icon: const Icon(Icons.share,color: Colors.white,))),
