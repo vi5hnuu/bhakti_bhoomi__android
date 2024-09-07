@@ -1,8 +1,8 @@
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +71,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                                   onShare: () async {
                                     ShareResult shareResult = await Share.share("${verse.translations['en']!} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
                                     if (shareResult.status == ShareResultStatus.success) {
-                                      ScaffoldMessenger.maybeOf(context)?.showSnackBar(notificationSnackbar(text: "Chanakya Neeti verse shared successfully",color: Colors.green));
+                                      NotificationService.showSnackbar(text: "Chanakya Neeti verse shared successfully",color: Colors.green);
                                     }
                                   },
                                   onComment: () => onComment(context: context, commentFormId: ChanakyaNeetiState.commentForId(chapterNo: widget.chapterNo, verseNo: index + 1)),
@@ -110,7 +110,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
   }
 
   _showNotImplementedMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
+    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

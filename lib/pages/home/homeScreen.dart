@@ -84,6 +84,13 @@ class _HomeState extends State<Home> {
                             ),
                         ],
                       )),
+                  if(state.isAdmin) ListTile(
+                    title: const Text("Create Post",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
+                    splashColor: Theme.of(context).primaryColor,
+                    leading: Icon(Icons.post_add, color: Theme.of(context).primaryColor,size: 24),
+                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
+                    onTap: () => GoRouter.of(context).pushNamed(Routing.createPost.name),
+                  ),
                   ListTile(
                     title: const Text("About Us",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
                     splashColor: Theme.of(context).primaryColor,

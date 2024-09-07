@@ -1,8 +1,8 @@
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
-import 'package:bhakti_bhoomi/widgets/notificationSnackbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -144,7 +144,7 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
   }
 
   _showNotImplementedMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: "Feature will available in next update...", color: Colors.orange));
+    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

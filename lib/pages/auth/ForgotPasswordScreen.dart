@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -8,8 +9,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../widgets/notificationSnackbar.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -29,10 +28,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.isError(forr: Httpstates.FORGOT_PASSWORD)) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.getError(forr: Httpstates.FORGOT_PASSWORD)!.message, color: Colors.red));
+          NotificationService.showSnackbar(text: state.getError(forr: Httpstates.FORGOT_PASSWORD)!.message, color: Colors.red);
         }
         if (state.success) {
-          ScaffoldMessenger.of(context).showSnackBar(notificationSnackbar(text: state.message!, color: Colors.green));
+          NotificationService.showSnackbar(text: state.message!, color: Colors.green);
           GoRouter.of(context).pushReplacementNamed(Routing.otp.name, pathParameters: {'usernameEmail': usernameEmailController.text});
         }
       },

@@ -1,24 +1,28 @@
 class Route{
-  Route({required this.name,required this.path});
+  Route({required this.name, required this.path, this.baseUrl="",String? fullPath}):fullPath=fullPath ?? "$baseUrl${path.startsWith("/") ? "":"/"}$path";
+
   String name;
   String path;
+  String baseUrl;
+  String fullPath;
 }
 
 class Routing {
   static final Route aboutUs = Route(name:"aboutUs",path:"/about-us");
+  static final Route createPost = Route(name:"createPost",path:"/admin/create-post");
 
-  static final Route profile = Route(name:"profile",path:"profile");
-  static final Route verify = Route(name:"verify",path:"verify");
+  static final Route profile = Route(name:"profile",path:"profile",baseUrl: "/auth");
+  static final Route verify = Route(name:"verify",path:"verify",baseUrl: "/auth");
 
   static final Route home = Route(name:"home",path:"/home");
-  static final Route login = Route(name:"login",path:"login");
+  static final Route login = Route(name:"login",path:"login",baseUrl: "/auth");
 
-  static final Route forgotPassword = Route(name:"forgot-password",path:"forgot-password");
-  static final Route otp = Route(name:"otp",path:"otp/:usernameEmail");
+  static final Route forgotPassword = Route(name:"forgot-password",path:"forgot-password",baseUrl: "/auth");
+  static final Route otp = Route(name:"otp",path:"otp/:usernameEmail",baseUrl: "/auth");
 
   static final Route splash = Route(name:"splash",path:"/splash");
-  static final Route register = Route(name:"register",path:"register");
-  static final Route updatePassword = Route(name:"update-password",path:"update-password");
+  static final Route register = Route(name:"register",path:"register",baseUrl: "/auth");
+  static final Route updatePassword = Route(name:"update-password",path:"update-password",baseUrl: "/auth");
 
   static final Route aartiInfo = Route(name:"aarti-info",path:"all/info");
   static final Route aarti = Route(name:"aarti",path:":id");

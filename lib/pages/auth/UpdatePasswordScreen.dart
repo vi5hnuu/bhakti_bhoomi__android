@@ -1,3 +1,4 @@
+import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
@@ -34,7 +35,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
         listener: (ctx, state) {
           if (state.success) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message ?? "updated password successfully")));
+            NotificationService.showSnackbar(text:state.message ?? "updated password successfully");
             GoRouter.of(context).pop();
           }
         },
