@@ -56,6 +56,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 final parentNavKey=GlobalKey<NavigatorState>();
 
@@ -66,6 +67,7 @@ void main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

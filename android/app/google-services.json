@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1049067408156",
+    "project_id": "bhaktibhoomi",
+    "storage_bucket": "bhaktibhoomi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049067408156:android:66f5f02ee8f750878888d9",
+        "android_client_info": {
+          "package_name": "com.vi5hnu.bhakti_bhoomi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049067408156-va56ln2698rimu2ba56ov7akfdnn6pck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vi5hnu.bhakti_bhoomi",
+            "certificate_hash": "df4d66e35dc514967fe5c52c31c47be41d78d742"
+          }
+        },
+        {
+          "client_id": "1049067408156-kvglrgq3g5esna1pi51cn4ln1h4eeg3v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRyy71g-YrA5oX0XbJc0un1DKUUBrp0fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049067408156-kvglrgq3g5esna1pi51cn4ln1h4eeg3v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

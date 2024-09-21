@@ -167,8 +167,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //     cancelToken: cancelToken,
                                 //   ),
                                 // );
-                                final result=await GoogleApi().login();
-                                setState(() => print(result));
+                                final result=await GoogleApi().signInWithGoogle();
+                                // setState(() => print(result));
                               },
                               child: Row(mainAxisSize: MainAxisSize.min,children: [
                                 const Icon(FontAwesomeIcons.google),
