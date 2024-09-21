@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/vrat-katha/VratKathaScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final vratKathaRoutes=GoRoute(
-  path: '/vrat-katha',
-  redirect: (context, state) => state.fullPath == '/vrat-katha' ? "${state.path!}/${BBR.Routing.vratKathaInfo.path}" : null,
+  path: BBR.Routing.vratKathaInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.vratKathaInfo.baseUrl ? BBR.Routing.vratKathaInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.vratKathaInfo.name,

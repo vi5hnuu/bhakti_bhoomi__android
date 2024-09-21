@@ -5,8 +5,8 @@ import 'package:bhakti_bhoomi/pages/ramcharitmanas/RamcharitmanasVersesScreen.da
 import 'package:go_router/go_router.dart';
 
 final ramcharitmanasRoutes=GoRoute(
-  path: '/ramcharitmanas',
-  redirect: (context, state) => state.fullPath == '/ramcharitmanas' ? "${state.path!}/${BBR.Routing.ramcharitmanasInfo.path}" : null,
+  path: BBR.Routing.ramcharitmanasInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.ramcharitmanasInfo.baseUrl ? BBR.Routing.ramcharitmanasInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.ramcharitmanasInfo.name,

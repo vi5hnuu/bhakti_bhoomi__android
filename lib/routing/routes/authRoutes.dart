@@ -10,8 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
 
 final authRoutes=GoRoute(
-  path: '/auth',
-  redirect: (context, state) => state.fullPath == '/auth' ? "${state.path!}/${BBR.Routing.login.path}" : null,
+  path: BBR.Routing.login.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.login.baseUrl ? BBR.Routing.login.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.login.name,

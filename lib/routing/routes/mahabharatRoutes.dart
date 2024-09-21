@@ -5,8 +5,8 @@ import 'package:bhakti_bhoomi/pages/mahabharat/MahabharatShlokScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final mahabharatRoutes=GoRoute(
-  path: '/mahabharat',
-  redirect: (context, state) => state.fullPath == '/mahabharat' ? "${state.path!}/${BBR.Routing.mahabharatBookInfos.path}" : null,
+  path: BBR.Routing.mahabharatBookInfos.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.mahabharatBookInfos.baseUrl ? BBR.Routing.mahabharatBookInfos.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.mahabharatBookInfos.name,

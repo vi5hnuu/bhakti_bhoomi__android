@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/guru-granth-sahib/GuruGranthSahibScreen.dart
 import 'package:go_router/go_router.dart';
 
 final guruGranthSahibRoutes=GoRoute(
-  path: '/guru-granth-sahib',
-  redirect: (context, state) => state.fullPath == '/guru-granth-sahib' ? "${state.path!}/${BBR.Routing.guruGranthSahibInfo.path}" : null,
+  path: BBR.Routing.guruGranthSahibInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.guruGranthSahibInfo.baseUrl ? BBR.Routing.guruGranthSahibInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.guruGranthSahibInfo.name,

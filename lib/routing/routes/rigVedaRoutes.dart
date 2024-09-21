@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/rigveda/RigvedaSuktaScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final rigVedaRoutes=GoRoute(
-  path: '/rig-veda',
-  redirect: (context, state) => state.fullPath == '/rig-veda' ? "${state.path!}/${BBR.Routing.rigvedaMandalasInfo.path}" : null,
+  path: BBR.Routing.rigvedaMandalasInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.rigvedaMandalasInfo.baseUrl ? BBR.Routing.rigvedaMandalasInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.rigvedaMandalasInfo.name,

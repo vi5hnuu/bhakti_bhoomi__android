@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/bhagvad-geeta/BhagvadGeetaShlokScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final bhagvadGeetaRoutes=GoRoute(
-  path: '/bhagvad-geeta',
-  redirect: (context, state) => state.fullPath == '/bhagvad-geeta' ? "${state.path!}/${BBR.Routing.bhagvadGeetaChapters.path}" : null,
+  path: BBR.Routing.bhagvadGeetaChapters.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.bhagvadGeetaChapters.baseUrl ? BBR.Routing.bhagvadGeetaChapters.fullPath : null,
   routes: [GoRoute(
     name: BBR.Routing.bhagvadGeetaChapters.name,
     path: BBR.Routing.bhagvadGeetaChapters.path,

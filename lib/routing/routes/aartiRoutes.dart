@@ -3,8 +3,8 @@ import 'package:bhakti_bhoomi/pages/aarti/AartiInfoScreen.dart';
 import 'package:bhakti_bhoomi/pages/aarti/AartiScreen.dart';
 import 'package:go_router/go_router.dart';
 
-final aartiRoutes=GoRoute(path: '/aarti',
-    redirect: (context, state) => state.fullPath == '/aarti' ? "${state.path!}/${BBR.Routing.aartiInfo.path}" : null,
+final aartiRoutes=GoRoute(path: BBR.Routing.aartiInfo.baseUrl,
+    redirect: (context, state) => state.fullPath == BBR.Routing.aartiInfo.baseUrl ? BBR.Routing.aartiInfo.fullPath : null,
     routes: [
       GoRoute(
         name: BBR.Routing.aartiInfo.name,

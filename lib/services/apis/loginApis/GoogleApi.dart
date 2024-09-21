@@ -10,7 +10,7 @@ class GoogleApi {
     "openid"
   ];
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: dotenv.env["GOOGLE_CLIENT_ID"],
+    clientId: dotenv.env["GOOGLE_CLIENT_ID"],
     scopes: _scopes,
     signInOption: SignInOption.standard,
     forceCodeForRefreshToken: true,

@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/yogasutra/YogaSutraScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final yogaSutraRoutes=GoRoute(
-  path: '/yoga-sutra',
-  redirect: (context, state) => state.fullPath == '/yoga-sutra' ? "${state.path!}/${BBR.Routing.yogaSutraChapters.path}" : null,
+  path: BBR.Routing.yogaSutraChapters.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.yogaSutraChapters.baseUrl ? BBR.Routing.yogaSutraChapters.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.yogaSutraChapters.name,

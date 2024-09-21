@@ -5,8 +5,8 @@ import 'package:bhakti_bhoomi/pages/brahmasutra/BrahmasutraScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final brahmasutraRoutes = GoRoute(
-    path: '/brahma-sutra',
-    redirect: (context, state) => state.fullPath == '/brahma-sutra' ? "${state.path!}/${BBR.Routing.brahmasutraChaptersInfo.path}" : null,
+    path: BBR.Routing.brahmasutraChaptersInfo.baseUrl,
+    redirect: (context, state) => state.fullPath == BBR.Routing.brahmasutraChaptersInfo.baseUrl ? BBR.Routing.brahmasutraChaptersInfo.fullPath : null,
     routes: [
       GoRoute(
       name: BBR.Routing.brahmasutraChaptersInfo.name,

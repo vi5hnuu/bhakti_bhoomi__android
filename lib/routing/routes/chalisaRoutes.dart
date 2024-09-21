@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/chalisa/ChalisaScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final chalisaRoutes=GoRoute(
-    path: '/chalisa',
-    redirect: (context, state) => state.fullPath == '/chalisa' ? "${state.path!}/${BBR.Routing.chalisaInfo.path}" : null,
+    path: BBR.Routing.chalisaInfo.baseUrl,
+    redirect: (context, state) => state.fullPath == BBR.Routing.chalisaInfo.baseUrl ? BBR.Routing.chalisaInfo.fullPath : null,
     routes: [
       GoRoute(
         name: BBR.Routing.chalisaInfo.name,

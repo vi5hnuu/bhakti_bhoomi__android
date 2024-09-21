@@ -4,8 +4,8 @@ import 'package:bhakti_bhoomi/pages/mantra/MantraScreen.dart';
 import 'package:go_router/go_router.dart';
 
 final mantraRoutes=GoRoute(
-  path: '/mantra',
-  redirect: (context, state) => state.fullPath == '/mantra' ? "${state.path!}/${BBR.Routing.mantraInfo.path}" : null,
+  path: BBR.Routing.mantraInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.mantraInfo.baseUrl ? BBR.Routing.mantraInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.mantraInfo.name,

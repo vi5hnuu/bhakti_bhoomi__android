@@ -5,8 +5,8 @@ import 'package:bhakti_bhoomi/pages/valmiki-ramayan/ValmikiRamayanShlokScreen.da
 import 'package:go_router/go_router.dart';
 
 final valmikiRamayanRoutes=GoRoute(
-  path: '/valmiki-ramayan',
-  redirect: (context, state) => state.fullPath == '/valmiki-ramayan' ? "${state.path!}/${BBR.Routing.valmikiRamayanKandsInfo.path}" : null,
+  path: BBR.Routing.valmikiRamayanKandsInfo.baseUrl,
+  redirect: (context, state) => state.fullPath == BBR.Routing.valmikiRamayanKandsInfo.baseUrl ? BBR.Routing.valmikiRamayanKandsInfo.fullPath : null,
   routes: [
     GoRoute(
       name: BBR.Routing.valmikiRamayanKandsInfo.name,
