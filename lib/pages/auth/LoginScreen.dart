@@ -1,6 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/services/apis/loginApis/GoogleApi.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
@@ -12,9 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
@@ -29,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameEmailController = TextEditingController(text: '');
   final TextEditingController passwordController = TextEditingController(text: '');
   final List<String> quoteHindi= ["तू करता वही है जो तू चाहता है,","पर होता वही है जो मैं चाहता हूँ।","तू वही कर जो मैं चाहता हूँ,","फिर होगा वही जो तू चाहता है।","\nश्रीकृष्ण"];
-  // GoogleSignInAccount? account;
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Text(account!=null ? jsonEncode(account) : "loading"),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 24),
                             child: Text(
@@ -154,35 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       lineWidth: 2,
                                     )]
                                   ],)),
-                          const SizedBox(height: 8),
-                          CustomElevatedButton(
-                            backgroundColor: Colors.white,
-                              onPressed: state.anyLoading(forr: [Httpstates.CUSTOM_LOGIN,Httpstates.GOOGLE_LOGIN])
-                                  ? null
-                                  : () async {
-                                // BlocProvider.of<AuthBloc>(context).add(
-                                //   LoginEvent(
-                                //     usernameEmail: usernameEmailController.text,
-                                //     password: passwordController.text,
-                                //     cancelToken: cancelToken,
-                                //   ),
-                                // );
-                                final result=await GoogleApi().login();
-                                setState(() => print(result));
-                              },
-                              child: Row(mainAxisSize: MainAxisSize.min,children: [
-                                const Icon(FontAwesomeIcons.google),
-                                const SizedBox(width: 11),
-                                const Text(
-                                  'Sign in with Google',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                if(state.isLoading(forr: Httpstates.GOOGLE_LOGIN)) ...[const SizedBox(width: 5),const SpinKitRing(
-                                  color: Colors.white,
-                                  size: 18,
-                                  lineWidth: 2,
-                                )]
-                              ],)),
                           const SizedBox(height: 14),
                           CustomTextButton(onPressed: state.isLoading(forr: Httpstates.CUSTOM_LOGIN) ? null : () => context.goNamed(Routing.register.name), child: const Text('Sign-up instead')),
                           CustomTextButton(onPressed: state.isLoading(forr: Httpstates.CUSTOM_LOGIN) ? null : () => context.goNamed(Routing.forgotPassword.name), child: const Text('forgot-password')),
