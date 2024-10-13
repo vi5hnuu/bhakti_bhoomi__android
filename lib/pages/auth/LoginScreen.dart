@@ -25,8 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
   final TextEditingController usernameEmailController = TextEditingController(text: '');
   final TextEditingController passwordController = TextEditingController(text: '');
-  final List<String> quoteHindi= ["तू करता वही है जो तू चाहता है,","पर होता वही है जो मैं चाहता हूँ।","तू वही कर जो मैं चाहता हूँ,","फिर होगा वही जो तू चाहता है।","\nश्रीकृष्ण"];
-
+  final List<String> quoteSanskrit=["सदृशं चेष्टते स्वस्याः प्रकृतिः।"];
+  final List<String> quoteHindi= ["मनुष्य अपनी स्वभाव के अनुसार कार्य करता है।,",
+    "— भगवद गीता 18.30"];
 
   @override
   Widget build(BuildContext context) {
@@ -66,22 +67,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                      constraints: const BoxConstraints(minHeight: 150,maxHeight: 300,minWidth: double.infinity),
+                      margin: const EdgeInsets.symmetric(horizontal: 24.0),
+                      constraints: const BoxConstraints(minHeight: 100,maxHeight: 150,minWidth: double.infinity),
                       child: DefaultTextStyle(
                         textAlign: TextAlign.justify,
                         style: TextStyle(
                             fontSize: 25.0,
                             fontFamily: 'Kalam',
                             fontWeight: FontWeight.normal,
-                            height: 1,
+                            height: 1.25,
                             color: theme.primaryColor
                         ),
                         child: AnimatedTextKit(
                           repeatForever: true,
-                          totalRepeatCount: 2,
-                          pause: const Duration(seconds: 5),
+                          totalRepeatCount: 5,
+                          pause: const Duration(seconds: 3),
                           animatedTexts: [
+                            TypewriterAnimatedText(curve: Curves.fastOutSlowIn,quoteSanskrit.join('\n'),textAlign: TextAlign.center,speed: const Duration(milliseconds: 100)),
                             TypewriterAnimatedText(curve: Curves.fastOutSlowIn,quoteHindi.join('\n'),textAlign: TextAlign.center,speed: const Duration(milliseconds: 100)),
                           ],
                         ),
