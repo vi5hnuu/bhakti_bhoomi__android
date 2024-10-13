@@ -63,6 +63,8 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
           buildWhen: (previous, current) => previous.allMantrasAudios!=current.allMantrasAudios,
           builder: (context, state) {
             final mantraAudio=state.getMantraAudioById(mantraAudioId: widget.mantraAudioId);
+            final isThisAudioPlaying=mantraAudio!=null && (audioPlayer.source.toString()==UrlSource(mantraAudio.audioUrl).toString());
+
             return mantraAudio!=null ? Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -87,17 +89,17 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                     Text(mantraAudio.title['en']!,),
                     Column(
                       children: [
-                        Slider(value: (audioPlayerState?.position?.inSeconds ?? 0).toDouble(), onChanged: (position){
+                        Slider(value: isThisAudioPlaying ? (audioPlayerState?.position?.inSeconds ?? 0).toDouble() : 0, onChanged: isThisAudioPlaying ? (position){
                           audioPlayer.seek(Duration(milliseconds: (position*1000).toInt()));
-                        },max: audioPlayerState?.duration?.inSeconds.toDouble() ?? 0.0),
+                        }:null,max: audioPlayerState?.duration?.inSeconds.toDouble() ?? 0.0),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(Utils.formatDuration(audioPlayerState?.position?.inSeconds ?? 0)),
-                              Text(Utils.formatDuration(audioPlayerState?.duration?.inSeconds ?? 0)),
+                              Text(Utils.formatDuration(isThisAudioPlaying ?(audioPlayerState?.position?.inSeconds ?? 0):0)),
+                              Text(Utils.formatDuration(isThisAudioPlaying ? (audioPlayerState?.duration?.inSeconds ?? 0):0)),
                             ],
                           ),
                         ),
@@ -108,7 +110,7 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.backwardStep)),
-                        IconButton(onPressed: ()async =>audioPlayerState?.playerState==PlayerState.playing ? await audioPlayer.pause() : await audioPlayer.play(UrlSource(mantraAudio.audioUrl)), icon: audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
+                        IconButton(onPressed: ()async =>audioPlayerState?.playerState==PlayerState.playing ? await audioPlayer.pause() : await audioPlayer.play(UrlSource(mantraAudio.audioUrl)), icon: isThisAudioPlaying && audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
                         IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.forwardStep)),
                       ],
                     ),
