@@ -47,6 +47,23 @@ class MantraState extends Equatable with WithHttpState {
 
   Map<String, MantraAudioModel> get allMantrasAudios => Map.unmodifiable(_mantrasAudios);
 
+  MantraAudioModel? nextAudio({required String mantraAudioId}){
+    try{
+      final mantraAudio=allMantrasAudios.values.indexed.firstWhere((element) => element.$2.id==mantraAudioId);
+      return mantraAudio.$1+1<allMantrasAudios.length ? allMantrasAudios.values.elementAt(mantraAudio.$1+1):null;
+    }catch(err){
+      throw new Exception("dev error");
+    }
+  }
+  MantraAudioModel? previousAudio({required String mantraAudioId}){
+    try{
+      final mantraAudio=allMantrasAudios.values.indexed.firstWhere((element) => element.$2.id==mantraAudioId);
+      return mantraAudio.$1-1>=0 ? allMantrasAudios.values.elementAt(mantraAudio.$1-1):null;
+    }catch(err){
+      throw new Exception("dev error");
+    }
+  }
+
   bool mantraExists({required String mantraId}) => _mantras.containsKey(mantraId);
 
   bool mantraAudioExists({required String mantraAudioId}) => _mantrasAudios.containsKey(mantraAudioId);

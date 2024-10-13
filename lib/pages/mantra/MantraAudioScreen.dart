@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/AudioPlayerState.dart';
+import 'package:bhakti_bhoomi/models/mantra/MantraAudioModel.dart';
 import 'package:bhakti_bhoomi/singletons/AudioPlayerSingleton.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
@@ -50,8 +51,8 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Mantra 🎧',
-              style: const TextStyle(
+          title: const Text('Mantra 🎧',
+              style: TextStyle(
                   color: Colors.white,
                   fontFamily: "Kalam",
                   fontSize: 18,
@@ -64,6 +65,8 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
           builder: (context, state) {
             final mantraAudio=state.getMantraAudioById(mantraAudioId: widget.mantraAudioId);
             final isThisAudioPlaying=mantraAudio!=null && (audioPlayer.source.toString()==UrlSource(mantraAudio.audioUrl).toString());
+            final nextAudio=mantraAudio!=null ? state.nextAudio(mantraAudioId: mantraAudio.id):null;
+            final previousAudio=mantraAudio!=null ? state.previousAudio(mantraAudioId: mantraAudio.id):null;
 
             return mantraAudio!=null ? Column(
               mainAxisSize: MainAxisSize.max,
@@ -109,11 +112,11 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.backwardStep)),
+                        IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.backwardStep)),
                         if((audioPlayerState?.isPlayLoading==true || audioPlayerState?.isPauseLoading==true))
                           const SpinKitCircle(color: Colors.green,size: 48.0)
                         else IconButton(onPressed: () =>onPlayPauseAudio(play:!isThisAudioPlaying || audioPlayerState?.playerState!=PlayerState.playing,url:mantraAudio.audioUrl), icon: isThisAudioPlaying && audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
-                        IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.forwardStep)),
+                        IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.forwardStep)),
                       ],
                     ),
                   ],
@@ -165,4 +168,11 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
     }
   }
 
+
+  void loadNextAudio({required MantraAudioModel nextMantraAudio}) {
+
+  }
+
+  void loadPreviousAudio({required MantraAudioModel previousMantraAudio}) {
+  }
 }

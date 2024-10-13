@@ -6,6 +6,7 @@ import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
@@ -122,10 +123,16 @@ class _HomeState extends State<Home> {
                     Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",height: 50,fit: BoxFit.fitHeight)),
                     Align(alignment: Alignment.centerRight, child: Padding(
                       padding: const EdgeInsets.only(right: 12.0),
-                      child: Switch(value: isHinduAudioOnly, onChanged: (value) =>setState((){
-                        isHinduAudioOnly=value;
-                        SecureStorage().storage.write(key: Constants.STORAGE_HINDU_AUDIO, value: isHinduAudioOnly.toString());
-                      })),
+                      child: IconButton(
+                          onPressed: () => setState(() {
+                                isHinduAudioOnly = !isHinduAudioOnly;
+                                SecureStorage().storage.write(
+                                    key: Constants.STORAGE_HINDU_AUDIO,
+                                    value: isHinduAudioOnly.toString());
+                              }),
+                          icon: Icon(isHinduAudioOnly
+                              ? Icons.music_note_sharp
+                              : Icons.music_off)),
                     ))
                   ],
                 ),

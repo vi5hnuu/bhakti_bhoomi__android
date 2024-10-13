@@ -215,8 +215,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       AudioPlayerSingleton().audioPlayer.pause();
-    } else if (state == AppLifecycleState.resumed) {
-      AudioPlayerSingleton().audioPlayer.resume();
     }
   }
 }
