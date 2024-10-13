@@ -110,7 +110,9 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.backwardStep)),
-                        IconButton(onPressed: ()async =>audioPlayerState?.playerState==PlayerState.playing ? await audioPlayer.pause() : await audioPlayer.play(UrlSource(mantraAudio.audioUrl)), icon: isThisAudioPlaying && audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
+                        if((audioPlayerState?.isPlayLoading==true || audioPlayerState?.isPauseLoading==true))
+                          const SpinKitCircle(color: Colors.green,size: 48.0)
+                        else IconButton(onPressed: () =>onPlayPauseAudio(play:!isThisAudioPlaying || audioPlayerState?.playerState!=PlayerState.playing,url:mantraAudio.audioUrl), icon: isThisAudioPlaying && audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
                         IconButton(onPressed: ()async =>{}, icon: const Icon(FontAwesomeIcons.forwardStep)),
                       ],
                     ),
@@ -145,6 +147,22 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
     token?.cancel("cancelled");
     subscriptions.forEach((subscription)=>subscription.cancel());
     super.dispose();
+  }
+
+  onPlayPauseAudio({required bool play,required String url})async {
+    try{
+      if(!play){
+        setState(()=>audioPlayerState?.patchWith(isPauseLoading:true));
+        await audioPlayer.pause();
+        setState(()=>audioPlayerState?.patchWith(isPauseLoading:false));
+      }else{
+        setState(()=>audioPlayerState?.patchWith(isPlayLoading:true));
+        await audioPlayer.play(UrlSource(url));
+        setState(()=>audioPlayerState?.patchWith(isPlayLoading:false));
+      }
+    }catch(e){
+      setState(()=>audioPlayerState?.patchWith(isPlayLoading:false,isPauseLoading: false));
+    }
   }
 
 }

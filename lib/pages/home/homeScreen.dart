@@ -36,7 +36,6 @@ class _HomeState extends State<Home> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Scaffold(
-          floatingActionButton: ElevatedButton(child: Text("hello"),onPressed: ()=>{},),
           appBar: AppBar(
             title: const Text(
               'Spiritual Shakti',
