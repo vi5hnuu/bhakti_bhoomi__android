@@ -34,6 +34,7 @@ import 'package:bhakti_bhoomi/services/ramcharitmanas/RamcharitmanasRepository.d
 import 'package:bhakti_bhoomi/services/rigveda/RigvedaRepository.dart';
 import 'package:bhakti_bhoomi/services/vratKatha/AartiRepository.dart';
 import 'package:bhakti_bhoomi/services/yogasutra/YogaSutraRepository.dart';
+import 'package:bhakti_bhoomi/singletons/AudioPlayerSingleton.dart';
 import 'package:bhakti_bhoomi/singletons/GlobalEventDispatcherSingleton.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
@@ -76,7 +77,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   static final _whiteListedRoutes = [BBR.Routing.login.fullPath,BBR.Routing.verify.fullPath, BBR.Routing.register.fullPath, BBR.Routing.forgotPassword.fullPath, BBR.Routing.splash.fullPath, BBR.Routing.otp.fullPath];
   final router=GoRouter(
       debugLogDiagnostics: true,
@@ -145,6 +146,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);//lifecycycle events
     globalEventSubscription=(globalEventDispatcher.stream as Stream<GlobalEvent>).listen((event){
       final onWhiteListedUrl=router.routerDelegate.currentConfiguration.matches.any((loc) => loc.matchedLocation.startsWith("/auth") || loc.matchedLocation=='/splash');
       if((event is LogOutInitEvent) && !onWhiteListedUrl){
@@ -205,7 +207,17 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     connectivitySubscription?.cancel();
     globalEventSubscription?.cancel();
+    AudioPlayerSingleton().audioPlayer.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      AudioPlayerSingleton().audioPlayer.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      AudioPlayerSingleton().audioPlayer.resume();
+    }
   }
 }
 

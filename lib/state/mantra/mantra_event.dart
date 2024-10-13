@@ -7,7 +7,12 @@ abstract class MantraEvent {
 }
 
 class FetchAllMantraInfo extends MantraEvent {
-  const FetchAllMantraInfo({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+  const FetchAllMantraInfo({super.cancelToken});
+}
+
+class FetchAllMantraAudioInfo extends MantraEvent {
+  final int pageNo;
+  const FetchAllMantraAudioInfo({required this.pageNo,super.cancelToken});
 }
 
 class FetchAllMantra extends MantraEvent {
@@ -24,4 +29,16 @@ class FetchMantraByTitle extends MantraEvent {
   final String title;
 
   const FetchMantraByTitle({required this.title, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
+
+class FetchMantraAudioById extends MantraEvent {
+  final String id;
+
+  const FetchMantraAudioById({required this.id, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
+
+class FetchMantraAudioByTitle extends MantraEvent {
+  final String title;
+
+  const FetchMantraAudioByTitle({required this.title, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }

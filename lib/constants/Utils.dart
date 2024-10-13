@@ -17,4 +17,13 @@ class Utils {
         return ErrorModel(message: e.response?.data['message'] ?? e.message,statusCode: e.response?.statusCode);
     }
   }
+  static String formatDuration(int seconds) {
+    final duration = Duration(seconds: seconds);
+
+    final hours = duration.inHours.toString().padLeft(2, '0');
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final secs = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+    return "$hours:$minutes:$secs";
+  }
 }

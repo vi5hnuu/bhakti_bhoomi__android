@@ -38,7 +38,7 @@ class MahabharatApi {
       url += '?pageNo=$pageNo';
     }
     if (pageSize != null) {
-      url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
+      url += pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
     }
     var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;

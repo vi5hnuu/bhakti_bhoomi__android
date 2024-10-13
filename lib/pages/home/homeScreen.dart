@@ -1,6 +1,10 @@
+import 'package:audioplayers/audioplayers.dart';
+import 'package:bhakti_bhoomi/constants/Constants.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,9 +19,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool isHinduAudioOnly=false;
+  final player = AudioPlayer(playerId: 'mantra');
 
   @override
   void initState() {
+    //isHinduOnlyAudioSwitch from secure storage
+    SecureStorage().storage.read(key: Constants.STORAGE_HINDU_AUDIO).then((value) => {
+      if(value!=null) setState(()=>isHinduAudioOnly=bool.parse(value))
+    });
     super.initState();
   }
 
@@ -26,6 +36,7 @@ class _HomeState extends State<Home> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Scaffold(
+          floatingActionButton: ElevatedButton(child: Text("hello"),onPressed: ()=>{},),
           appBar: AppBar(
             title: const Text(
               'Spiritual Shakti',
@@ -105,8 +116,21 @@ class _HomeState extends State<Home> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",height: 50,fit: BoxFit.fitHeight)),
-                GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
+                Stack(
+                  alignment: Alignment.center,
+                  fit: StackFit.loose,
+                  children: [
+                    Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",height: 50,fit: BoxFit.fitHeight)),
+                    Align(alignment: Alignment.centerRight, child: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: Switch(value: isHinduAudioOnly, onChanged: (value) =>setState((){
+                        isHinduAudioOnly=value;
+                        SecureStorage().storage.write(key: Constants.STORAGE_HINDU_AUDIO, value: isHinduAudioOnly.toString());
+                      })),
+                    ))
+                  ],
+                ),
+                if(!isHinduAudioOnly) GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
                   ItemCard(imageProvider: const AssetImage("assets/home/aarti.webp"),title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
                   ItemCard(imageProvider:const AssetImage("assets/home/brahmasutra.webp"),onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
                   ItemCard(imageProvider:const AssetImage("assets/home/chalisa.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
@@ -119,6 +143,9 @@ class _HomeState extends State<Home> {
                   ItemCard(imageProvider:const AssetImage("assets/home/bhagvadgeeta.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
                   ItemCard(imageProvider:const AssetImage("assets/home/yogasutra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
                   ItemCard(imageProvider:const AssetImage("assets/home/vratkatha.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.vratKathaInfo.name)}, title: "Vrat Katha's"),
+                ]),
+                if(isHinduAudioOnly) GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
+                  ItemCard(imageProvider:const AssetImage("assets/home/audio/mantra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraAudioInfo.name)}, title: "Mantra 🎵"),
                 ]),
                 Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",height: 50,fit: BoxFit.fitHeight)),
                 GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
@@ -135,6 +162,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     super.dispose();
+    player.dispose();
   }
 }
 

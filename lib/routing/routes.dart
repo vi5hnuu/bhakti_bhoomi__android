@@ -43,7 +43,9 @@ class Routing {
   static final Route mahabharatBookChapterShloks = Route(name:"mahabharat-book-chapter-shloks",path:"book/:bookNo/chapter/:chapterNo/shloks",baseUrl: '/mahabharat');
 
   static final Route mantraInfo = Route(name:"mantra-info",path:"mantra-info",baseUrl: '/mantra');
+  static final Route mantraAudioInfo = Route(name:"mantra-audio-info",path:"audio/mantra-info",baseUrl: '/mantra');
   static final Route mantra = Route(name:"mantra",path:"mantra/:mantraId",baseUrl: '/mantra');
+  static final Route mantraAudio = Route(name:"mantra-audio",path:"mantra/audio/:mantraAudioId",baseUrl: '/mantra');
 
   static final Route ramcharitmanasInfo = Route(name:"ramcharitmanas-info",path:"info",baseUrl: '/ramcharitmanas');
   static final Route ramcharitmanasMangalaCharan = Route(name:"ramcharitmanas-mangalacharan",path:"kand/:kand/mangalacharan",baseUrl: '/ramcharitmanas');

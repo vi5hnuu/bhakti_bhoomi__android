@@ -44,7 +44,7 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
         return Scaffold(
             appBar: AppBar(
               title: Text(
-                'Ramcharitmanas | ${widget.kand} Sargas',
+                'Valmiki Ramayan | ${widget.kand} Sargas',
                 style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Theme.of(context).primaryColor,

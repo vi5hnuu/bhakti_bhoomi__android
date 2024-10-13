@@ -45,10 +45,10 @@ class BrahmasutraApi {
       url += '?pageNo=$pageNo';
     }
     if (pageSize != null) {
-      url = pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
+      url += pageNo != null ? '&pageSize=$pageSize' : '?pageSize=$pageSize';
     }
     if (lang != null) {
-      url = (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
+      url += (pageNo != null || pageSize != null) ? '&lang=$lang' : '?lang=$lang';
     }
     var res = await DioSingleton().dio.get(url, cancelToken: cancelToken);
     return res.data;

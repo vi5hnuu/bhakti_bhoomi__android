@@ -52,7 +52,9 @@ class Httpstates{
   static const String ALL_MANTRA_INFO="ALL_MANTRA_INFO";
   static const String ALL_MANTRA="ALL_MANTRA";
   static const String MANTRA_BY_ID="MANTRA_BY_ID";
+  static const String MANTRA_AUDIO_BY_ID="MANTRA_BY_ID";
   static const String MANTRA_BY_TITLE="MANTRA_BY_TITLE";
+  static const String MANTRA_AUDIO_BY_TITLE="MANTRA_BY_TITLE";
 
   //RAMAYANA STATE
   static const String RAMAYANA_INFO="RAMAYANA_INFO";
