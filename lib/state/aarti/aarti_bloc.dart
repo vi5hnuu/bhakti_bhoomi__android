@@ -3,14 +3,12 @@ import 'package:bhakti_bhoomi/extensions/map-entensions.dart';
 import 'package:bhakti_bhoomi/models/aarti/AartiInfoModel.dart';
 import 'package:bhakti_bhoomi/models/aarti/AartiModel.dart';
 import 'package:bhakti_bhoomi/services/aarti/AartiRepository.dart';
-import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/WithHttpState.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-
 import '../../models/HttpState.dart';
 
 part 'aarti_event.dart';

@@ -20,7 +20,7 @@ final mantraRoutes=GoRoute(
     GoRoute(
         name: BBR.Routing.mantraAudioInfo.name,
         path: BBR.Routing.mantraAudioInfo.path,
-        builder: (context, state) => MantraAudioInfoScreen(title: 'Mantra 🎵')),
+        builder: (context, state) => const MantraAudioInfoScreen(title: 'Mantra 🎵')),
     GoRoute(
         name: BBR.Routing.mantraAudio.name,
         path: BBR.Routing.mantraAudio.path,

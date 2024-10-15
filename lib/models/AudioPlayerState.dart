@@ -1,42 +1,56 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:equatable/equatable.dart';
 
-class Audioplayerstate{
+class AudioPlayerState extends Equatable{
   Duration? position;
   Duration? duration;
   PlayerState? playerState;
-  bool isPlayLoading;
   bool isPauseLoading;
+  bool isPlayLoading;
+  bool isSeekLoading;
 
-  Audioplayerstate({this.position,this.duration,this.playerState,this.isPauseLoading=false,this.isPlayLoading=false});
+  AudioPlayerState({this.position,
+    this.duration,
+    this.playerState,
+    this.isPauseLoading=false,
+    this.isPlayLoading=false,
+    this.isSeekLoading=false});
 
-  Audioplayerstate copyWith({
+  AudioPlayerState copyWith({
     Duration? position,
     Duration? duration,
     PlayerState? playerState,
-    bool? isPlayLoading,
     bool? isPauseLoading,
+    bool? isPlayLoading,
+    bool? isSeekLoading,
   }) {
-    return Audioplayerstate(
+    return AudioPlayerState(
         position:position ?? this.position,
         duration:duration ?? this.duration,
         playerState:playerState ?? this.playerState,
-        isPlayLoading:isPlayLoading ?? this.isPlayLoading,
         isPauseLoading:isPauseLoading ?? this.isPauseLoading,
+        isPlayLoading:isPlayLoading ?? this.isPlayLoading,
+        isSeekLoading:isSeekLoading ?? this.isSeekLoading
     );
   }
 
-  Audioplayerstate patchWith({
+  AudioPlayerState patchWith({
     Duration? position,
     Duration? duration,
     PlayerState? playerState,
-    bool? isPlayLoading,
     bool? isPauseLoading,
+    bool? isPlayLoading,
+    bool? isSeekLoading,
   }) {
     this.position=position ?? this.position;
     this.duration=duration ?? this.duration;
     this.playerState=playerState ?? this.playerState;
-    this.isPlayLoading=isPlayLoading ?? this.isPlayLoading;
-    this.isPauseLoading=isPauseLoading ?? this.isPauseLoading;
+    isPauseLoading=isPauseLoading ?? this.isPauseLoading;
+    isPlayLoading=isPlayLoading ?? this.isPlayLoading;
+    isSeekLoading=isSeekLoading ?? this.isSeekLoading;
     return this;
   }
+
+  @override
+  List<Object?> get props =>[isPlayLoading,isPauseLoading,isSeekLoading,playerState,duration,position];
 }

@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isHinduAudioOnly=false;
-  final player = AudioPlayer(playerId: 'mantra');
 
   @override
   void initState() {
@@ -168,7 +167,6 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     super.dispose();
-    player.dispose();
   }
 }
 

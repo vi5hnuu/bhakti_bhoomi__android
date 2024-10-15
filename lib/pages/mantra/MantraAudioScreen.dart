@@ -1,20 +1,15 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/AudioPlayerState.dart';
 import 'package:bhakti_bhoomi/models/mantra/MantraAudioModel.dart';
 import 'package:bhakti_bhoomi/singletons/AudioPlayerSingleton.dart';
-import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
-import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
-import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -34,14 +29,14 @@ class MantraAudioScreen extends StatefulWidget {
 
 class _MantraAudioScreenState extends State<MantraAudioScreen> {
   CancelToken? token;
-  final audioPlayer= AudioPlayerSingleton().audioPlayer;
-  Audioplayerstate? audioPlayerState;
+  AudioPlayerState audioplayerState=AudioPlayerState();
   List<StreamSubscription> subscriptions=[];
-
+  final audio=AudioPlayerSingleton();
+  
   @override
   initState() {
+    initAudioPlayerState();
     loadMantraAudio(mantraAudioId: widget.mantraAudioId);
-    initPlayerState();
     super.initState();
   }
 
@@ -61,13 +56,9 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body:  BlocBuilder<MantraBloc, MantraState>(
-          buildWhen: (previous, current) => previous.allMantrasAudios!=current.allMantrasAudios,
-          builder: (context, state) {
-            final mantraAudio=state.getMantraAudioById(mantraAudioId: widget.mantraAudioId);
-            final isThisAudioPlaying=mantraAudio!=null && (audioPlayer.source.toString()==UrlSource(mantraAudio.audioUrl).toString());
-            final nextAudio=mantraAudio!=null ? state.nextAudio(mantraAudioId: mantraAudio.id):null;
-            final previousAudio=mantraAudio!=null ? state.previousAudio(mantraAudioId: mantraAudio.id):null;
-
+          buildWhen: (previous, current) => previous.allMantrasAudios[widget.mantraAudioId]!=current.allMantrasAudios[widget.mantraAudioId],
+          builder: (_, mantraState) {
+            final mantraAudio=mantraState.getMantraAudioById(mantraAudioId: widget.mantraAudioId);
             return mantraAudio!=null ? Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -75,16 +66,16 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 24.0),
+                  height: mediaQuery.size.height*0.5,
+                  width: double.infinity,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
                     child: Image.network(mantraAudio.thumbnail,
-                        loadingBuilder: (context, child, loadingProgress) => loadingProgress!=null ? const SpinKitDoubleBounce(color: Colors.green):child,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_outlined),
-                        fit: BoxFit.cover,
-                      ),
+                      loadingBuilder: (context, child, loadingProgress) => loadingProgress!=null ? const SpinKitDoubleBounce(color: Colors.green):child,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_outlined),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  height: mediaQuery.size.height*0.5,
-                  width: double.infinity,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,17 +83,19 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                     Text(mantraAudio.title['en']!,),
                     Column(
                       children: [
-                        Slider(value: isThisAudioPlaying ? (audioPlayerState?.position?.inSeconds ?? 0).toDouble() : 0, onChanged: isThisAudioPlaying ? (position){
-                          audioPlayer.seek(Duration(milliseconds: (position*1000).toInt()));
-                        }:null,max: audioPlayerState?.duration?.inSeconds.toDouble() ?? 0.0),
+                        Slider(value: audio.isPlaying(url: mantraAudio.audioUrl) ? (audioplayerState.position?.inSeconds ?? 0).toDouble() : 0,
+                          onChanged: audio.isPlaying(url: mantraAudio.audioUrl) && !audioplayerState.isPlayLoading && !audioplayerState.isSeekLoading ? (position){
+                          setState(()=>audioplayerState=audioplayerState.copyWith(isSeekLoading: true));
+                          audio.player.seek(Duration(milliseconds: (position*1000).toInt()));
+                        }:null,max: audioplayerState.duration?.inSeconds.toDouble() ?? 0.0),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(Utils.formatDuration(isThisAudioPlaying ?(audioPlayerState?.position?.inSeconds ?? 0):0)),
-                              Text(Utils.formatDuration(isThisAudioPlaying ? (audioPlayerState?.duration?.inSeconds ?? 0):0)),
+                              Text(Utils.formatDuration(audio.isPlaying(url: mantraAudio.audioUrl) ? (audioplayerState.position?.inSeconds ?? 0):0)),
+                              Text(Utils.formatDuration(audio.isPlaying(url: mantraAudio.audioUrl) ? (audioplayerState.duration?.inSeconds ?? 0):0)),
                             ],
                           ),
                         ),
@@ -113,17 +106,26 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.backwardStep)),
-                        if((audioPlayerState?.isPlayLoading==true || audioPlayerState?.isPauseLoading==true))
+                        if(audio.isPlaying(url: mantraAudio.audioUrl) && (audioplayerState.isPlayLoading || audioplayerState.isPauseLoading))
                           const SpinKitCircle(color: Colors.green,size: 48.0)
-                        else IconButton(onPressed: () =>onPlayPauseAudio(play:!isThisAudioPlaying || audioPlayerState?.playerState!=PlayerState.playing,url:mantraAudio.audioUrl), icon: isThisAudioPlaying && audioPlayerState?.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
+                        else IconButton(onPressed: (){
+                          if(!audio.isPlaying(url: mantraAudio.audioUrl) || audioplayerState.playerState!=PlayerState.playing){
+                            setState(()=>audioplayerState=audioplayerState.copyWith(isPlayLoading: true));
+                            audio.player.play(UrlSource(mantraAudio.audioUrl));
+                          }
+                          else{
+                            setState(()=>audioplayerState=audioplayerState.copyWith(isPauseLoading: true));
+                            audio.player.pause();
+                          }
+                        }, icon: audio.isPlaying(url: mantraAudio.audioUrl) && audioplayerState.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
                         IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.forwardStep)),
                       ],
                     ),
                   ],
                 )
               ],
-            ):Center(child: state.isError(forr: Httpstates.MANTRA_AUDIO_BY_ID)
-                ? RetryAgain(onRetry: ()=>this.loadMantraAudio(mantraAudioId: widget.mantraAudioId), error: state.getError(forr: Httpstates.MANTRA_AUDIO_BY_ID)!.message)
+            ):Center(child: mantraState.isError(forr: Httpstates.MANTRA_AUDIO_BY_ID)
+                ? RetryAgain(onRetry: ()=>this.loadMantraAudio(mantraAudioId: widget.mantraAudioId), error: mantraState.getError(forr: Httpstates.MANTRA_AUDIO_BY_ID)!.message)
                 : Padding(padding: const EdgeInsets.symmetric(vertical: 20),child: SpinKitChasingDots(color: Theme.of(context).primaryColor, size: 24)));
           }),
         );
@@ -134,45 +136,32 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
     token=CancelToken();
     BlocProvider.of<MantraBloc>(context).add(FetchMantraAudioById(id: mantraAudioId, cancelToken: token));
   }
-
-  void initPlayerState() {
-    audioPlayerState=Audioplayerstate(playerState: audioPlayer.state);
-    audioPlayer.getDuration().then((duration) => audioPlayerState?.duration=duration);
-    subscriptions.add(audioPlayer.onPlayerStateChanged.listen((event) {
-      if (mounted) setState(() => audioPlayerState?.playerState = event);
-    }));
-    subscriptions.add(audioPlayer.onDurationChanged.listen((duration)=>setState(()=>audioPlayerState?.duration = duration)));
-    subscriptions.add(audioPlayer.onPositionChanged.listen((duration) =>setState(() => audioPlayerState?.position = duration)));
-  }
-
-  @override
-  void dispose() {
-    token?.cancel("cancelled");
-    subscriptions.forEach((subscription)=>subscription.cancel());
-    super.dispose();
-  }
-
-  onPlayPauseAudio({required bool play,required String url})async {
-    try{
-      if(!play){
-        setState(()=>audioPlayerState?.patchWith(isPauseLoading:true));
-        await audioPlayer.pause();
-        setState(()=>audioPlayerState?.patchWith(isPauseLoading:false));
-      }else{
-        setState(()=>audioPlayerState?.patchWith(isPlayLoading:true));
-        await audioPlayer.play(UrlSource(url));
-        setState(()=>audioPlayerState?.patchWith(isPlayLoading:false));
-      }
-    }catch(e){
-      setState(()=>audioPlayerState?.patchWith(isPlayLoading:false,isPauseLoading: false));
+  
+  void initAudioPlayerState() async{
+    Duration? totalDuration=await audio.player.getDuration();
+    if(totalDuration!=null){
+      setState(()=>audioplayerState=audioplayerState.copyWith(duration: totalDuration));
     }
+    subscriptions.add(audio.player.onSeekComplete.listen((_) => setState(()=>audioplayerState=audioplayerState.copyWith(isSeekLoading: false))));
+    subscriptions.add(audio.player.onDurationChanged.listen((duration) => setState(()=>audioplayerState=audioplayerState.copyWith(duration: duration))));
+    subscriptions.add(audio.player.onPositionChanged.listen((duration) => setState(()=>audioplayerState=audioplayerState.copyWith(position: duration))));
+    subscriptions.add(audio.player.onPlayerStateChanged.listen((playerState) => setState(()=>audioplayerState=audioplayerState.copyWith(playerState: playerState,isPlayLoading: playerState==PlayerState.playing ? false:null,isPauseLoading: playerState==PlayerState.paused ? false:null))));
   }
-
+  
 
   void loadNextAudio({required MantraAudioModel nextMantraAudio}) {
 
   }
 
   void loadPreviousAudio({required MantraAudioModel previousMantraAudio}) {
+  }
+
+  @override
+  void dispose() {
+    token?.cancel("cancelled");
+    for (var subscription in subscriptions) {
+      subscription.cancel();
+    }
+    super.dispose();
   }
 }

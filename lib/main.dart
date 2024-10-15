@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:bhakti_bhoomi/models/UserRole.dart';
 import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
-import 'package:bhakti_bhoomi/pages/auth/LoginScreen.dart';
 import 'package:bhakti_bhoomi/pages/createPost/CreatePostScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
@@ -143,6 +141,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ]);
   StreamSubscription<GlobalEvent>? globalEventSubscription;
   StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
+  Offset position = const Offset(100, 100);
 
   @override
   void initState() {
@@ -171,7 +170,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<AartiBloc>(create: (ctx) => AartiBloc(aartiRepository: AartiRepository())),
@@ -189,32 +187,73 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<VratKathaBloc>(create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
-      child:MaterialApp.router(
-        scaffoldMessengerKey: NotificationService.messengerKey,
-        title: 'Spirtual Shakti',
-        key: parentNavKey,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
-          useMaterial3: true,
+      child:Directionality(
+        textDirection: TextDirection.ltr,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            MaterialApp.router(
+              key: parentNavKey,
+              scaffoldMessengerKey: NotificationService.messengerKey,
+              title: 'Spirtual Shakti',
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
+                useMaterial3: true,
+              ),
+              routerConfig: router,
+            ),
+            Positioned(
+              left: position.dx,
+              top: position.dy,
+              child: GestureDetector(
+                onPanUpdate: (details) {
+                  setState(()=>position = Offset(position.dx + details.delta.dx, position.dy + details.delta.dy));
+                },
+                onPanEnd: (details) {
+                  if (_isAtEdgeOfScreen(context)) {
+                    setState(() {
+                    });
+                  }
+                },
+                child: Padding(padding: EdgeInsets.all(4.0),child: FloatingActionButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1000)),
+                  elevation: 2,
+                  onPressed: () {
+                  },
+                  child: Icon(Icons.music_note),
+                ),),
+              ),
+            ),
+          ],
         ),
-        routerConfig: router,
       ),
     );
+  }
+  bool _isAtEdgeOfScreen(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
+    // Define the "edge" threshold (e.g., 50 pixels from the screen edge)
+    const edgeThreshold = 50.0;
+
+    return position.dx <= edgeThreshold || // Left edge
+        position.dy <= edgeThreshold || // Top edge
+        position.dx >= screenSize.width - edgeThreshold || // Right edge
+        position.dy >= screenSize.height - edgeThreshold; // Bottom edge
   }
 
   @override
   void dispose() {
     connectivitySubscription?.cancel();
     globalEventSubscription?.cancel();
-    AudioPlayerSingleton().audioPlayer.dispose();
+    AudioPlayerSingleton().player.dispose();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      AudioPlayerSingleton().audioPlayer.pause();
+      AudioPlayerSingleton().player.pause();
     }
   }
 }

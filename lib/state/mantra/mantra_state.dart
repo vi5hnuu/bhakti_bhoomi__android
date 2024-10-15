@@ -3,7 +3,7 @@ part of 'mantra_bloc.dart';
 @immutable
 class MantraState extends Equatable with WithHttpState {
   final Map<String, MantraInfoModel>? _mantraInfo; //mantraInfo
-  MantraAudioPageModel? _mantraAudioInfo; //mantraInfo
+  final MantraAudioPageModel? _mantraAudioInfo; //mantraInfo
   final Map<String, MantraGroupModel> _mantras; //mantraId,mantra
   final Map<String, MantraAudioModel> _mantrasAudios; //mantraAudioId,mantraAudio
   static const defaultMantraAudioInfoPageSize = 15;
