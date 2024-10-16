@@ -203,28 +203,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ),
               routerConfig: router,
             ),
-            Positioned(
-              left: position.dx,
-              top: position.dy,
-              child: GestureDetector(
-                onPanUpdate: (details) {
-                  setState(()=>position = Offset(position.dx + details.delta.dx, position.dy + details.delta.dy));
-                },
-                onPanEnd: (details) {
-                  if (_isAtEdgeOfScreen(context)) {
-                    setState(() {
-                    });
-                  }
-                },
-                child: Padding(padding: EdgeInsets.all(4.0),child: FloatingActionButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1000)),
-                  elevation: 2,
-                  onPressed: () {
-                  },
-                  child: Icon(Icons.music_note),
-                ),),
-              ),
-            ),
+            // Positioned(
+            //   left: position.dx,
+            //   top: position.dy,
+            //   child: GestureDetector(
+            //     onPanUpdate: (details) {
+            //       setState(()=>position = Offset(position.dx + details.delta.dx, position.dy + details.delta.dy));
+            //     },
+            //     onPanEnd: (details) {
+            //       if (_isAtEdgeOfScreen(context)) {
+            //         setState(() {
+            //         });
+            //       }
+            //     },
+            //     child: Padding(padding: EdgeInsets.all(4.0),child: FloatingActionButton(
+            //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(1000)),
+            //       elevation: 2,
+            //       onPressed: () {
+            //       },
+            //       child: Icon(Icons.music_note),
+            //     ),),
+            //   ),
+            // ),
           ],
         ),
       ),

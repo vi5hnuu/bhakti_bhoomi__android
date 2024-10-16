@@ -21,20 +21,20 @@ const Map<String, Object> _aboutUsInfo = {
           "github": "https://github.com/vi5hnuu"
         }
       },
-      {
-        "name": "Jyoti Maurya",
-        "role":
-            "Psychologist in Training & Spiritual Seeker",
-        "photo_url":
-            "https://res.cloudinary.com/dmzcpxynz/image/upload/v1723358447/contributors/jyoti.jpg",
-        "description": [
-          "Jyoti Maurya is a dedicated individual who has recently completed his 12th grade and is preparing to study psychology. Her journey into psychology is driven by a deep interest in understanding the human mind and behavior.",
-          "Alongside his academic pursuits, Jyoti follows a spiritual path, seeking balance and meaning through spiritual practices. Her approach to life combines psychological insights with spiritual wisdom, allowing him to connect deeply with both the scientific and spiritual aspects of the human experience."
-        ],
-        "social_links": {
-          "instagram": "https://www.instagram.com/vyakti_04/"
-        }
-      },
+      // {
+      //   "name": "Jyoti Maurya",
+      //   "role":
+      //       "Psychologist in Training & Spiritual Seeker",
+      //   "photo_url":
+      //       "https://res.cloudinary.com/dmzcpxynz/image/upload/v1723358447/contributors/jyoti.jpg",
+      //   "description": [
+      //     "Jyoti Maurya is a dedicated individual who has recently completed his 12th grade and is preparing to study psychology. Her journey into psychology is driven by a deep interest in understanding the human mind and behavior.",
+      //     "Alongside his academic pursuits, Jyoti follows a spiritual path, seeking balance and meaning through spiritual practices. Her approach to life combines psychological insights with spiritual wisdom, allowing him to connect deeply with both the scientific and spiritual aspects of the human experience."
+      //   ],
+      //   "social_links": {
+      //     "instagram": "https://www.instagram.com/vyakti_04/"
+      //   }
+      // },
     ]
   },
   "contactInfo": {
