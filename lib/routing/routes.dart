@@ -69,4 +69,6 @@ class Routing {
 
   static final Route guruGranthSahibInfo = Route(name:"guru-granth-sahib_info",path:"info",baseUrl: '/guru-granth-sahib');
   static final Route guruGranthSahibRagaParts= Route(name:"guru-granth-sahib_raga_parts",path:"raga_parts/raga-no/:ragaNo",baseUrl: '/guru-granth-sahib');
+
+  static final Route bookmarks = Route(name:"bookmarks",path:"/bookmarks");
 }

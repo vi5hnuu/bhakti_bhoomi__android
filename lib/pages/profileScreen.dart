@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               image: DecorationImage(
                                 image: (coverImage != null
                                     ? FileImage(File(coverImage!.path))
-                                    : NetworkImage(state.userInfo!.posterMeta!
+                                    : CachedNetworkImageProvider(state.userInfo!.posterMeta!
                                         .secure_url)) as ImageProvider,
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
@@ -161,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         backgroundImage: profileImage != null
                                             ? FileImage(
                                                 File(profileImage!.path))
-                                            : NetworkImage(state
+                                            : CachedNetworkImageProvider(state
                                                 .userInfo!
                                                 .profileMeta!
                                                 .secure_url) as ImageProvider,

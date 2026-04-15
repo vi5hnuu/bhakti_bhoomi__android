@@ -1,6 +1,9 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
@@ -23,7 +26,8 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
   final pageStorageKey = const PageStorageKey('chanakya-neeti_screen');
   final PageController _controller = PageController(initialPage: 0);
   CancelToken? token;
-  int currentPage=0;
+  int currentPage = 0;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -39,6 +43,20 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
             title: Text('Chanakya Neeti | Chapter No - ${widget.chapterNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: state.allChaptersInfo![widget.chapterNo].versesCount > 0
+                    ? (currentPage + 1) / state.allChaptersInfo![widget.chapterNo].versesCount
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -62,20 +80,40 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text(verse.translations['en']!)],
+                              children: [Text(verse.translations['en']!, style: TextStyle(fontSize: fontSize))],
                             ),
                             Positioned(
                                 bottom: 45,
                                 right: 15,
-                                child: EngageActions(
-                                  onShare: () async {
-                                    ShareResult shareResult = await Share.share("${verse.translations['en']!} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
-                                    if (shareResult.status == ShareResultStatus.success) {
-                                      NotificationService.showSnackbar(text: "Chanakya Neeti verse shared successfully",color: Colors.green);
-                                    }
+                                child: BlocBuilder<LikeBloc, LikeState>(
+                                  builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                  builder: (ctx, bookmarkState) {
+                                    final contentId = ChanakyaNeetiState.commentForId(chapterNo: widget.chapterNo, verseNo: index + 1);
+                                    final bookmarked = bookmarkState.isBookmarked(contentId);
+                                    return EngageActions(
+                                      isBookmarked: bookmarked,
+                                      isLiked: likeState.isLiked(contentId),
+                                      onBookmark: () => requireAuth(context, () {
+                                        if (bookmarked) {
+                                          final bid = bookmarkState.bookmarkIdFor(contentId);
+                                          if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                        } else {
+                                          ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'chanakya_neeti'));
+                                        }
+                                      }),
+                                      onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                        ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                      }),
+                                      onShare: () async {
+                                        final result = await Share.share("${verse.translations['en']!}\n\n— Chanakya Neeti ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
+                                        if (result.status == ShareResultStatus.success) {
+                                          NotificationService.showSnackbar(text: "Verse shared successfully", color: Colors.green);
+                                        }
+                                      },
+                                      onComment: () => onComment(context: context, commentFormId: contentId),
+                                    );
                                   },
-                                  onComment: () => onComment(context: context, commentFormId: ChanakyaNeetiState.commentForId(chapterNo: widget.chapterNo, verseNo: index + 1)),
-                                )),
+                                ))),
                             Positioned(
                               top: 15,
                               right: 15,
@@ -107,6 +145,7 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiVerseByChapterNoVerseNo(chapterNo: chapterNo, verseNo: verseNo, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: ChanakyaNeetiState.commentForId(chapterNo: chapterNo, verseNo: verseNo)));
   }
 
   _showNotImplementedMessage() {

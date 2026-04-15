@@ -49,7 +49,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final cookie = await _getCookie();
         final isValidCookie = _isCookieValid(cookie);
         if(!isValidCookie) await _clearCookies();
-        if(isValidCookie) DioSingleton().addCookie(Constants.jwtKey, cookie!); //add cookie for further requests
+        if(isValidCookie) DioSingleton().addCookie(Constants.jwtKey, cookie!);
+        // Always load refresh cookie — DioSingleton uses it to auto-refresh expired access tokens
+        final refreshCookie = await _getRefreshCookie();
+        if (refreshCookie != null) DioSingleton().addCookie(Constants.refreshJwtKey, refreshCookie);
         ApiResponse<UserInfo> res = await authRepository.me(cancelToken: event.cancelToken);
         emit(AuthState(userInfo: res.data,httpStates:state.httpStates.clone()..remove(Httpstates.TRY_AUTH), success: res.success, message: res.success ? "logged in successfully" : null));
       } on DioException catch (e) {
@@ -187,12 +190,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return cookie != null ? Cookie.fromSetCookieValue(cookie) : null;
   }
 
+  Future<Cookie?> _getRefreshCookie() async {
+    var cookie = await _sStorage.storage.read(key: Constants.refreshJwtKey);
+    return cookie != null ? Cookie.fromSetCookieValue(cookie) : null;
+  }
+
   _clearCookies() async {
     await _sStorage.storage.deleteAll();
   }
 
   bool _isCookieValid(Cookie? cookie) {
     if (cookie == null) return false;
-    return cookie.expires!.isAfter(DateTime.now().add(Duration(minutes: 5)));
+    return cookie.expires!.isAfter(DateTime.now().add(const Duration(minutes: 5)));
   }
 }

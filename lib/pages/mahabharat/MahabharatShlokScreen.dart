@@ -1,6 +1,9 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -24,8 +27,9 @@ class MahabharatShlokScreen extends StatefulWidget {
 class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
   final pageStorageKey = const PageStorageKey('mahabharat_shlok_screen');
   final PageController _controller = PageController(initialPage: 0);
-  int currentPage=0;
+  int currentPage = 0;
   CancelToken? token;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -38,10 +42,23 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
     return BlocBuilder<MahabharatBloc, MahabharatState>(
       builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title:
-                Text('Mahabharat | Book No - ${widget.bookNo} | Chapter No ${widget.chapterNo}', style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
+            title: Text('Mahabharat | Book No - ${widget.bookNo} | Chapter No ${widget.chapterNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
             backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo) > 0
+                    ? (currentPage + 1) / state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo)
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -65,20 +82,40 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text(shlok.text)],
+                              children: [Text(shlok.text, style: TextStyle(fontSize: fontSize))],
                             ),
                             Positioned(
                               bottom: 45,
                               right: 15,
-                              child: EngageActions(
-                                onShare: () async {
-                                  ShareResult shareResult = await Share.share("${shlok.text} https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
-                                  if (shareResult.status == ShareResultStatus.success) {
-                                    NotificationService.showSnackbar(text: "shlok shared successfully",color: Colors.green);
-                                  }
+                              child: BlocBuilder<LikeBloc, LikeState>(
+                                builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                builder: (ctx, bookmarkState) {
+                                  final contentId = MahabharatState.commentForId(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
+                                  final bookmarked = bookmarkState.isBookmarked(contentId);
+                                  return EngageActions(
+                                    isBookmarked: bookmarked,
+                                    isLiked: likeState.isLiked(contentId),
+                                    onBookmark: () => requireAuth(context, () {
+                                      if (bookmarked) {
+                                        final bid = bookmarkState.bookmarkIdFor(contentId);
+                                        if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                      } else {
+                                        ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'mahabharat'));
+                                      }
+                                    }),
+                                    onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                      ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                    }),
+                                    onShare: () async {
+                                      final result = await Share.share("${shlok.text}\n\n— Mahabharat Book ${widget.bookNo}, Chapter ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
+                                      if (result.status == ShareResultStatus.success) {
+                                        NotificationService.showSnackbar(text: "Shlok shared successfully", color: Colors.green);
+                                      }
+                                    },
+                                    onComment: () => onComment(context: context, commentFormId: contentId),
+                                  );
                                 },
-                                onComment: () => onComment(context: context, commentFormId: MahabharatState.commentForId(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1)),
-                              ),
+                              )),
                             ),
                             Positioned(
                               top: 15,
@@ -111,6 +148,7 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: MahabharatState.commentForId(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo)));
   }
 
   _showNotImplementedMessage() {

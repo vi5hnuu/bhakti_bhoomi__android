@@ -1,6 +1,9 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -8,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BhagvadGeetaShlokScreen extends StatefulWidget {
   final String title;
@@ -26,6 +30,7 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
   int currentPage = 0;
   CancelToken? token;
   final PageController _controller = PageController(initialPage: 0);
+  double fontSize = 16;
 
   @override
   initState() {
@@ -46,6 +51,20 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                     fontWeight: FontWeight.bold)),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: state.bhagvadGeetaChapters![widget.chapterNo].versesCount > 0
+                    ? (currentPage + 1) / state.bhagvadGeetaChapters![widget.chapterNo].versesCount
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -70,21 +89,40 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text(shlok.shlok)],
+                              children: [Text(shlok.shlok, style: TextStyle(fontSize: fontSize))],
                             ),
                             Positioned(
                                 bottom: 45,
                                 right: 15,
-                                child: EngageActions(
-                                  onBookmark: () => {},
-                                  onLike: () => {},
-                                  onComment: () => onComment(
-                                      context: context,
-                                      commentFormId:
-                                          BhagvadGeetaState.commentForId(
-                                              chapterNo: widget.chapterNo,
-                                              shlokNo: index + 1)),
-                                )),
+                                child: BlocBuilder<LikeBloc, LikeState>(
+                                  builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                  builder: (ctx, bookmarkState) {
+                                    final contentId = BhagvadGeetaState.commentForId(
+                                        chapterNo: widget.chapterNo, shlokNo: index + 1);
+                                    final bookmarked = bookmarkState.isBookmarked(contentId);
+                                    return EngageActions(
+                                      isBookmarked: bookmarked,
+                                      isLiked: likeState.isLiked(contentId),
+                                      onBookmark: () => requireAuth(context, () {
+                                        if (bookmarked) {
+                                          final bid = bookmarkState.bookmarkIdFor(contentId);
+                                          if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                        } else {
+                                          ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'bhagavad_geeta'));
+                                        }
+                                      }),
+                                      onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                        ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                      }),
+                                      onComment: () => onComment(
+                                          context: context,
+                                          commentFormId: contentId),
+                                      onShare: shlok != null ? () => Share.share(
+                                        '${shlok.shlok}\n\n— Bhagavad Gita ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi',
+                                      ) : null,
+                                    );
+                                  },
+                                ))),
                           ],
                         )
                       : state.isError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)
@@ -112,6 +150,8 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
     BlocProvider.of<BhagvadGeetaBloc>(context).add(
         FetchBhagvadShlokByChapterNoShlokNo(
             chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: token));
+    final contentId = BhagvadGeetaState.commentForId(chapterNo: chapterNo, shlokNo: shlokNo);
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: contentId));
   }
 
   _showNotImplementedMessage() {

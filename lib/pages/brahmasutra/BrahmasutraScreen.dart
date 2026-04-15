@@ -1,6 +1,9 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -25,8 +28,9 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
   final pageStorageKey = const PageStorageKey('brahmasutra');
   final PageController _controller = PageController(initialPage: 0);
   String? lang;
-  int currentPage=0;
+  int currentPage = 0;
   CancelToken? token;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -46,6 +50,20 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: (state.totalSutras(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo) ?? 0) > 0
+                    ? (currentPage + 1) / state.totalSutras(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo)!
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -86,7 +104,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                                               child: Text(
                                                 e.value,
                                                 textAlign: TextAlign.center,
-                                                style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                                style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: fontSize),
                                               ),
                                             ))
                                         .toList(),
@@ -101,18 +119,35 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                             Positioned(
                                 bottom: 45,
                                 right: 15,
-                                child: EngageActions(
-                                  onShare: () async {
-                                    ShareResult shareResult = await Share.share("${sutra.sutra.values.join("\n")} \n\n Read More : https://play.google.com/store/apps/details?id=com.vi5hnu.bhakti_bhoomi&hl=en-IN", subject: "Mahabharat Shlok", sharePositionOrigin: const Rect.fromLTWH(0, 0, 0, 0));
-                                    if (shareResult.status == ShareResultStatus.success) {
-                                      NotificationService.showSnackbar(text: "sutra shared successfully",color: Colors.green);
-                                    }
+                                child: BlocBuilder<LikeBloc, LikeState>(
+                                  builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                  builder: (ctx, bookmarkState) {
+                                    final contentId = BrahmaSutraState.commentForId(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index + 1, lang: lang ?? BrahmaSutraState.defaultLang);
+                                    final bookmarked = bookmarkState.isBookmarked(contentId);
+                                    return EngageActions(
+                                      isBookmarked: bookmarked,
+                                      isLiked: likeState.isLiked(contentId),
+                                      onBookmark: () => requireAuth(context, () {
+                                        if (bookmarked) {
+                                          final bid = bookmarkState.bookmarkIdFor(contentId);
+                                          if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                        } else {
+                                          ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'brahmasutra'));
+                                        }
+                                      }),
+                                      onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                        ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                      }),
+                                      onShare: () async {
+                                        final result = await Share.share("${sutra.sutra.values.join("\n")}\n\n— Brahma Sutra ${widget.chapterNo}.${widget.quaterNo}.${index + 1}\n\nRead on Bhakti Bhoomi");
+                                        if (result.status == ShareResultStatus.success) {
+                                          NotificationService.showSnackbar(text: "Sutra shared successfully", color: Colors.green);
+                                        }
+                                      },
+                                      onComment: () => onComment(context: context, commentFormId: contentId),
+                                    );
                                   },
-                                  onComment: () => onComment(
-                                      context: context,
-                                      commentFormId:
-                                          BrahmaSutraState.commentForId(chapterNo: widget.chapterNo, quaterNo: widget.quaterNo, sutraNo: index + 1, lang: lang ?? BrahmaSutraState.defaultLang)),
-                                )),
+                                ))),
                           ],
                         )
                       : state.isError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)
@@ -143,6 +178,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: BrahmaSutraState.commentForId(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo + 1, lang: lang ?? BrahmaSutraState.defaultLang)));
   }
 
   _showNotImplementedMessage() {

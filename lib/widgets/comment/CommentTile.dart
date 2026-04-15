@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -24,15 +25,11 @@ class CommentTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                CircleAvatar(child: ClipOval(child: Image.network(comment.profileImageUrl,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
-                      return const SpinKitPumpingHeart(color: Colors.grey, size: 18);
-                    }
-                  },
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image_outlined),))),
+                CircleAvatar(child: ClipOval(child: CachedNetworkImage(
+                  imageUrl: comment.profileImageUrl,
+                  placeholder: (_, __) => const SpinKitPumpingHeart(color: Colors.grey, size: 18),
+                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image_outlined),
+                ))),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

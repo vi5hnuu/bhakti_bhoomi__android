@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class RoundedListTile extends StatelessWidget {
@@ -15,12 +16,13 @@ class RoundedListTile extends StatelessWidget {
         backgroundColor: Theme.of(context).primaryColor,
         child: Text('$itemNo', style: const TextStyle(color: Colors.white)),
       ),
-      trailing: imageUrl!=null ? ClipOval(child: CircleAvatar(radius: 24,child: Image.network(fit: BoxFit.fitHeight,imageUrl!,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const CircularProgressIndicator();
-          },
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_outlined)),)) : null,
+      trailing: imageUrl != null
+          ? ClipOval(child: CircleAvatar(radius: 24, child: CachedNetworkImage(
+              imageUrl: imageUrl!, fit: BoxFit.fitHeight,
+              placeholder: (_, __) => const CircularProgressIndicator(strokeWidth: 2),
+              errorWidget: (_, __, ___) => const Icon(Icons.image_not_supported_outlined),
+            )))
+          : null,
       key: key,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(64), side: BorderSide(color: Theme.of(context).primaryColor)),
       title: Text(text,softWrap: false,maxLines: 1,overflow: TextOverflow.ellipsis,),

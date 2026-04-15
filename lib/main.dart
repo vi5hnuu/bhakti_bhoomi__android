@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
+import 'package:bhakti_bhoomi/pages/bookmarks/BookmarksScreen.dart';
 import 'package:bhakti_bhoomi/pages/createPost/CreatePostScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
@@ -47,6 +48,8 @@ import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -134,7 +137,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           name: BBR.Routing.home.name,
           path: BBR.Routing.home.path,
           builder: (context, state) => const Home(title: 'Spirtual Shakti'),
-
+        ),
+        GoRoute(
+          name: BBR.Routing.bookmarks.name,
+          path: BBR.Routing.bookmarks.path,
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const BookmarksScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
         ),
         authRoutes,
         aartiRoutes,
@@ -197,6 +208,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<YogaSutraBloc>(create: (ctx) => YogaSutraBloc(yogaSutraRepository: YogaSutraRepository())),
         BlocProvider<GuruGranthSahibBloc>(create: (ctx) => GuruGranthSahibBloc(guruGranthSahibRepository: GuruGranthSahibRepository())),
         BlocProvider<VratKathaBloc>(create: (ctx) => VratKathaBloc(vratKathaRepository: VratKathaRepository())),
+        BlocProvider<BookmarkBloc>(create: (ctx) => BookmarkBloc()),
+        BlocProvider<LikeBloc>(create: (ctx) => LikeBloc()),
         BlocProvider<AuthBloc>(lazy: false, create: (ctx) => AuthBloc(authRepository: AuthRepository()))
       ],
       child:Directionality(

@@ -1,9 +1,13 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +28,10 @@ class ValmikiRamayanShlokScreen extends StatefulWidget {
 class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
   final pageStorageKey = const PageStorageKey('valmikiramayan-kand-sarga-shloks');
   final PageController _controller = PageController(initialPage: 0);
-  int currentPage=0;
+  int currentPage = 0;
   String? lang;
   CancelToken? cancelToken;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -49,6 +54,18 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
               ),
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
+              actions: [
+                IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+                IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(3),
+                child: LinearProgressIndicator(
+                  value: totalShloks > 0 ? (currentPage + 1) / totalShloks : 0,
+                  backgroundColor: Colors.white24,
+                  color: Colors.white,
+                ),
+              ),
             ),
             body: PageView.builder(
               key: pageStorageKey,
@@ -102,7 +119,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                                         child: Text(
                                           shlok.shlok,
                                           textAlign: TextAlign.justify,
-                                          style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                          style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: fontSize),
                                         ),
                                       ),
                                     ),
@@ -114,13 +131,35 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
                             Positioned(
                               bottom: 45,
                               right: 15,
-                              child: EngageActions(
-                                onBookmark: () => {},
-                                onLike: () => {},
-                                onComment: () => onComment(
-                                    context: context,
-                                    commentFormId: RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: currentPage+1, lang: lang ?? RamayanState.defaultLanguage)),
-                              ),
+                              child: BlocBuilder<LikeBloc, LikeState>(
+                                builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                builder: (ctx, bookmarkState) {
+                                  final contentId = RamayanState.commentForId(kanda: widget.kand, sargaNo: widget.sargaNo, shlokNo: index + 1, lang: lang ?? RamayanState.defaultLanguage);
+                                  final bookmarked = bookmarkState.isBookmarked(contentId);
+                                  return EngageActions(
+                                    isBookmarked: bookmarked,
+                                    isLiked: likeState.isLiked(contentId),
+                                    onBookmark: () => requireAuth(context, () {
+                                      if (bookmarked) {
+                                        final bid = bookmarkState.bookmarkIdFor(contentId);
+                                        if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                      } else {
+                                        ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'ramayan'));
+                                      }
+                                    }),
+                                    onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                      ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                    }),
+                                    onShare: () async {
+                                      final result = await Share.share("${shlok.shlok}\n\n— Valmiki Ramayan | ${widget.kand}, Sarga ${widget.sargaNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
+                                      if (result.status == ShareResultStatus.success) {
+                                        NotificationService.showSnackbar(text: "Shlok shared successfully", color: Colors.green);
+                                      }
+                                    },
+                                    onComment: () => onComment(context: context, commentFormId: contentId),
+                                  );
+                                },
+                              )),
                             ),
                             Positioned(
                                 top: -5,
@@ -187,6 +226,7 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     cancelToken?.cancel("cancelled");
     cancelToken = CancelToken();
     BlocProvider.of<RamayanBloc>(context).add(FetchRamayanShlokByKandSargaNoShlokNo(kanda: kand, sargaNo: sargaNo, shlokNo: shlokNo, lang: lang, cancelToken: cancelToken));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: RamayanState.commentForId(kanda: kand, sargaNo: sargaNo, shlokNo: shlokNo, lang: lang ?? RamayanState.defaultLanguage)));
   }
 
   @override

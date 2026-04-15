@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
@@ -56,9 +57,11 @@ class _VratKathaScreenState extends State<VratKathaScreen> {
                   elevation: 0.1,
                   margin: const EdgeInsets.only(bottom: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  child:  Image.network(fit: BoxFit.fitWidth,katha.imagePath,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-                      loadingBuilder: (context, child, loadingProgress) => loadingProgress == null ? child : const CircularProgressIndicator())
+                  child: CachedNetworkImage(
+                      imageUrl: katha.imagePath,
+                      fit: BoxFit.fitWidth,
+                      errorWidget: (_, __, ___) => const Icon(Icons.error),
+                      placeholder: (_, __) => const Center(child: CircularProgressIndicator()))
                 ),
                 ...katha.katha.text.map((verse) =>
                     Column(children: [

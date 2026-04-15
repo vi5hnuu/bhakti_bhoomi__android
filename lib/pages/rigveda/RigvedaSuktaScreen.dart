@@ -1,8 +1,12 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/rigveda/rigveda_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -49,11 +53,21 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                   fontWeight: FontWeight.bold),
             ),
             actions: [
-              IconButton(onPressed: fontSize<=14 ? null : ()=>setState(() => fontSize-=1), icon: const Icon(Icons.remove)),
-              IconButton(onPressed: fontSize>=32 ? null : ()=>setState(() => fontSize+=1), icon: const Icon(Icons.add)),
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
             ],
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: (state.rigvedaInfo!.mandalaInfo[widget.mandala] ?? 0) > 0
+                    ? (currentPage + 1) / state.rigvedaInfo!.mandalaInfo[widget.mandala]!
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -99,16 +113,35 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                               Positioned(
                                   bottom: 45,
                                   right: 15,
-                                  child: EngageActions(
-                                    onBookmark: () => {},
-                                    onLike: () => {},
-                                    onComment: () => onComment(
-                                        context: context,
-                                        commentFormId:
-                                            RigvedaState.commentForId(
-                                                mandala: widget.mandala,
-                                                suktaNo: index + 1)),
-                                  )),
+                                  child: BlocBuilder<LikeBloc, LikeState>(
+                                    builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                    builder: (ctx, bookmarkState) {
+                                      final contentId = RigvedaState.commentForId(mandala: widget.mandala, suktaNo: index + 1);
+                                      final bookmarked = bookmarkState.isBookmarked(contentId);
+                                      return EngageActions(
+                                        isBookmarked: bookmarked,
+                                        isLiked: likeState.isLiked(contentId),
+                                        onBookmark: () => requireAuth(context, () {
+                                          if (bookmarked) {
+                                            final bid = bookmarkState.bookmarkIdFor(contentId);
+                                            if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                          } else {
+                                            ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'rigveda'));
+                                          }
+                                        }),
+                                        onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                          ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                        }),
+                                        onShare: () async {
+                                          final result = await Share.share("${sukta.text}\n\n— Rig Veda, Mandala ${widget.mandala}, Sukta ${index + 1}\n\nRead on Bhakti Bhoomi");
+                                          if (result.status == ShareResultStatus.success) {
+                                            NotificationService.showSnackbar(text: "Sukta shared successfully", color: Colors.green);
+                                          }
+                                        },
+                                        onComment: () => onComment(context: context, commentFormId: contentId),
+                                      );
+                                    },
+                                  ))),
                               Positioned(
                                 top: 64,
                                 right: 7,
@@ -159,6 +192,7 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
     token = CancelToken();
     BlocProvider.of<RigvedaBloc>(context).add(FetchVerseByMandalaSukta(
         mandalaNo: mandala, suktaNo: suktaNo, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: RigvedaState.commentForId(mandala: mandala, suktaNo: suktaNo)));
   }
 
   @override

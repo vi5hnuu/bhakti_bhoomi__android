@@ -1,6 +1,10 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
@@ -26,6 +30,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
   String? lang;
   CancelToken? token;
   int currentPage = 0;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -45,6 +50,20 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: (state.totalVersesInKand(widget.kand) ?? 0) > 0
+                    ? (currentPage + 1) / state.totalVersesInKand(widget.kand)!
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -81,7 +100,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                     child: Text(
                                       verse.text,
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                      style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: fontSize),
                                     ),
                                   )),
                                   SizedBox(
@@ -93,12 +112,35 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                               Positioned(
                                   bottom: 45,
                                   right: 15,
-                                  child: EngageActions(
-                                    onBookmark: () => {},
-                                    onLike: () => {},
-                                    onComment: () => onComment(
-                                        context: context, commentFormId: RamcharitmanasState.commentForId(kand: widget.kand, verseNo: index + 1, lang: lang ?? RamcharitmanasState.defaultLang)),
-                                  )),
+                                  child: BlocBuilder<LikeBloc, LikeState>(
+                                    builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                    builder: (ctx, bookmarkState) {
+                                      final contentId = RamcharitmanasState.commentForId(kand: widget.kand, verseNo: index + 1, lang: lang ?? RamcharitmanasState.defaultLang);
+                                      final bookmarked = bookmarkState.isBookmarked(contentId);
+                                      return EngageActions(
+                                        isBookmarked: bookmarked,
+                                        isLiked: likeState.isLiked(contentId),
+                                        onBookmark: () => requireAuth(context, () {
+                                          if (bookmarked) {
+                                            final bid = bookmarkState.bookmarkIdFor(contentId);
+                                            if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                          } else {
+                                            ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'ramcharitmanas'));
+                                          }
+                                        }),
+                                        onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                          ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                        }),
+                                        onShare: () async {
+                                          final result = await Share.share("${verse.text}\n\n— Ramcharitmanas | ${widget.kand}, Verse ${index + 1}\n\nRead on Bhakti Bhoomi");
+                                          if (result.status == ShareResultStatus.success) {
+                                            NotificationService.showSnackbar(text: "Verse shared successfully", color: Colors.green);
+                                          }
+                                        },
+                                        onComment: () => onComment(context: context, commentFormId: contentId),
+                                      );
+                                    },
+                                  ))),
                               Positioned(
                                 top: 64,
                                 right: 7,
@@ -126,6 +168,7 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasVerseByKandaAndVerseNo(kanda: kand, verseNo: verseNo, lang: lang, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: RamcharitmanasState.commentForId(kand: kand, verseNo: verseNo, lang: lang ?? RamcharitmanasState.defaultLang)));
   }
 
   _onPageChanged(pageNo) {

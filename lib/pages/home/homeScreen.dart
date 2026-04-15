@@ -3,7 +3,7 @@ import 'package:bhakti_bhoomi/constants/Constants.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
-import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(state.userInfo!.profileMeta!.secure_url),
+                      backgroundImage: CachedNetworkImageProvider(state.userInfo!.profileMeta!.secure_url),
                     ),
                   ),
                 )
@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            foregroundImage: (state.userInfo?.profileMeta?.secure_url != null) ? NetworkImage(state.userInfo!.profileMeta!.secure_url) : null,
+                            foregroundImage: (state.userInfo?.profileMeta?.secure_url != null) ? CachedNetworkImageProvider(state.userInfo!.profileMeta!.secure_url) : null,
                             child: state.isLoading(forr: Httpstates.USER_INFO)
                                 ? SpinKitPulse(
                                     color: Theme.of(context).primaryColor,
@@ -128,6 +128,16 @@ class _HomeState extends State<Home> {
                     leading: Icon(Icons.post_add, color: Theme.of(context).primaryColor,size: 24),
                     trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
                     onTap: () => GoRouter.of(context).pushNamed(Routing.createPost.name),
+                  ),
+                  if (state.userInfo != null) ListTile(
+                    title: const Text("Bookmarks", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                    splashColor: Theme.of(context).primaryColor,
+                    leading: Icon(Icons.bookmark_outline, color: Theme.of(context).primaryColor, size: 24),
+                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
+                    onTap: () {
+                      Navigator.pop(context);
+                      GoRouter.of(context).pushNamed(Routing.bookmarks.name);
+                    },
                   ),
                   if (state.userInfo != null) ListTile(
                     title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),

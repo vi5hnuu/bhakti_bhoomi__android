@@ -44,27 +44,29 @@ class _AartiInfoScreenState extends State<AartiInfoScreen> {
       ),
       body: BlocBuilder<AartiBloc, AartiState>(builder: (context, state) {
         return state.aartisInfo.isNotEmpty
-            ? ListView.builder(
-                itemCount: state.aartisInfo.length,
-                itemBuilder: (context, index) {
-                  final aartiInfo = state.aartisInfo[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RoundedListTile(
-                      itemNo: index + 1,
-                      text: aartiInfo.title,
-                      key: Key(aartiInfo.id),
-                      onTap: () => GoRouter.of(context).pushNamed(Routing.aarti.name,
-                          pathParameters: {"id": state.aartisInfo[index].id}),
-                    ),
-                  );
-                })
+            ? RefreshIndicator(
+                onRefresh: () async => initAartiInfo(),
+                child: ListView.builder(
+                  itemCount: state.aartisInfo.length,
+                  itemBuilder: (context, index) {
+                    final aartiInfo = state.aartisInfo[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RoundedListTile(
+                        itemNo: index + 1,
+                        text: aartiInfo.title,
+                        key: Key(aartiInfo.id),
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.aarti.name, pathParameters: {"id": state.aartisInfo[index].id}),
+                      ),
+                    );
+                  },
+                ),
+              )
             : Center(
                 child: state.isError(forr: Httpstates.AARTI_INFO)
-                    ? RetryAgain(onRetry: initAartiInfo,error: state.getError(forr:  Httpstates.AARTI_INFO)!.message)
+                    ? RetryAgain(onRetry: initAartiInfo, error: state.getError(forr: Httpstates.AARTI_INFO)!.message)
                     : (state.isLoading(forr: Httpstates.AARTI_INFO)
-                        ? SpinKitThreeBounce(
-                            color: Theme.of(context).primaryColor)
+                        ? SpinKitThreeBounce(color: Theme.of(context).primaryColor)
                         : const Text("No Aarti found.")));
       }),
     );

@@ -1,5 +1,6 @@
 import 'package:bhakti_bhoomi/constants/about-us-info.dart';
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -80,13 +81,12 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                         width: 150,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: Image.network(fit: BoxFit.contain,contributor.photoUrl,loadingBuilder: (context, child, loadingProgress) => loadingProgress!=null ? Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SpinKitCircle(size: 48,color: Colors.deepOrange),
-                              Text(((loadingProgress.cumulativeBytesLoaded/(loadingProgress.expectedTotalBytes ?? 1)).floor()*100).toString())
-                            ],):child),
+                          child: CachedNetworkImage(
+                          imageUrl: contributor.photoUrl,
+                          fit: BoxFit.contain,
+                          placeholder: (_, __) => const SpinKitCircle(size: 48, color: Colors.deepOrange),
+                          errorWidget: (_, __, ___) => const Icon(Icons.broken_image_outlined),
+                        ),
                         ),
                       ),
                     ),

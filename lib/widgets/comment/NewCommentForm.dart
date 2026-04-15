@@ -1,6 +1,7 @@
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
 import 'package:bhakti_bhoomi/models/UserInfo.dart';
 import 'package:bhakti_bhoomi/singletons/LoggerSingleton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class NewCommentForm extends StatefulWidget {
@@ -42,7 +43,7 @@ class _NewCommentFormState extends State<NewCommentForm> {
             ),
           ),
         ListTile(
-          leading: CircleAvatar(backgroundImage: widget.userInfo?.profileMeta?.secure_url != null ? NetworkImage(widget.userInfo!.profileMeta!.secure_url) : null,child: widget.userInfo?.profileMeta?.secure_url == null ? const Icon(Icons.favorite_outlined):null),
+          leading: CircleAvatar(backgroundImage: widget.userInfo?.profileMeta?.secure_url != null ? CachedNetworkImageProvider(widget.userInfo!.profileMeta!.secure_url) : null,child: widget.userInfo?.profileMeta?.secure_url == null ? const Icon(Icons.favorite_outlined):null),
           title: TextFormField(
             controller: commentTextCntrl,
             autocorrect: true,

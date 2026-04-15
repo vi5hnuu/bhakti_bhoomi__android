@@ -42,23 +42,26 @@ class _ChalisaInfoScreenState extends State<ChalisaInfoScreen> {
               iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: chalisaInfo != null
-                ? ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: chalisaInfo.length,
-                    itemBuilder: (context, index) {
-                      final chalisa = chalisaInfo.entries.elementAt(index);
-                      return Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: RoundedListTile(
-                          itemNo: index + 1,
-                          onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa.name, pathParameters: {'chalisaId': chalisa.key}),
-                          text: chalisa.value,
-                        ),
-                      );
-                    },
+                ? RefreshIndicator(
+                    onRefresh: () async => initChalisaInfo(),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: chalisaInfo.length,
+                      itemBuilder: (context, index) {
+                        final chalisa = chalisaInfo.entries.elementAt(index);
+                        return Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: RoundedListTile(
+                            itemNo: index + 1,
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.chalisa.name, pathParameters: {'chalisaId': chalisa.key}),
+                            text: chalisa.value,
+                          ),
+                        );
+                      },
+                    ),
                   )
                 : state.isError(forr: Httpstates.ALL_CHALISA_INFO)
-                    ? Center(child: RetryAgain(onRetry: initChalisaInfo,error: state.getError(forr: Httpstates.ALL_CHALISA_INFO)!.message))
+                    ? Center(child: RetryAgain(onRetry: initChalisaInfo, error: state.getError(forr: Httpstates.ALL_CHALISA_INFO)!.message))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );

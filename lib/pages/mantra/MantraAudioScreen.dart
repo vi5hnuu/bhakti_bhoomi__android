@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/AudioPlayerState.dart';
 import 'package:bhakti_bhoomi/models/mantra/MantraAudioModel.dart';
@@ -70,9 +71,10 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                   width: double.infinity,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
-                    child: Image.network(mantraAudio.thumbnail,
-                      loadingBuilder: (context, child, loadingProgress) => loadingProgress!=null ? const SpinKitDoubleBounce(color: Colors.green):child,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_outlined),
+                    child: CachedNetworkImage(
+                      imageUrl: mantraAudio.thumbnail,
+                      placeholder: (_, __) => const SpinKitDoubleBounce(color: Colors.green),
+                      errorWidget: (_, __, ___) => const Icon(Icons.image_not_supported_outlined),
                       fit: BoxFit.cover,
                     ),
                   ),

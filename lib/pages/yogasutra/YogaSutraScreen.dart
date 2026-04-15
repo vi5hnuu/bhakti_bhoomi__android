@@ -1,7 +1,11 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
@@ -23,9 +27,10 @@ class YogaSutraScreen extends StatefulWidget {
 class _YogaSutraScreenState extends State<YogaSutraScreen> {
   final pageStorageKey = const PageStorageKey('ramcharitmanas-kand-verses');
   final PageController _controller = PageController(initialPage: 0);
-  int currentPage=0;
+  int currentPage = 0;
   String? lang;
   CancelToken? token;
+  double fontSize = 16;
 
   @override
   initState() {
@@ -45,6 +50,20 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
             ),
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(3),
+              child: LinearProgressIndicator(
+                value: state.yogaSutraInfo!.totalSutra.length > 0
+                    ? (currentPage + 1) / state.yogaSutraInfo!.totalSutra.length
+                    : 0,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: PageView.builder(
             key: pageStorageKey,
@@ -79,19 +98,42 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                                       child: Center(
                                           child: Text(
                                     sutra.sutra.values.first,
-                                    style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: 16),
+                                    style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: fontSize),
                                   )))
                                 ],
                               ),
                               Positioned(
                                   bottom: 45,
                                   right: 15,
-                                  child: EngageActions(
-                                    onBookmark: () => {},
-                                    onLike: () => {},
-                                    onComment: () => onComment(
-                                        context: context, commentFormId: YogaSutraState.commentForId(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: lang ?? YogaSutraState.defaultLanguage)),
-                                  )),
+                                  child: BlocBuilder<LikeBloc, LikeState>(
+                                    builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                                    builder: (ctx, bookmarkState) {
+                                      final contentId = YogaSutraState.commentForId(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: lang ?? YogaSutraState.defaultLanguage);
+                                      final bookmarked = bookmarkState.isBookmarked(contentId);
+                                      return EngageActions(
+                                        isBookmarked: bookmarked,
+                                        isLiked: likeState.isLiked(contentId),
+                                        onBookmark: () => requireAuth(context, () {
+                                          if (bookmarked) {
+                                            final bid = bookmarkState.bookmarkIdFor(contentId);
+                                            if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                          } else {
+                                            ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'yoga_sutra'));
+                                          }
+                                        }),
+                                        onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                          ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                        }),
+                                        onShare: () async {
+                                          final result = await Share.share("${sutra.sutra.values.first}\n\n— Yoga Sutra ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
+                                          if (result.status == ShareResultStatus.success) {
+                                            NotificationService.showSnackbar(text: "Sutra shared successfully", color: Colors.green);
+                                          }
+                                        },
+                                        onComment: () => onComment(context: context, commentFormId: contentId),
+                                      );
+                                    },
+                                  ))),
                             ],
                           )
                         : state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)
@@ -126,6 +168,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraByChapterNoSutraNo(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang, cancelToken: token));
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: YogaSutraState.commentForId(chapterNo: chapterNo, sutraNo: sutraNo, lang: lang ?? YogaSutraState.defaultLanguage)));
   }
 
   @override

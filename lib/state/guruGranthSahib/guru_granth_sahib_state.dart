@@ -33,6 +33,9 @@ class GuruGranthSahibState extends Equatable with WithHttpState {
   Map<String, GuruGranthSahibRagaModel> getRagas() => Map.unmodifiable(_guruGranthSahibRagas);
   GuruGranthSahibInfoModel? getInfo() => _guruGranthSahibInfo;
 
+  static String commentForId({required int ragaNo, required int partNo}) =>
+      'raga_$ragaNo-part_$partNo';
+
   @override
   List<Object?> get props => [httpStates, _guruGranthSahibRagas, _guruGranthSahibInfo];
 }
