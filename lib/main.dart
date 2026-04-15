@@ -76,15 +76,27 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  static final _whiteListedRoutes = [BBR.Routing.login.fullPath,BBR.Routing.verify.fullPath, BBR.Routing.register.fullPath, BBR.Routing.forgotPassword.fullPath, BBR.Routing.splash.fullPath, BBR.Routing.otp.fullPath];
+  // Routes that require the user to be authenticated
+  static final _authRequiredPaths = [
+    BBR.Routing.profile.fullPath,
+  ];
   final router=GoRouter(
       debugLogDiagnostics: true,
       redirect: (context, state) {
         final authState=BlocProvider.of<AuthBloc>(context).state;
-        if (!_whiteListedRoutes.contains(state.fullPath) && !authState.isAuthtenticated) {
-          return "/auth/${BBR.Routing.login.path}";
-        }else if(state.fullPath?.startsWith("/admin")==true && !authState.isAdmin){
-          return "/home";
+        final fullPath = state.fullPath ?? '';
+        // Redirect to home if authenticated user tries to open login/register
+        final authScreenPaths = [BBR.Routing.login.fullPath, BBR.Routing.register.fullPath];
+        if (authScreenPaths.contains(fullPath) && authState.isAuthtenticated) {
+          return BBR.Routing.home.fullPath;
+        }
+        // Protect routes that require login (profile, etc.)
+        if (_authRequiredPaths.any((p) => fullPath.startsWith(p)) && !authState.isAuthtenticated) {
+          return BBR.Routing.login.fullPath;
+        }
+        // Admin-only routes
+        if (fullPath.startsWith("/admin") && !authState.isAdmin) {
+          return BBR.Routing.home.fullPath;
         }
         return null;
       },
@@ -151,7 +163,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if((event is LogOutInitEvent) && !onWhiteListedUrl){
         NotificationService.showSnackbar(text: "Session expired, Please log-in again");
       }else if((event is LogOutCompleteEvent)){
-        router.goNamed(BBR.Routing.login.name);
+        router.goNamed(BBR.Routing.home.name);
       }
     });
 

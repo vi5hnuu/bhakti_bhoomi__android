@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (state.isLoading(forr: Httpstates.TRY_AUTH) || timer?.isActive==true){
       return;
     }else if(state.isError(forr: Httpstates.TRY_AUTH) || (!state.isAuthtenticated && timer?.isActive==false)){
-      GoRouter.of(context).replaceNamed(Routing.login.name);
+      GoRouter.of(context).replaceNamed(Routing.home.name);
     }else if(state.isAuthtenticated && timer?.isActive!=true){
       GoRouter.of(context).replaceNamed(Routing.home.name);
     }

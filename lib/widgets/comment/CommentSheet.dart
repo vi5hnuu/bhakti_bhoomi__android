@@ -1,6 +1,7 @@
 import 'package:bhakti_bhoomi/models/CommentModel.dart';
 import 'package:bhakti_bhoomi/models/NewComment.dart';
 import 'package:bhakti_bhoomi/models/UserInfo.dart';
+import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/comment/comment_bloc.dart';
 import 'package:bhakti_bhoomi/state/comment/comment_event.dart';
@@ -14,6 +15,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CommentSheet extends StatefulWidget {
@@ -71,7 +73,7 @@ class _CommentSheetState extends State<CommentSheet> {
                       Expanded(
                         child: Column(
                           children: [
-                            if (showMainLoader || userInfo == null)
+                            if (showMainLoader)
                               const Padding(
                                 padding: EdgeInsets.only(top: 12.0),
                                 child: SpinKitThreeBounce(color: Colors.blue, size: 24),
@@ -109,23 +111,25 @@ class _CommentSheetState extends State<CommentSheet> {
                                   },
                                   itemCount: state.comments.length),
                             ),
-                            NewCommentForm(
-                              onRemoveReplyTo: () => setState(() => replyToComment = null),
-                              onAddComment: (value) {
-                                _addComment(
-                                    newComment: NewComment(
-                                        commentForId: widget.commentForId,
-                                        content: value,
-                                        profileImageUrl: userInfo!.profileMeta!.secure_url,
-                                        userId: userInfo!.id,
-                                        username: userInfo!.username,
-                                        parentCommentId: replyToComment != null ? replyToComment!.id : null,
-                                        parentCommentUserId: replyToComment != null ? replyToComment!.userId : null));
-                              },
-                              replyToComment: replyToComment,
-                              userInfo: userInfo,
-                              isEnabled: !state.loadingFor.any((e) => e is CreateCommentEvent),
-                            )
+                            userInfo != null
+                                ? NewCommentForm(
+                                    onRemoveReplyTo: () => setState(() => replyToComment = null),
+                                    onAddComment: (value) {
+                                      _addComment(
+                                          newComment: NewComment(
+                                              commentForId: widget.commentForId,
+                                              content: value,
+                                              profileImageUrl: userInfo!.profileMeta?.secure_url ?? '',
+                                              userId: userInfo!.id,
+                                              username: userInfo!.username,
+                                              parentCommentId: replyToComment != null ? replyToComment!.id : null,
+                                              parentCommentUserId: replyToComment != null ? replyToComment!.userId : null));
+                                    },
+                                    replyToComment: replyToComment,
+                                    userInfo: userInfo,
+                                    isEnabled: !state.loadingFor.any((e) => e is CreateCommentEvent),
+                                  )
+                                : _buildGuestCommentPrompt()
                           ],
                         ),
                       ),
@@ -136,6 +140,35 @@ class _CommentSheetState extends State<CommentSheet> {
             ),
           );
         });
+  }
+
+  Widget _buildGuestCommentPrompt() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline, color: Colors.grey, size: 20),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Text(
+              'Login to join the conversation',
+              style: TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              GoRouter.of(context).pushNamed(Routing.login.name);
+            },
+            child: const Text('Log In'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _likeComment({required String commentId, required bool like}) {

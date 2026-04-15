@@ -3,6 +3,7 @@ import 'package:bhakti_bhoomi/constants/Constants.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _HomeState extends State<Home> {
             shadowColor: Colors.grey,
             backgroundColor: Theme.of(context).primaryColor,
             actions: [
-              if (state.userInfo != null)
+              if (state.userInfo != null && state.userInfo!.profileMeta?.secure_url != null)
                 GestureDetector(
                   onTap: () => GoRouter.of(context).pushNamed(Routing.profile.name),
                   child: Padding(
@@ -55,6 +56,11 @@ class _HomeState extends State<Home> {
                       backgroundImage: NetworkImage(state.userInfo!.profileMeta!.secure_url),
                     ),
                   ),
+                )
+              else if (state.userInfo == null)
+                TextButton(
+                  onPressed: () => GoRouter.of(context).pushNamed(Routing.login.name),
+                  child: const Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 )
             ],
             iconTheme: const IconThemeData(color: Colors.white),
@@ -94,12 +100,44 @@ class _HomeState extends State<Home> {
                             ),
                         ],
                       )),
-                  if(state.isAdmin) ListTile(
+                  if (state.userInfo == null) ...[
+                    ListTile(
+                      title: const Text("Login", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                      splashColor: Theme.of(context).primaryColor,
+                      leading: Icon(Icons.login, color: Theme.of(context).primaryColor, size: 24),
+                      trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
+                      onTap: () {
+                        Navigator.pop(context);
+                        GoRouter.of(context).pushNamed(Routing.login.name);
+                      },
+                    ),
+                    ListTile(
+                      title: const Text("Sign Up", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                      splashColor: Theme.of(context).primaryColor,
+                      leading: Icon(Icons.person_add_outlined, color: Theme.of(context).primaryColor, size: 24),
+                      trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
+                      onTap: () {
+                        Navigator.pop(context);
+                        GoRouter.of(context).pushNamed(Routing.register.name);
+                      },
+                    ),
+                  ],
+                  if (state.isAdmin) ListTile(
                     title: const Text("Create Post",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
                     splashColor: Theme.of(context).primaryColor,
                     leading: Icon(Icons.post_add, color: Theme.of(context).primaryColor,size: 24),
                     trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
                     onTap: () => GoRouter.of(context).pushNamed(Routing.createPost.name),
+                  ),
+                  if (state.userInfo != null) ListTile(
+                    title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                    splashColor: Theme.of(context).primaryColor,
+                    leading: Icon(Icons.person_outline, color: Theme.of(context).primaryColor, size: 24),
+                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
+                    onTap: () {
+                      Navigator.pop(context);
+                      GoRouter.of(context).pushNamed(Routing.profile.name);
+                    },
                   ),
                   ListTile(
                     title: const Text("About Us",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
@@ -107,6 +145,15 @@ class _HomeState extends State<Home> {
                     leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor,size: 24),
                     trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
                     onTap: () => GoRouter.of(context).pushNamed(Routing.aboutUs.name),
+                  ),
+                  if (state.userInfo != null) ListTile(
+                    title: const Text("Logout", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Colors.red)),
+                    splashColor: Colors.red.shade100,
+                    leading: const Icon(Icons.logout, color: Colors.red, size: 24),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.read<AuthBloc>().add(const LogoutEvent());
+                    },
                   )
                 ],
               )),
