@@ -1,6 +1,7 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/utils/auth_guard.dart';
@@ -114,16 +115,11 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
                                     );
                                   },
                                 ))),
-                            Positioned(
-                              top: 15,
-                              right: 15,
-                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
-                            )
                           ],
                         ),
                       )
                     : state.isError(forr: Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)
-                        ? Center(child: Text(state.getError(forr: Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)!.message))
+                        ? Center(child: RetryAgain(onRetry: loadCurrentVerse, error: state.getError(forr: Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)!.message))
                         : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
               );
             },
@@ -148,15 +144,10 @@ class _ChanakyaNeetiShlokScreenState extends State<ChanakyaNeetiShlokScreen> {
     context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: ChanakyaNeetiState.commentForId(chapterNo: chapterNo, verseNo: verseNo)));
   }
 
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
-  }
-
   @override
   void dispose() {
     _controller.dispose();
     token?.cancel("cancelled");
     super.dispose();
   }
-
 }

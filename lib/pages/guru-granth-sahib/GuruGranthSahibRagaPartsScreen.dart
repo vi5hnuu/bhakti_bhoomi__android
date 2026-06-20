@@ -9,8 +9,8 @@ import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:share_plus/share_plus.dart';
 
 class GuruGranthSahibRagaPartsScreen extends StatefulWidget {
@@ -56,8 +56,8 @@ class _GuruGranthSahibRagaPartsScreenState extends State<GuruGranthSahibRagaPart
                   .primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
               actions: [
-                IconButton(onPressed: fontSize<=14 ? null : ()=>setState(() => fontSize-=1), icon: const Icon(Icons.remove)),
-                IconButton(onPressed: fontSize>=32 ? null : ()=>setState(() => fontSize+=1), icon: const Icon(Icons.add)),
+                IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+                IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
               ],
             ),
             body: raga != null
@@ -130,7 +130,7 @@ class _GuruGranthSahibRagaPartsScreenState extends State<GuruGranthSahibRagaPart
                 : Center(
                     child: state.isError(forr: Httpstates.GURU_GRANTH_SAHIB_RAGA)
                         ? RetryAgain(onRetry: () => initRaga(ragaNo: widget.ragaNo, partNo: selectedPart), error: state.getError(forr: Httpstates.GURU_GRANTH_SAHIB_RAGA)!.message)
-                        : const CircularProgressIndicator()));
+                        : SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );
   }

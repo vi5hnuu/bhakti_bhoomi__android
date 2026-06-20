@@ -21,11 +21,11 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'otpForm');
-  final TextEditingController usernameEmailCntrl = TextEditingController(text: '');
-  final TextEditingController passwordCntrl = TextEditingController(text: '');
-  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '');
+  final TextEditingController usernameEmailCntrl = TextEditingController();
+  final TextEditingController passwordCntrl = TextEditingController();
+  final TextEditingController confirmPasswordCntrl = TextEditingController();
   late List<FocusNode> _focusNodes;
-  late List<TextEditingController> _Otpcontrollers;
+  late List<TextEditingController> _otpControllers;
   final CancelToken cancelToken = CancelToken();
 
   @override
@@ -33,16 +33,20 @@ class _OtpScreenState extends State<OtpScreen> {
     super.initState();
     usernameEmailCntrl.text = widget.usernameEmail;
 
-    _focusNodes = List.generate(6, (index) => FocusNode());
-    _Otpcontrollers = List.generate(6, (index) => TextEditingController());
+    _focusNodes = List.generate(6, (_) => FocusNode());
+    _otpControllers = List.generate(6, (_) => TextEditingController());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
+        listenWhen: (previous, current) => previous != current,
         listener: (ctx, state) {
+          if (state.isError(forr: Httpstates.RESET_PASSWORD)) {
+            NotificationService.showSnackbar(text: state.getError(forr: Httpstates.RESET_PASSWORD)!.message, color: Colors.red);
+          }
           if (state.success) {
-            NotificationService.showSnackbar(text: state.message ?? "password changed successfully");
+            NotificationService.showSnackbar(text: state.message ?? "Password updated successfully", color: Colors.green);
             GoRouter.of(context).goNamed(Routing.login.name);
           }
         },
@@ -77,7 +81,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               child: Padding(
                                 padding: EdgeInsets.only(right: (index == 5 ? 0 : 5.0)),
                                 child: TextField(
-                                  controller: _Otpcontrollers[index],
+                                  controller: _otpControllers[index],
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.center,
                                   maxLength: 1,
@@ -124,7 +128,10 @@ class _OtpScreenState extends State<OtpScreen> {
                             suffixIcon: const Icon(Icons.password),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter valid confirm password';
+                                return 'Please enter confirm password';
+                              }
+                              if (value != passwordCntrl.text) {
+                                return 'Passwords do not match';
                               }
                               return null;
                             }),
@@ -135,12 +142,12 @@ class _OtpScreenState extends State<OtpScreen> {
                           onPressed: state.isLoading(forr: Httpstates.RESET_PASSWORD)
                               ? null
                               : () async {
-                                  if (formKey.currentState?.validate() == false || _Otpcontrollers.where((otpCntrl) => otpCntrl.value.text.isEmpty).isNotEmpty) {
+                                  if (formKey.currentState?.validate() == false || _otpControllers.where((otpCntrl) => otpCntrl.value.text.isEmpty).isNotEmpty) {
                                     return;
                                   }
                                   BlocProvider.of<AuthBloc>(context).add(ResetPasswordEvent(
                                       usernameEmail: widget.usernameEmail,
-                                      otp: this._Otpcontrollers.map((otpCntrl) => otpCntrl.value.text).join(''),
+                                      otp: _otpControllers.map((c) => c.text).join(''),
                                       password: passwordCntrl.text,
                                       confirmPassword: confirmPasswordCntrl.text,
                                       cancelToken: cancelToken));
@@ -150,8 +157,6 @@ class _OtpScreenState extends State<OtpScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.isError(forr: Httpstates.RESET_PASSWORD)) Text(state.getError(forr: Httpstates.RESET_PASSWORD)!.message),
-                        if (passwordCntrl.value.text != confirmPasswordCntrl.value.text) const Text("new password should be equal to confirm password"),
                         const SizedBox(height: 12),
                         CustomTextButton(
                             onPressed: state.isLoading(forr: Httpstates.RESET_PASSWORD)
@@ -171,8 +176,8 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void dispose() {
     cancelToken.cancel("register cancelled");
-    this._focusNodes.forEach((node) => node.dispose());
-    this._Otpcontrollers.forEach((cntrl) => cntrl.dispose());
+    for (final node in _focusNodes) { node.dispose(); }
+    for (final cntrl in _otpControllers) { cntrl.dispose(); }
     usernameEmailCntrl.dispose();
     passwordCntrl.dispose();
     confirmPasswordCntrl.dispose();

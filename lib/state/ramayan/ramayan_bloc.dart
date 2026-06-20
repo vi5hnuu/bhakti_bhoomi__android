@@ -30,10 +30,6 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
       }
     });
 
-    on<FetchRamayanSargaInfo>((event, emit) async {
-      // TODO: implement event handler
-    });
-
     on<FetchRamayanSargasInfo>((event, emit) async {
       if (state.isSargaInfoPageLoaded(kand: event.kanda, pageNo: event.pageNo)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.RAMAYANA_SARGAS_INFO)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMAYANA_SARGAS_INFO,const HttpState.loading())));
@@ -64,14 +60,6 @@ class RamayanBloc extends Bloc<RamayanEvent, RamayanState> {
       }
     });
 
-    on<FetchRamayanShlokByKandSargaIdShlokNo>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<FetchRamayanShlokasByKandSargaNo>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<FetchRamayanShlokasByKandSargaId>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

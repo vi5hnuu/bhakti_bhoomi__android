@@ -26,18 +26,18 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'registerForm');
   final ImagePicker imagePicker = ImagePicker();
-  XFile? profileImage = null;
-  XFile? coverImage = null;
+  XFile? profileImage;
+  XFile? coverImage;
 
   final _defaultCoverImagePath = "assets/images/ram_poster_sm.jpg";
   final _defaultProfileImagePath = "assets/images/ram_dp_sm.jpg";
   late final ImageProvider defaultCoverImage;
   late final ImageProvider defaultProfileImage;
-  final TextEditingController firstNameCntrl = TextEditingController(text: '');
-  final TextEditingController lastNameCntrl = TextEditingController(text: '');
-  final TextEditingController usernameControllerCntrl = TextEditingController(text: '');
-  final TextEditingController emailCntrl = TextEditingController(text: '');
-  final TextEditingController passwordCntrl = TextEditingController(text: '');
+  final TextEditingController firstNameCntrl = TextEditingController();
+  final TextEditingController lastNameCntrl = TextEditingController();
+  final TextEditingController usernameControllerCntrl = TextEditingController();
+  final TextEditingController emailCntrl = TextEditingController();
+  final TextEditingController passwordCntrl = TextEditingController();
   final CancelToken cancelToken = CancelToken();
 
   @override

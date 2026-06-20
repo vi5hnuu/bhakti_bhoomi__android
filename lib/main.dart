@@ -84,17 +84,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     BBR.Routing.profile.fullPath,
   ];
   final router=GoRouter(
-      debugLogDiagnostics: true,
+      debugLogDiagnostics: false,
       redirect: (context, state) {
         final authState=BlocProvider.of<AuthBloc>(context).state;
         final fullPath = state.fullPath ?? '';
         // Redirect to home if authenticated user tries to open login/register
         final authScreenPaths = [BBR.Routing.login.fullPath, BBR.Routing.register.fullPath];
-        if (authScreenPaths.contains(fullPath) && authState.isAuthtenticated) {
+        if (authScreenPaths.contains(fullPath) && authState.isAuthenticated) {
           return BBR.Routing.home.fullPath;
         }
         // Protect routes that require login (profile, etc.)
-        if (_authRequiredPaths.any((p) => fullPath.startsWith(p)) && !authState.isAuthtenticated) {
+        if (_authRequiredPaths.any((p) => fullPath.startsWith(p)) && !authState.isAuthenticated) {
           return BBR.Routing.login.fullPath;
         }
         // Admin-only routes

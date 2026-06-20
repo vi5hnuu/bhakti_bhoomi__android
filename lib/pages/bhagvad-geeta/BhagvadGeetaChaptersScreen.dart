@@ -45,11 +45,14 @@ class _BhagvadGeetaChaptersScreenState
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: state.bhagvadGeetaChapters != null
-            ? SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: state.bhagvadGeetaChapters!
+            ? RefreshIndicator(
+                onRefresh: () async => initBhagvadGeetaChapters(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: state.bhagvadGeetaChapters!
                         .map((e) => Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 5.0),
@@ -64,6 +67,7 @@ class _BhagvadGeetaChaptersScreenState
                               ),
                             ))
                         .toList(),
+                    ),
                   ),
                 ),
               )

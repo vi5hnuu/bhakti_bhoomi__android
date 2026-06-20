@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:share_plus/share_plus.dart';
 
 class BhagvadGeetaShlokScreen extends StatefulWidget {
@@ -117,9 +118,12 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                                       onComment: () => onComment(
                                           context: context,
                                           commentFormId: contentId),
-                                      onShare: shlok != null ? () => Share.share(
-                                        '${shlok.shlok}\n\n— Bhagavad Gita ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi',
-                                      ) : null,
+                                      onShare: () async {
+                                        final result = await Share.share('${shlok.shlok}\n\n— Bhagavad Gita ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi');
+                                        if (result.status == ShareResultStatus.success) {
+                                          NotificationService.showSnackbar(text: "Shlok shared successfully", color: Colors.green);
+                                        }
+                                      },
                                     );
                                   },
                                 ))),
@@ -127,7 +131,7 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
                         )
                       : state.isError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)
                           ? Center(child: RetryAgain(onRetry: reloadCurrentShlok, error: state.getError(forr: Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO)!.message))
-                          : const Center(child: CircularProgressIndicator()),
+                          : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
                 ),
               );
             },
@@ -152,12 +156,6 @@ class _BhagvadGeetaShlokScreenState extends State<BhagvadGeetaShlokScreen> {
             chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: token));
     final contentId = BhagvadGeetaState.commentForId(chapterNo: chapterNo, shlokNo: shlokNo);
     context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: contentId));
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(
-        text: "Feature will available in next update...",
-        color: Colors.orange);
   }
 
   @override

@@ -4,7 +4,6 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,22 +19,21 @@ class UpdatePasswordScreen extends StatefulWidget {
 class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   final formKey = GlobalKey<FormState>(debugLabel: 'updatePassword');
 
-  final TextEditingController oldPasswordCntrl = TextEditingController(text: '');
-  final TextEditingController newPasswordCntrl = TextEditingController(text: '');
-  final TextEditingController confirmPasswordCntrl = TextEditingController(text: '');
+  final TextEditingController oldPasswordCntrl = TextEditingController();
+  final TextEditingController newPasswordCntrl = TextEditingController();
+  final TextEditingController confirmPasswordCntrl = TextEditingController();
   final CancelToken cancelToken = CancelToken();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
+        listenWhen: (previous, current) => previous != current,
         listener: (ctx, state) {
+          if (state.isError(forr: Httpstates.UPDATE_PASSWORD)) {
+            NotificationService.showSnackbar(text: state.getError(forr: Httpstates.UPDATE_PASSWORD)!.message, color: Colors.red);
+          }
           if (state.success) {
-            NotificationService.showSnackbar(text:state.message ?? "updated password successfully");
+            NotificationService.showSnackbar(text: state.message ?? "Password updated successfully", color: Colors.green);
             GoRouter.of(context).pop();
           }
         },
@@ -61,7 +59,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                       children: [
                         CustomInputField(
                             controller: oldPasswordCntrl,
-                            labelText: "Old Passwword",
+                            labelText: "Old Password",
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter old Password';
@@ -111,23 +109,12 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
-                        if (state.isError(forr: Httpstates.UPDATE_PASSWORD)) Text(state.getError(forr: Httpstates.UPDATE_PASSWORD)!.message),
                       ],
                     ),
                   ),
                 ),
               ),
             ));
-  }
-
-  Future<MultipartFile> _getDefaultCoverImage({required String assetPath}) async {
-    final bytes = await rootBundle.load(assetPath);
-    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'cover.png');
-  }
-
-  Future<MultipartFile> _getDefaultProfileImage({required String assetPath}) async {
-    final bytes = await rootBundle.load(assetPath);
-    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'profile.png');
   }
 
   @override

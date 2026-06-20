@@ -96,7 +96,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<LogoutEvent>((event, emit) async {
-      if(!state.isAuthtenticated) return;
+      if(!state.isAuthenticated) return;
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.LOG_OUT,const HttpState.loading())));
       try {
         await Future.delayed(const Duration(seconds: 2));

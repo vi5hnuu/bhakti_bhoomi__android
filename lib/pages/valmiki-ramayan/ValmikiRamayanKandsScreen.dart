@@ -44,18 +44,22 @@ class _ValmikiRamayanKandsScreenState extends State<ValmikiRamayanKandsScreen> {
           ),
           body: Center(
             child: ramayanInfo != null
-                ? ListView(
-                    children: state
-                        .kandas()!
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                              child: RoundedListTile(
-                                itemNo: e.value,
-                                onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo.name, pathParameters: {'kand': e.key}),
-                                text: '${e.key}',
-                              ),
-                            ))
-                        .toList())
+                ? RefreshIndicator(
+                    onRefresh: () async => initRamayanaInfo(),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: state
+                          .kandas()!
+                          .map((e) => Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                                child: RoundedListTile(
+                                  itemNo: e.value,
+                                  onTap: () => GoRouter.of(context).pushNamed(Routing.valmikiRamayanSargasInfo.name, pathParameters: {'kand': e.key}),
+                                  text: '${e.key}',
+                                ),
+                              ))
+                          .toList()),
+                  )
                 : state.isError(forr: Httpstates.RAMAYANA_INFO)
                     ? Center(
                         child: RetryAgain(onRetry: initRamayanaInfo,error: state.getError(forr: Httpstates.RAMAYANA_INFO)!.message),

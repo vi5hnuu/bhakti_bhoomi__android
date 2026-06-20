@@ -6,6 +6,7 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
@@ -151,7 +152,7 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)
-                          ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)!.message))
+                          ? Center(child: RetryAgain(onRetry: initCurrentSutr, error: state.getError(forr: Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)!.message))
                           : Center(
                               child: SpinKitThreeBounce(
                                 color: Theme.of(context).primaryColor,
@@ -179,10 +180,6 @@ class _BrahmasutraScreenState extends State<BrahmasutraScreen> {
     token = CancelToken();
     BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraByChapterNoQuaterNoSutraNo(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo, lang: lang, cancelToken: token));
     context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: BrahmaSutraState.commentForId(chapterNo: chapterNo, quaterNo: quaterNo, sutraNo: sutraNo + 1, lang: lang ?? BrahmaSutraState.defaultLang)));
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

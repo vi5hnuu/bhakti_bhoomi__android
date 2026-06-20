@@ -8,13 +8,12 @@ import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -23,8 +22,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController usernameEmailController = TextEditingController(text: '');
-  final TextEditingController passwordController = TextEditingController(text: '');
+  final TextEditingController usernameEmailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final List<String> quoteSanskrit=["सदृशं चेष्टते स्वस्याः प्रकृतिः।"];
   final List<String> quoteHindi= ["मनुष्य अपनी स्वभाव के अनुसार कार्य करता है।,",
     "— भगवद गीता 18.30"];
@@ -32,14 +31,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme=Theme.of(context);
-    // debugPaintSizeEnabled = true;
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.isError(forr: Httpstates.CUSTOM_LOGIN)) {
           NotificationService.showSnackbar(text: state.getError(forr: Httpstates.CUSTOM_LOGIN)!.message, color: Colors.red);
         }
-        if (state.isAuthtenticated) {
+        if (state.isAuthenticated) {
           NotificationService.showSnackbar(text: state.message ?? "logged in successfully", color: Colors.green);
           context.replaceNamed(Routing.home.name);
         }

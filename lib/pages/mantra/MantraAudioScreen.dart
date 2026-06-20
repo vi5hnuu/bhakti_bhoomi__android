@@ -4,13 +4,11 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/constants/Utils.dart';
 import 'package:bhakti_bhoomi/models/AudioPlayerState.dart';
-import 'package:bhakti_bhoomi/models/mantra/MantraAudioModel.dart';
 import 'package:bhakti_bhoomi/singletons/AudioPlayerSingleton.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -103,25 +101,22 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.backwardStep)),
-                        if(audio.isPlaying(url: mantraAudio.audioUrl) && (audioplayerState.isPlayLoading || audioplayerState.isPauseLoading))
-                          const SpinKitCircle(color: Colors.green,size: 48.0)
-                        else IconButton(onPressed: (){
-                          if(!audio.isPlaying(url: mantraAudio.audioUrl) || audioplayerState.playerState!=PlayerState.playing){
-                            setState(()=>audioplayerState=audioplayerState.copyWith(isPlayLoading: true));
-                            audio.player.play(UrlSource(mantraAudio.audioUrl));
-                          }
-                          else{
-                            setState(()=>audioplayerState=audioplayerState.copyWith(isPauseLoading: true));
-                            audio.player.pause();
-                          }
-                        }, icon: audio.isPlaying(url: mantraAudio.audioUrl) && audioplayerState.playerState==PlayerState.playing ? const Icon(FontAwesomeIcons.pause) : const  Icon(FontAwesomeIcons.play)),
-                        IconButton(onPressed: null, icon: const Icon(FontAwesomeIcons.forwardStep)),
-                      ],
+                    if(audio.isPlaying(url: mantraAudio.audioUrl) && (audioplayerState.isPlayLoading || audioplayerState.isPauseLoading))
+                      const SpinKitCircle(color: Colors.green, size: 48.0)
+                    else IconButton(
+                      iconSize: 48,
+                      onPressed: () {
+                        if (!audio.isPlaying(url: mantraAudio.audioUrl) || audioplayerState.playerState != PlayerState.playing) {
+                          setState(() => audioplayerState = audioplayerState.copyWith(isPlayLoading: true));
+                          audio.player.play(UrlSource(mantraAudio.audioUrl));
+                        } else {
+                          setState(() => audioplayerState = audioplayerState.copyWith(isPauseLoading: true));
+                          audio.player.pause();
+                        }
+                      },
+                      icon: audio.isPlaying(url: mantraAudio.audioUrl) && audioplayerState.playerState == PlayerState.playing
+                          ? const FaIcon(FontAwesomeIcons.pause)
+                          : const FaIcon(FontAwesomeIcons.play),
                     ),
                   ],
                 )
@@ -150,13 +145,6 @@ class _MantraAudioScreenState extends State<MantraAudioScreen> {
     subscriptions.add(audio.player.onPlayerStateChanged.listen((playerState) => setState(()=>audioplayerState=audioplayerState.copyWith(playerState: playerState,isPlayLoading: playerState==PlayerState.playing ? false:null,isPauseLoading: playerState==PlayerState.paused ? false:null))));
   }
   
-
-  void loadNextAudio({required MantraAudioModel nextMantraAudio}) {
-
-  }
-
-  void loadPreviousAudio({required MantraAudioModel previousMantraAudio}) {
-  }
 
   @override
   void dispose() {

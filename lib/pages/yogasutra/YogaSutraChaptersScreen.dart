@@ -42,17 +42,20 @@ class _YogaSutraChaptersScreenState extends State<YogaSutraChaptersScreen> {
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: yogaSutraInfo != null
-              ? Column(
-                  children: List.generate(
-                      yogaSutraInfo.totalSutra.length,
-                      (index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-                            child: RoundedListTile(
-                              itemNo: index + 1,
-                              onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': '${index + 1}'}),
-                              text: "chapter",
-                            ),
-                          )),
+              ? RefreshIndicator(
+                  onRefresh: () async => initYogaSutraInfo(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: yogaSutraInfo.totalSutra.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
+                      child: RoundedListTile(
+                        itemNo: index + 1,
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': '${index + 1}'}),
+                        text: "chapter",
+                      ),
+                    ),
+                  ),
                 )
               : state.isError(forr: Httpstates.YOGASUTRA_INFO)
                   ? Center(

@@ -16,17 +16,3 @@ class FetchVerseByMandalaSukta extends RigvedaEvent {
 
   const FetchVerseByMandalaSukta({required this.mandalaNo, required this.suktaNo, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
-
-class FetchVerseBySuktaId extends RigvedaEvent {
-  final String suktaId;
-
-  const FetchVerseBySuktaId({required this.suktaId, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
-}
-
-class FetchVersesByMandala extends RigvedaEvent {
-  final int mandalaNo;
-  final int? pageNo;
-  final int? pageSize;
-
-  const FetchVersesByMandala({required this.mandalaNo, this.pageNo, this.pageSize, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
-}

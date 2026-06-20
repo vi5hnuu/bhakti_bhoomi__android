@@ -43,9 +43,4 @@ mixin WithHttpState{
     return httpStates[forr]!=null;
   }
 
-  printStates(){
-    for(final kv in httpStates.entries){
-      print("http state ${kv.key} --> ${kv.value.error}/${kv.value.loading}");
-    }
-  }
 }

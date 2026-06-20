@@ -2,11 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bhakti_bhoomi/models/post/Post.dart' as post_models;
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PostMeta{
   String? selectedId;

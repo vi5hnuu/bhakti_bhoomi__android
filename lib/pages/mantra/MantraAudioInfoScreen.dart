@@ -1,10 +1,5 @@
-import 'dart:math';
-
-import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
-import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
 import 'package:dio/dio.dart';
@@ -52,19 +47,26 @@ class _MantraAudioInfoScreenState extends State<MantraAudioInfoScreen> {
             body: Stack(
               fit: StackFit.expand,
               children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  itemCount: (state.allMantraAudioInfo?.data.length ?? 0),
-                  itemBuilder: (context, index) {
-                    final mantraAudioInfo = state.allMantraAudioInfo!.data[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                      child: RoundedListTile(
-                          itemNo: index + 1,
-                          onTap: ()=>GoRouter.of(context).pushNamed(Routing.mantraAudio.name, pathParameters: {'mantraAudioId': mantraAudioInfo.id}),
-                          text: '${mantraAudioInfo.title['en']}'),
-                    );
+                RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() => pageNo = 1);
+                    loadCurrentPage();
                   },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: (state.allMantraAudioInfo?.data.length ?? 0),
+                    itemBuilder: (context, index) {
+                      final mantraAudioInfo = state.allMantraAudioInfo!.data[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                        child: RoundedListTile(
+                            itemNo: index + 1,
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.mantraAudio.name, pathParameters: {'mantraAudioId': mantraAudioInfo.id}),
+                            text: '${mantraAudioInfo.title['en']}'),
+                      );
+                    },
+                  ),
                 ),
                 if(state.hasHttpState(forr: state.mantraAudioInfoPageKey(pageNo: pageNo))) Align(alignment: Alignment.center, child:Center(child: state.isError(forr: state.mantraAudioInfoPageKey(pageNo: pageNo))
                     ? RetryAgain(onRetry: loadCurrentPage, error: state.getError(forr: state.mantraAudioInfoPageKey(pageNo: pageNo))!.message)

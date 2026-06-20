@@ -3,7 +3,6 @@ import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -34,7 +33,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              state.hasHttpState(forr: Httpstates.CHALISA_BY_ID) || state.allChalisa[widget.chalisaId] == null ? 'Aarti' : state.allChalisa[widget.chalisaId]!.title,
+              state.hasHttpState(forr: Httpstates.CHALISA_BY_ID) || state.allChalisa[widget.chalisaId] == null ? 'Chalisa' : state.allChalisa[widget.chalisaId]!.title,
               style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Theme.of(context).primaryColor,

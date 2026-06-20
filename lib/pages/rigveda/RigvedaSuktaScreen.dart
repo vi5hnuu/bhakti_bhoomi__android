@@ -10,7 +10,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -142,16 +141,6 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                                       );
                                     },
                                   ))),
-                              Positioned(
-                                top: 64,
-                                right: 7,
-                                child: IconButton(
-                                    onPressed: () =>
-                                        this._showNotImplementedMessage(),
-                                    icon: const Icon(
-                                        Icons.report_problem_outlined,
-                                        size: 24)),
-                              )
                             ],
                           )
                         : state.isError(
@@ -175,12 +164,6 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
             }),
           )),
     );
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(
-        text: "Feature will available in next update...",
-        color: Colors.orange);
   }
 
   void loadCurrentSukta() {
@@ -235,7 +218,7 @@ class _RigvedaSuktaScreenState extends State<RigvedaSuktaScreen> {
                           ],
                         )
                       : state.isError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)
-                          ? Center(child: Text(state.getError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)!.message))
+                          ? Center(child: RetryAgain(onRetry: loadCurrentSukta, error: state.getError(forr: Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA)!.message))
                           : Center(
                               child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
                             ),

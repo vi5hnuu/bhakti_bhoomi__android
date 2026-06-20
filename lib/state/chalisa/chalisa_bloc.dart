@@ -28,10 +28,6 @@ class ChalisaBloc extends Bloc<ChalisaEvent, ChalisaState> {
       }
     });
 
-    on<FetchAllChalisa>((event, emit) {
-      // TODO: implement event handler
-    });
-
     on<FetchChalisaById>((event, emit) async {
       if (state.chalisaExists(chalisaId: event.id)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.CHALISA_BY_ID)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHALISA_BY_ID,const HttpState.loading())));
@@ -45,8 +41,6 @@ class ChalisaBloc extends Bloc<ChalisaEvent, ChalisaState> {
       }
     });
 
-    on<FetchChalisaByTitle>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

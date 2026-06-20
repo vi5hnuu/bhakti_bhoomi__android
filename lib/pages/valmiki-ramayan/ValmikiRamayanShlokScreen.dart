@@ -214,10 +214,6 @@ class _ValmikiRamayanShlokScreenState extends State<ValmikiRamayanShlokScreen> {
     );
   }
 
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
-  }
-
   void loadCurrentShlok() {
     _loadShlok(kand: widget.kand, sargaNo: widget.sargaNo, shlokNo: currentPage+1, lang: lang);
   }
@@ -255,7 +251,7 @@ class LanguageDialog extends StatelessWidget {
       child: Column(
         children: [
           const Text(
-            "Select Lenguage",
+            "Select Language",
             style: TextStyle(fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),

@@ -29,14 +29,6 @@ class BhagvadGeetaBloc extends Bloc<BhagvadGeetaEvent, BhagvadGeetaState> {
       }
     });
 
-    on<FetchBhagvadShlokByChapterIdShlokId>((event, emit) {
-      // TODO: implement event handler
-    });
-
-    on<FetchBhagvadShlokByChapterIdShlokNo>((event, emit) {
-      // TODO: implement event handler
-    });
-
     on<FetchBhagvadShlokByChapterNoShlokNo>((event, emit) async {
       if (state.shlokExists(chapterNo: event.chapterNo, shlokNo: event.shlokNo)) return emit(state.copyWith(httpStates: state.httpStates.clone()..remove(Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO))); //cache
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BHAGVAD_GEETA_SHLOK_BY_CHAPTERNO_SHLOKNO,const HttpState.loading())));
@@ -50,8 +42,6 @@ class BhagvadGeetaBloc extends Bloc<BhagvadGeetaEvent, BhagvadGeetaState> {
       }
     });
 
-    on<FetchBhagvadGeetaShloks>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

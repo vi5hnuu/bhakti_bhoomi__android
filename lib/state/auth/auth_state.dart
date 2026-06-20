@@ -18,7 +18,7 @@ class AuthState extends Equatable with WithHttpState{
         httpStates: httpStates ?? this.httpStates);
   }
 
-  get isAuthtenticated{
+  get isAuthenticated{
     return userInfo!=null;
   }
 

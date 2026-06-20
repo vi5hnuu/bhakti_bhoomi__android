@@ -1,7 +1,9 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/brahmaSutra/brahma_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,6 +19,20 @@ class BrahmasutraQuatersInfoScreen extends StatefulWidget {
 }
 
 class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScreen> {
+  CancelToken cancelToken = CancelToken();
+
+  @override
+  void initState() {
+    _reload();
+    super.initState();
+  }
+
+  void _reload() {
+    cancelToken.cancel("reload");
+    cancelToken = CancelToken();
+    BlocProvider.of<BrahmaSutraBloc>(context).add(FetchBrahmasutraInfo(cancelToken: cancelToken));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,25 +45,32 @@ class _BrahmasutraQuatersInfoScreenState extends State<BrahmasutraQuatersInfoScr
           builder: (context, state) {
             final brahmasutraInfo = state.brahmasutraInfo;
             return brahmasutraInfo != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-                    child: Column(
-                      children: List.generate(
-                          state.brahmasutraInfo!.chaptersInfo['${widget.chapterNo}']!.totalQuaters,
-                          (index) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                child: RoundedListTile(
-                                  itemNo: index + 1,
-                                  text: "quater",
-                                  onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra.name, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
-                                ),
-                              )),
+                ? RefreshIndicator(
+                    onRefresh: () async => _reload(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+                      itemCount: state.brahmasutraInfo!.chaptersInfo['${widget.chapterNo}']!.totalQuaters,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: RoundedListTile(
+                          itemNo: index + 1,
+                          text: "quater",
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutra.name, pathParameters: {'chapterNo': '${widget.chapterNo}', 'quaterNo': '${index + 1}'}),
+                        ),
+                      ),
                     ),
                   )
                 : state.isError(forr: Httpstates.BRAHMA_SUTRA_INFO)
-                    ? Center(child: Text(state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!.message))//useless..wont occur
-                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));//wont occur
+                    ? Center(child: RetryAgain(onRetry: _reload, error: state.getError(forr: Httpstates.BRAHMA_SUTRA_INFO)!.message))
+                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));
           },
         ));
+  }
+
+  @override
+  void dispose() {
+    cancelToken.cancel("cancelled");
+    super.dispose();
   }
 }

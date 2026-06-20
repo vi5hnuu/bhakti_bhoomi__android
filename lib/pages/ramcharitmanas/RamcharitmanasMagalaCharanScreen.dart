@@ -1,12 +1,17 @@
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
+import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/utils/auth_guard.dart';
+import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../widgets/CustomDropDownMenu.dart';
 
@@ -78,36 +83,34 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
                         Positioned(
                           bottom: 45,
                           right: 15,
-                          child: Card(
-                            color: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                      onPressed: () => this._showNotImplementedMessage(),
-                                      tooltip: 'Like',
-                                      selectedIcon: Icon(Icons.favorite, size: 36),
-                                      isSelected: true,
-                                      icon: const Icon(Icons.favorite_border, size: 36)),
-                                  const SizedBox(height: 10),
-                                  IconButton(
-                                      onPressed: () => onComment(context: context, commentFormId: RamcharitmanasState.commentForId(kand: widget.kand, lang: lang ?? RamcharitmanasState.defaultLang)),
-                                      icon: const Icon(Icons.mode_comment_outlined, size: 36)),
-                                  const SizedBox(height: 10),
-                                  IconButton(
-                                    onPressed: () => this._showNotImplementedMessage(),
-                                    icon: const Icon(Icons.bookmark_border, size: 36),
-                                    tooltip: 'bookmark',
-                                    color: Colors.blue,
-                                    selectedIcon: const Icon(Icons.bookmark_added_sharp, size: 36),
-                                    isSelected: true,
-                                  ),
-                                ],
-                              ),
+                          child: BlocBuilder<LikeBloc, LikeState>(
+                            builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
+                              builder: (ctx, bookmarkState) {
+                                final contentId = RamcharitmanasState.commentForId(kand: widget.kand, lang: lang ?? RamcharitmanasState.defaultLang);
+                                final bookmarked = bookmarkState.isBookmarked(contentId);
+                                return EngageActions(
+                                  isBookmarked: bookmarked,
+                                  isLiked: likeState.isLiked(contentId),
+                                  onBookmark: () => requireAuth(context, () {
+                                    if (bookmarked) {
+                                      final bid = bookmarkState.bookmarkIdFor(contentId);
+                                      if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
+                                    } else {
+                                      ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'ramcharitmanas'));
+                                    }
+                                  }),
+                                  onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
+                                    ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
+                                  }),
+                                  onShare: () async {
+                                    final result = await Share.share("${mangalacharan!.text}\n\n— Ramcharitmanas | ${widget.kand} Mangalacharan\n\nRead on Bhakti Bhoomi");
+                                    if (result.status == ShareResultStatus.success) {
+                                      NotificationService.showSnackbar(text: "Mangalacharan shared successfully", color: Colors.green);
+                                    }
+                                  },
+                                  onComment: () => onComment(context: context, commentFormId: contentId),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -130,21 +133,19 @@ class _RamcharitmanasMangalacharanScreenState extends State<RamcharitmanasMangal
       if (!mounted || value == null) return;
       lang = value;
       _loadLangMangalacharan(kand: widget.kand, lang: value);
+      context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: RamcharitmanasState.commentForId(kand: widget.kand, lang: value)));
     });
   }
 
   void loadCurrentLangMangalaCharan() {
     _loadLangMangalacharan(kand: widget.kand, lang: lang);
+    context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: RamcharitmanasState.commentForId(kand: widget.kand, lang: lang ?? RamcharitmanasState.defaultLang)));
   }
 
   void _loadLangMangalacharan({required String kand, String? lang}) {
     token?.cancel("cancelled");
     token = CancelToken();
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasMangalacharanByKanda(kanda: kand, lang: lang, cancelToken: token));
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

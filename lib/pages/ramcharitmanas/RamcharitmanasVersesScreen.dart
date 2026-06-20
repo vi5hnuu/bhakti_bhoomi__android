@@ -141,11 +141,6 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
                                       );
                                     },
                                   ))),
-                              Positioned(
-                                top: 64,
-                                right: 7,
-                                child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
-                              )
                             ],
                           )
                         : state.isError(forr: Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)
@@ -179,10 +174,6 @@ class _RamcharitmanasVersesScreenState extends State<RamcharitmanasVersesScreen>
         _loadVerse(kand: widget.kand, verseNo: pageNo + 1, lang: lang);
       },
     );
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

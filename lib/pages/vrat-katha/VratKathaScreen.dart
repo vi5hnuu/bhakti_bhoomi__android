@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/state/vratkatha/vratKatha_bloc.dart';
@@ -7,6 +5,7 @@ import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class VratKathaScreen extends StatefulWidget {
   final String title;
@@ -83,7 +82,7 @@ class _VratKathaScreenState extends State<VratKathaScreen> {
                       ))
                     ],))
                     .toList(),
-                ]):Center(child: state.isError(forr: Httpstates.VRAT_KATHA) ? RetryAgain(onRetry: initVratKatha, error: state.getError(forr: Httpstates.VRAT_KATHA)!.message) : const CircularProgressIndicator()),));
+                ]):Center(child: state.isError(forr: Httpstates.VRAT_KATHA) ? RetryAgain(onRetry: initVratKatha, error: state.getError(forr: Httpstates.VRAT_KATHA)!.message) : SpinKitThreeBounce(color: Theme.of(context).primaryColor)),));
       },
     );
   }

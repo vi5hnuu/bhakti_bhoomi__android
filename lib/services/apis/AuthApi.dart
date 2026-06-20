@@ -73,13 +73,8 @@ class AuthApi {
   }
 
   Future<Map<String, dynamic>> forgotPassword({required String usernameEmail, CancelToken? cancelToken}) async {
-    try {
-      var res = await DioSingleton().dio.post(_forgotPasswordUrl, data: jsonEncode({"usernameEmail": usernameEmail}), cancelToken: cancelToken);
-      return res.data;
-    } catch (e) {
-      print(e);
-      throw e;
-    }
+    var res = await DioSingleton().dio.post(_forgotPasswordUrl, data: jsonEncode({"usernameEmail": usernameEmail}), cancelToken: cancelToken);
+    return res.data;
   }
 
   Future<Map<String, dynamic>> resetPassword({required String usernameEmail, required String otp, required String password, required String confirmPassword, CancelToken? cancelToken}) async {

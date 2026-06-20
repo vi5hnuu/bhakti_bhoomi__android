@@ -42,20 +42,24 @@ class _MantraInfoScreenState extends State<MantraInfoScreen> {
               iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: allMantraInfo != null
-                ? ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
-                    itemCount: allMantraInfo.length,
-                    itemBuilder: (context, index) {
-                      final mantraInfo = allMantraInfo.entries.toList()[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: RoundedListTile(
-                          onTap: () => GoRouter.of(context).pushNamed(Routing.mantra.name, pathParameters: {'mantraId': mantraInfo.key}),
-                          itemNo: index + 1,
-                          text: mantraInfo.value.title,
-                        ),
-                      );
-                    })
+                ? RefreshIndicator(
+                    onRefresh: () async => initAllMantraInfo(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+                      itemCount: allMantraInfo.length,
+                      itemBuilder: (context, index) {
+                        final mantraInfo = allMantraInfo.entries.toList()[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: RoundedListTile(
+                            onTap: () => GoRouter.of(context).pushNamed(Routing.mantra.name, pathParameters: {'mantraId': mantraInfo.key}),
+                            itemNo: index + 1,
+                            text: mantraInfo.value.title,
+                          ),
+                        );
+                      },
+                    ))
                 : state.isError(forr: Httpstates.ALL_MANTRA_INFO)
                     ? Center(child: RetryAgain(onRetry: initAllMantraInfo,error: state.getError(forr: Httpstates.ALL_MANTRA_INFO)!.message))
                     : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));

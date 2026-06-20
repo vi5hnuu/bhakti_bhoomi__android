@@ -10,12 +10,6 @@ class FetchChanakyaNeetiChaptersInfo extends ChanakyaNeetiEvent {
   const FetchChanakyaNeetiChaptersInfo({CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
-class FetchChanakyaNeetiChapterVerses extends ChanakyaNeetiEvent {
-  final int chapterNo;
-
-  const FetchChanakyaNeetiChapterVerses({required this.chapterNo, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
-}
-
 class FetchChanakyaNeetiVerseByChapterNoVerseNo extends ChanakyaNeetiEvent {
   final int chapterNo;
   final int verseNo;

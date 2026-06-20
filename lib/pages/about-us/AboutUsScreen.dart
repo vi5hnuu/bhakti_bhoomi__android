@@ -1,10 +1,6 @@
 import 'package:bhakti_bhoomi/constants/about-us-info.dart';
-import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,13 +15,6 @@ class AboutUsScreen extends StatefulWidget {
 }
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
-  final CancelToken cancelToken = CancelToken();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +30,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: BlocBuilder<AartiBloc, AartiState>(builder: (context, state) {
-        return SingleChildScrollView(
+      body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 24),
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -57,15 +45,15 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     children: [
                       if(contributor.socialLinks.linkedin!=null) IconButton(
                         onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.linkedin!)),
-                        icon:Icon(FontAwesomeIcons.linkedin,color: Theme.of(context).primaryColor,size: 32,),
+                        icon:FaIcon(FontAwesomeIcons.linkedin,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                       if(contributor.socialLinks.instagram!=null)IconButton(
                         onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.instagram!)),
-                        icon: Icon(FontAwesomeIcons.instagram,color: Theme.of(context).primaryColor,size: 32,),
+                        icon: FaIcon(FontAwesomeIcons.instagram,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                       if(contributor.socialLinks.github!=null)IconButton(
                         onPressed: () => _launchUrl(Uri.parse(contributor.socialLinks.github!)),
-                        icon: Icon(FontAwesomeIcons.github,color: Theme.of(context).primaryColor,size: 32,),
+                        icon: FaIcon(FontAwesomeIcons.github,color: Theme.of(context).primaryColor,size: 32,),
                       ),
                     ],
                   )),
@@ -112,24 +100,13 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
               )),
             ],
           ),
-        );
-      }),
+        ),
     );
   }
 
-  @override
-  void dispose() {
-    cancelToken.cancel("cancelled");
-    super.dispose();
-  }
-
-  Future<void> _launchUrl(Uri url) async {//launch in app and fallback to browser else error
-    try {
-      if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView) || !await launchUrl(url, mode: LaunchMode.externalApplication)) {
-          throw Exception('Could not launch $url');
-      }
-    } catch (e) {
-      print(e);
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 }

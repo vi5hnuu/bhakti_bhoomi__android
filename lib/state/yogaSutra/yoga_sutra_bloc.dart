@@ -30,9 +30,6 @@ class YogaSutraBloc extends Bloc<YogaSutraEvent, YogaSutraState> {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchYogasutraBySutraId>((event, emit) {
-      // TODO: implement event handler
-    });
     on<FetchYogasutraByChapterNoSutraNo>((event, emit) async {
       if (state.sutraExists(chapterNo: event.chapterNo, sutraNo: event.sutraNo, lang: event.lang)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)));
       try {
@@ -46,8 +43,6 @@ class YogaSutraBloc extends Bloc<YogaSutraEvent, YogaSutraState> {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchYogasutrasByChapterNo>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

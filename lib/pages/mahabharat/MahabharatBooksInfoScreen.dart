@@ -39,21 +39,25 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
                 iconTheme: const IconThemeData(color: Colors.white),
               ),
               body: state.allBooksInfo != null
-                  ? SingleChildScrollView(
-                      child: Column(
-                        children: state.allBooksInfo!
-                            .map((bookInfo) => Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                    tileColor: Theme.of(context).primaryColor,
-                                    leading: const Icon(Icons.menu_rounded, color: Colors.white),
-                                    title: Text('Book ${bookInfo.bookNo}', style: const TextStyle(fontSize: 24, color: Colors.white)),
-                                    subtitle: Text('Contains ${bookInfo.info.values.reduce((tShloks, shloks) => tShloks + shloks)} Shloks', style: TextStyle(color: Colors.white)),
-                                    onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos.name, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
-                                  ),
-                                ))
-                            .toList(),
+                  ? RefreshIndicator(
+                      onRefresh: () async => initMahabharataInfo(),
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: state.allBooksInfo!.length,
+                        itemBuilder: (context, index) {
+                          final bookInfo = state.allBooksInfo![index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              tileColor: Theme.of(context).primaryColor,
+                              leading: const Icon(Icons.menu_rounded, color: Colors.white),
+                              title: Text('Book ${bookInfo.bookNo}', style: const TextStyle(fontSize: 24, color: Colors.white)),
+                              subtitle: Text('Contains ${bookInfo.info.values.reduce((tShloks, shloks) => tShloks + shloks)} Shloks', style: const TextStyle(color: Colors.white)),
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos.name, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
+                            ),
+                          );
+                        },
                       ),
                     )
                   : state.isError(forr: Httpstates.MAHABHARATA_INFO)

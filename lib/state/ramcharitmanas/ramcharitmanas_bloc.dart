@@ -29,9 +29,6 @@ class RamcharitmanasBloc extends Bloc<RamcharitmanasEvent, RamcharitmanasState> 
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMCHARITMANAS_INFO, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchRamcharitmanasVerseById>((event, emit) {
-      // TODO: implement event handler
-    });
     on<FetchRamcharitmanasVerseByKandaAndVerseNo>((event, emit) async {
       if (state.verseExists(kand: event.kanda, verseNo: event.verseNo, lang: event.lang)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.RAMCHARITMANAS_VERSE_BY_KAND_VERSENO)));
       try {
@@ -56,11 +53,6 @@ class RamcharitmanasBloc extends Bloc<RamcharitmanasEvent, RamcharitmanasState> 
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RAMCHARITMANAS_MANGALACHARAN_BY_KAND, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchRamcharitmanasAllMangalacharan>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<FetchRamcharitmanasVersesByKand>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

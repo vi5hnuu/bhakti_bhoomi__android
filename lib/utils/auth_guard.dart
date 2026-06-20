@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 /// Runs [action] if the user is authenticated, otherwise shows a login prompt.
 /// Use this for any action that requires login: comments, likes, bookmarks, etc.
 void requireAuth(BuildContext context, VoidCallback action) {
-  final isAuth = context.read<AuthBloc>().state.isAuthtenticated;
+  final isAuth = context.read<AuthBloc>().state.isAuthenticated;
   if (isAuth) {
     action();
   } else {

@@ -1,8 +1,10 @@
 import 'package:bhakti_bhoomi/models/bookmark/BookmarkModel.dart';
+import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 
 class BookmarksScreen extends StatefulWidget {
   const BookmarksScreen({super.key});
@@ -113,6 +115,8 @@ class _BookmarkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final description = _humanReadable(bookmark.contentType, bookmark.contentId);
+    final canNavigate = _canNavigate(bookmark.contentType);
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -121,23 +125,155 @@ class _BookmarkTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
+        onTap: canNavigate ? () => _navigate(context, bookmark) : null,
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
           child: Icon(Icons.bookmark, color: Theme.of(context).primaryColor, size: 20),
         ),
-        title: Text(bookmark.contentId, style: const TextStyle(fontSize: 13, fontFamily: 'NotoSansDevanagari')),
+        title: Text(description, style: const TextStyle(fontSize: 14)),
         subtitle: bookmark.addedAt != null
             ? Text(_formatDate(bookmark.addedAt!), style: const TextStyle(fontSize: 11, color: Colors.grey))
             : null,
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-          onPressed: () => context.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bookmark.id)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (canNavigate)
+              Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey.shade400),
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+              onPressed: () => context.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bookmark.id)),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  /// Returns a human-readable description for the bookmarked content.
+  String _humanReadable(String contentType, String contentId) {
+    try {
+      switch (contentType) {
+        case 'bhagavad_geeta':
+          // format: chapterNo_X-shlokNoY  (no underscore before shlok number)
+          final parts = contentId.split('-');
+          final chapter = parts[0].split('_')[1];
+          final shlok = parts[1].replaceAll('shlokNo', '');
+          return 'Chapter $chapter · Shlok $shlok';
+        case 'chanakya_neeti':
+          // format: chapterNo_X-verseNo_Y
+          final parts = contentId.split('-');
+          final chapter = parts[0].split('_')[1];
+          final verse = parts[1].split('_')[1];
+          return 'Chapter $chapter · Verse $verse';
+        case 'mahabharat':
+          // format: bookNo_X-chapterNo_Y-shlokNo_Z
+          final parts = contentId.split('-');
+          final book = parts[0].split('_')[1];
+          final chapter = parts[1].split('_')[1];
+          final shlok = parts[2].split('_')[1];
+          return 'Book $book · Chapter $chapter · Shlok $shlok';
+        case 'ramayan':
+          // format: kanda_X-sargaNo_Y-shlokNo_Z-lang_W  (kanda may have spaces)
+          final kandaMatch = RegExp(r'kanda_(.+?)-sargaNo_(\d+)-shlokNo_(\d+)').firstMatch(contentId);
+          if (kandaMatch != null) {
+            return '${kandaMatch.group(1)} · Sarga ${kandaMatch.group(2)} · Shlok ${kandaMatch.group(3)}';
+          }
+          return contentId;
+        case 'ramcharitmanas':
+          // format: kand_X-verseNo_Y-lang_W  (kand may have spaces)
+          final kandMatch = RegExp(r'kand_(.+?)-verseNo_(\d+)').firstMatch(contentId);
+          if (kandMatch != null) {
+            return '${kandMatch.group(1)} · Verse ${kandMatch.group(2)}';
+          }
+          return contentId;
+        case 'rigveda':
+          // format: mandalaNo_X-suktaNo_Y
+          final parts = contentId.split('-');
+          final mandala = parts[0].split('_')[1];
+          final sukta = parts[1].split('_')[1];
+          return 'Mandala $mandala · Sukta $sukta';
+        case 'brahmasutra':
+          // format: chapterNo_X-quaterNo_Y-sutraNo_Z-lang_W
+          final parts = contentId.split('-');
+          final chapter = parts[0].split('_')[1];
+          final quater = parts[1].split('_')[1];
+          final sutra = parts[2].split('_')[1];
+          return 'Chapter $chapter · Quater $quater · Sutra $sutra';
+        case 'yoga_sutra':
+          // format: chapterNo_X-sutraNo_Y-lang_W
+          final parts = contentId.split('-');
+          final chapter = parts[0].split('_')[1];
+          final sutra = parts[1].split('_')[1];
+          return 'Chapter $chapter · Sutra $sutra';
+        case 'guru_granth_sahib':
+          // format: raga_X-part_Y
+          final parts = contentId.split('-');
+          final raga = parts[0].split('_')[1];
+          final part = parts[1].split('_')[1];
+          return 'Raga $raga · Part $part';
+        default:
+          return contentId;
+      }
+    } catch (_) {
+      return contentId;
+    }
+  }
+
+  bool _canNavigate(String contentType) {
+    const navigable = {
+      'bhagavad_geeta', 'chanakya_neeti', 'mahabharat', 'ramayan',
+      'ramcharitmanas', 'rigveda', 'brahmasutra', 'yoga_sutra', 'guru_granth_sahib',
+    };
+    return navigable.contains(contentType);
+  }
+
+  void _navigate(BuildContext context, BookmarkModel bookmark) {
+    try {
+      final contentId = bookmark.contentId;
+      switch (bookmark.contentType) {
+        case 'bhagavad_geeta':
+          final chapterNo = contentId.split('-')[0].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapterShloks.name, pathParameters: {'chapterNo': chapterNo});
+        case 'chanakya_neeti':
+          final chapterNo = contentId.split('-')[0].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapterShlok.name, pathParameters: {'chapterNo': chapterNo});
+        case 'mahabharat':
+          final parts = contentId.split('-');
+          final bookNo = parts[0].split('_')[1];
+          final chapterNo = parts[1].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.mahabharatBookChapterShloks.name, pathParameters: {'bookNo': bookNo, 'chapterNo': chapterNo});
+        case 'ramayan':
+          final m = RegExp(r'kanda_(.+?)-sargaNo_(\d+)').firstMatch(contentId);
+          if (m != null) {
+            GoRouter.of(context).pushNamed(Routing.valmikiRamayanShlok.name, pathParameters: {'kand': m.group(1)!, 'sargaNo': m.group(2)!});
+          }
+        case 'ramcharitmanas':
+          final m = RegExp(r'kand_(.+?)-verseNo').firstMatch(contentId);
+          if (m != null) {
+            GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses.name, pathParameters: {'kand': m.group(1)!});
+          }
+        case 'rigveda':
+          final mandala = contentId.split('-')[0].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas.name, pathParameters: {'mandala': mandala});
+        case 'brahmasutra':
+          final parts = contentId.split('-');
+          final chapterNo = parts[0].split('_')[1];
+          final quaterNo = parts[1].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.brahmasutra.name, pathParameters: {'chapterNo': chapterNo, 'quaterNo': quaterNo});
+        case 'yoga_sutra':
+          final chapterNo = contentId.split('-')[0].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': chapterNo});
+        case 'guru_granth_sahib':
+          final ragaNo = contentId.split('-')[0].split('_')[1];
+          GoRouter.of(context).pushNamed(Routing.guruGranthSahibRagaParts.name, pathParameters: {'ragaNo': ragaNo});
+      }
+    } catch (_) {
+      // contentId malformed — can't navigate
+    }
+  }
+
   String _formatDate(DateTime dt) {
-    return '${dt.day}/${dt.month}/${dt.year}';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 }

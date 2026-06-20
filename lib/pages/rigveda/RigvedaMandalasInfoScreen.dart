@@ -41,14 +41,20 @@ class _RigvedaMandalasInfoScreenState extends State<RigvedaMandalasInfoScreen> {
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: state.rigvedaInfo != null
-              ? Column(
-                  children: List.generate(
-                      state.rigvedaInfo!.totalMandala,
-                      (index) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-                            child: RoundedListTile(
-                                itemNo: index + 1, onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas.name, pathParameters: {'mandala': '${index + 1}'}), text: "mandala"),
-                          )),
+              ? RefreshIndicator(
+                  onRefresh: () async => initRigvedaInfo(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: state.rigvedaInfo!.totalMandala,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
+                      child: RoundedListTile(
+                        itemNo: index + 1,
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.rigvedaMandalaSuktas.name, pathParameters: {'mandala': '${index + 1}'}),
+                        text: "mandala",
+                      ),
+                    ),
+                  ),
                 )
               : state.isError(forr: Httpstates.RIGVEDA_INFO)
                   ? Center(child: RetryAgain(onRetry: initRigvedaInfo,error: state.getError(forr: Httpstates.RIGVEDA_INFO)!.message))

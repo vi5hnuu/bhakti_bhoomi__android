@@ -8,6 +8,7 @@ import 'package:bhakti_bhoomi/utils/auth_guard.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
 import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
+import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
@@ -138,7 +139,7 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
                           )
                         : state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)
                             ? Center(
-                                child: Text(state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!.message),
+                                child: RetryAgain(onRetry: loadCurrentSutra, error: state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!.message),
                               )
                             : Center(
                                 child: SpinKitThreeBounce(
@@ -154,10 +155,6 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
             ),
           )),
     );
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   void loadCurrentSutra() {

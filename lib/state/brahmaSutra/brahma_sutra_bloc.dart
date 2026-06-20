@@ -29,10 +29,6 @@ class BrahmaSutraBloc extends Bloc<BrahmaSutraEvent, BrahmaSutraState> {
       }
     });
 
-    on<FetchBrahmasutraBySutraId>((event, emit) {
-      // TODO: implement event handler
-    });
-
     on<FetchBrahmasutraByChapterNoQuaterNoSutraNo>((event, emit) async {
       if (state.brahmaSutraExists(chapterNo: event.chapterNo, quaterNo: event.quaterNo, sutraNo: event.sutraNo, lang: event.lang)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.BRAHMA_SUTRA_BY_CHAPTERNO_QUATERNO_SUTRANO,const HttpState.loading())));
@@ -47,8 +43,6 @@ class BrahmaSutraBloc extends Bloc<BrahmaSutraEvent, BrahmaSutraState> {
       }
     });
 
-    on<FetchBrahmasutrasByChapterNoQuaterNo>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

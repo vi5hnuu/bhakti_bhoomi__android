@@ -117,11 +117,6 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
                                 },
                               )),
                             ),
-                            Positioned(
-                              top: 15,
-                              right: 15,
-                              child: IconButton(onPressed: () => this._showNotImplementedMessage(), icon: const Icon(Icons.report_problem_outlined, size: 24)),
-                            )
                           ],
                         ),
                       )
@@ -149,10 +144,6 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
     token = CancelToken();
     BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatShlokByShlokNo(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo, cancelToken: token));
     context.read<LikeBloc>().add(FetchLikeStatusEvent(contentId: MahabharatState.commentForId(bookNo: bookNo, chapterNo: chapterNo, shlokNo: shlokNo)));
-  }
-
-  _showNotImplementedMessage() {
-    NotificationService.showSnackbar(text: "Feature will available in next update...", color: Colors.orange);
   }
 
   @override

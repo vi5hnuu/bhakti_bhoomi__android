@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bhakti_bhoomi/models/ramayan/RamayanInfoModel.dart';
+
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramayan/ramayan_bloc.dart';
@@ -50,8 +51,14 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
               backgroundColor: Theme.of(context).primaryColor,
               iconTheme: const IconThemeData(color: Colors.white),
             ),
-            body: ListView.builder(
+            body: RefreshIndicator(
+              onRefresh: () async {
+                setState(() => pageNo = 1);
+                loadCurrentPage();
+              },
+              child: ListView.builder(
               controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: _itemsCountUntillPage(ramayanInfo: state.ramayanInfo!),
               itemBuilder: (context, index) {
                 final sargaInfo = state.getSargaInfo(kanda: widget.kand, sargaNo: index + 1);
@@ -67,7 +74,7 @@ class _ValmikiRamayanSargasScreenState extends State<ValmikiRamayanSargasScreen>
                     ? RetryAgain(onRetry: loadCurrentPage, error: state.getError(forr: Httpstates.RAMAYANA_SARGAS_INFO)!.message)
                     : Padding(padding: const EdgeInsets.symmetric(vertical: 20),child: SpinKitThreeBounce(color: Theme.of(context).primaryColor, size: 24)));
               },
-            ));
+            )));
       },
     );
   }

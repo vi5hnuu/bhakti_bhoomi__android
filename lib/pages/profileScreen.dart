@@ -8,9 +8,7 @@ import 'package:bhakti_bhoomi/widgets/CameraIconButton.dart';
 import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
 import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,8 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final formKey = GlobalKey<FormState>(debugLabel: 'registerForm');
   final ImagePicker imagePicker = ImagePicker();
-  XFile? profileImage = null;
-  XFile? coverImage = null;
+  XFile? profileImage;
+  XFile? coverImage;
   DateTime? _lastBackPressedAt;
 
   @override
@@ -48,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if (!state.isAuthtenticated) {
+          if (!state.isAuthenticated) {
             router.goNamed(Routing.login.name);
           }
           if (state.anyError(forr: [

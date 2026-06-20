@@ -40,7 +40,10 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
             backgroundColor: Theme.of(context).primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
           ),
-          body: chaptersInfo != null ? ListView.builder(
+          body: chaptersInfo != null ? RefreshIndicator(
+                onRefresh: () async => initChanakyaNeetiChaptersInfo(),
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: chaptersInfo.length,
                   itemBuilder: (context, index) {
                     final chapterInfo = chaptersInfo[index];
@@ -65,7 +68,8 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
                                 'chapterNo': '${chapterInfo.chapterNo}'
                               }),
                         ));
-                  })
+                  }),
+              )
               : state.isError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)
                   ? Center(child: RetryAgain(onRetry: initChanakyaNeetiChaptersInfo,error: state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!.message))
                   : Center(

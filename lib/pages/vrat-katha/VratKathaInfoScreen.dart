@@ -49,20 +49,27 @@ class _VratKathaInfoScreenState extends State<VratKathaInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if(state.kathaInfos.isNotEmpty) Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.kathaInfos.length,
-                    itemBuilder: (context, index) {
-                      final kathaInfo = state.getKathaInfoAt(at: index);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                        child: RoundedListTile(
-                            itemNo: index + 1,
-                            imageUrl: kathaInfo.imagePath,
-                            onTap: () => GoRouter.of(context).pushNamed(Routing.vratKatha.name, pathParameters: {'kathaId': kathaInfo.id}),
-                            text: '${kathaInfo.title}'),
-                      );
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() => pageNo = 1);
+                      loadCurrentPage();
                     },
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: state.kathaInfos.length,
+                      itemBuilder: (context, index) {
+                        final kathaInfo = state.getKathaInfoAt(at: index);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                          child: RoundedListTile(
+                              itemNo: index + 1,
+                              imageUrl: kathaInfo.imagePath,
+                              onTap: () => GoRouter.of(context).pushNamed(Routing.vratKatha.name, pathParameters: {'kathaId': kathaInfo.id}),
+                              text: '${kathaInfo.title}'),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Container(

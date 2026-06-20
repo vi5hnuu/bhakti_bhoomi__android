@@ -1,5 +1,4 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/state/bhagvadGeeta/bhagvad_geeta_bloc.dart';
 import 'package:bhakti_bhoomi/state/guruGranthSahib/guru_granth_sahib_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
@@ -46,24 +45,25 @@ class _BhagvadGeetaChaptersScreenState
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: state.getInfo() != null
-            ? SingleChildScrollView(
-                child: Padding(
+            ? RefreshIndicator(
+                onRefresh: () async => initGuruGranthSahibInfo(),
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: state.getInfo()!.ragasInfo
-                        .map((e) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 5.0),
-                              child: RoundedListTile(
-                                itemNo: e.ragaNo,
-                                text: "(${e.totalParts} part/s) ${e.name}",
-                                onTap: () => {
-                                  GoRouter.of(context).pushNamed(Routing.guruGranthSahibRagaParts.name,pathParameters: {"ragaNo":e.ragaNo.toString()})
-                                }
-                              ),
-                            ))
-                        .toList(),
-                  ),
+                  itemCount: state.getInfo()!.ragasInfo.length,
+                  itemBuilder: (context, index) {
+                    final e = state.getInfo()!.ragasInfo[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: RoundedListTile(
+                        itemNo: e.ragaNo,
+                        text: "(${e.totalParts} part/s) ${e.name}",
+                        onTap: () => GoRouter.of(context).pushNamed(
+                            Routing.guruGranthSahibRagaParts.name,
+                            pathParameters: {"ragaNo": e.ragaNo.toString()}),
+                      ),
+                    );
+                  },
                 ),
               )
             : state.isError(forr: Httpstates.GURU_GRANTH_SAHIB_INFO)

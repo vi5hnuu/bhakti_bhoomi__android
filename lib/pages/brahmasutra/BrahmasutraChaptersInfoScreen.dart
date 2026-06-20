@@ -38,19 +38,20 @@ class _BrahmasutraChaptersInfoScreenState extends State<BrahmasutraChaptersInfoS
           builder: (context, state) {
             final brahmasutraInfo = state.brahmasutraInfo;
             return brahmasutraInfo != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-                    child: Column(
-                      children: List.generate(
-                          state.brahmasutraInfo!.totalChapters,
-                          (index) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                child: RoundedListTile(
-                                  itemNo: index + 1,
-                                  text: "chapter",
-                                  onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo.name, pathParameters: {'chapterNo': '${index + 1}'}),
-                                ),
-                              )),
+                ? RefreshIndicator(
+                    onRefresh: () async => initBrahmaSutraInfo(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+                      itemCount: state.brahmasutraInfo!.totalChapters,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: RoundedListTile(
+                          itemNo: index + 1,
+                          text: "chapter",
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.brahmasutraQuatersInfo.name, pathParameters: {'chapterNo': '${index + 1}'}),
+                        ),
+                      ),
                     ),
                   )
                 : state.isError(forr: Httpstates.BRAHMA_SUTRA_INFO)

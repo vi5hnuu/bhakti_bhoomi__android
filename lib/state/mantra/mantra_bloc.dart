@@ -41,9 +41,6 @@ class MantraBloc extends Bloc<MantraEvent, MantraState> {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(state.mantraAudioInfoPageKey(pageNo: event.pageNo), HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchAllMantra>((event, emit) {
-      // TODO: implement event handler
-    });
     on<FetchMantraById>((event, emit) async {
       if (state.mantraExists(mantraId: event.id)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.MANTRA_BY_ID)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MANTRA_BY_ID,const HttpState.loading())));
@@ -68,11 +65,6 @@ class MantraBloc extends Bloc<MantraEvent, MantraState> {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.MANTRA_AUDIO_BY_ID, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchMantraByTitle>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<FetchMantraAudioByTitle>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

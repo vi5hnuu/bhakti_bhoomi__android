@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class VerifyScreen extends StatefulWidget {
-  VerifyScreen({super.key});
+  const VerifyScreen({super.key});
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -20,7 +20,7 @@ class VerifyScreen extends StatefulWidget {
 class _VerifyScreenState extends State<VerifyScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController emailCntrl = TextEditingController(text: '');
+  final TextEditingController emailCntrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       builder: (context, state) => Scaffold(
         appBar: AppBar(
           title: const Text(
-            'verify',
+            'Verify',
             style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,

@@ -1,13 +1,12 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bhakti_bhoomi/constants/Constants.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/widgets/DailyVerseCard.dart';
 import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
@@ -192,6 +191,7 @@ class _HomeState extends State<Home> {
                     ))
                   ],
                 ),
+                const DailyVerseCard(),
                 if(!isHinduAudioOnly) GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
                   ItemCard(imageProvider: const AssetImage("assets/home/aarti.webp"),title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
                   ItemCard(imageProvider:const AssetImage("assets/home/brahmasutra.webp"),onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),

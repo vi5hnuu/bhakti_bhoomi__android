@@ -1,11 +1,11 @@
 import 'package:bhakti_bhoomi/models/mantra/MantraModel.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:bhakti_bhoomi/state/mantra/mantra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -53,7 +53,7 @@ class _MantraScreenState extends State<MantraScreen> {
                   )
                 : state.isError(forr: Httpstates.MANTRA_BY_ID)
                     ? Center(child: RetryAgain(onRetry: initMantraById,error: state.getError(forr: Httpstates.MANTRA_BY_ID)!.message))
-                    : const Center(child: CircularProgressIndicator()));
+                    : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)));
       },
     );
   }

@@ -41,11 +41,6 @@ class RigvedaBloc extends Bloc<RigvedaEvent, RigvedaState> {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.RIGVEDA_VERSE_BY_MANDALA_SUKTA, HttpState.error(error: ErrorModel(message:e.toString())))));
       }
     });
-    on<FetchVerseBySuktaId>((event, emit) {
-      // TODO: implement event handler
-    });
-    on<FetchVersesByMandala>((event, emit) {
-      // TODO: implement event handler
-    });
+
   }
 }

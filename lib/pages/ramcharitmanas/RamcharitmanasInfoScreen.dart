@@ -42,7 +42,9 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
               iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: info != null
-                ? Container(
+                ? RefreshIndicator(
+                    onRefresh: () async => initRamcharitmanasInfo(),
+                    child: Container(
                     width: double.infinity,
                     height: double.infinity,
                     padding: const EdgeInsets.all(8),
@@ -134,7 +136,7 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
                         ),
                       ],
                     ),
-                  )
+                  ))
                 : state.isError(forr: Httpstates.RAMCHARITMANAS_INFO)
                     ? Center(child: RetryAgain(onRetry: initRamcharitmanasInfo,error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!.message))
                     : Center(

@@ -30,9 +30,6 @@ class ChanakyaNeetiBloc extends Bloc<ChanakyaNeetiEvent, ChanakyaNeetiState> {
       }
     });
 
-    on<FetchChanakyaNeetiChapterVerses>((event, emit) {
-      // TODO: implement event handler
-    });
     on<FetchChanakyaNeetiVerseByChapterNoVerseNo>((event, emit) async {
       if (state.verseExists(chapterNo: event.chapterNo, verseNo: event.verseNo)) return emit(state.copyWith(httpStates:  state.httpStates.clone()..remove(Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO)));
       emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.CHANAKYA_NEETI_VERSE_BY_CHAPTERNO_VERSENO,const HttpState.loading())));

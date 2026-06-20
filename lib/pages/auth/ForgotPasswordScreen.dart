@@ -20,7 +20,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final CancelToken cancelToken = CancelToken();
   final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
-  final TextEditingController usernameEmailController = TextEditingController(text: '');
+  final TextEditingController usernameEmailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         },
                         child: const Text(
                           'Forgot-password',
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         )),
                     const SizedBox(height: 12),
                     CustomTextButton(onPressed: state.isLoading(forr: Httpstates.FORGOT_PASSWORD) ? null : () => context.goNamed(Routing.login.name), child: const Text('Sign-in instead'))
