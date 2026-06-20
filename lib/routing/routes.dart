@@ -26,6 +26,8 @@ class Routing {
   static final Route journey = Route(name:"journey",path:"/practice/journey");
   static final Route deities = Route(name:"deities",path:"/practice/deities");
   static final Route rituals = Route(name:"rituals",path:"/practice/rituals");
+  static final Route panchang = Route(name:"panchang",path:"/panchang");
+  static final Route festivals = Route(name:"festivals",path:"/panchang/festivals");
   static final Route login = Route(name:"login",path:"login",baseUrl: "/auth");
 
   static final Route forgotPassword = Route(name:"forgot-password",path:"forgot-password",baseUrl: "/auth");

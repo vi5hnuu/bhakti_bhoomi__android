@@ -13,6 +13,8 @@ import 'package:bhakti_bhoomi/pages/practice/JapaMalaScreen.dart';
 import 'package:bhakti_bhoomi/pages/practice/JourneyScreen.dart';
 import 'package:bhakti_bhoomi/pages/practice/DeitiesScreen.dart';
 import 'package:bhakti_bhoomi/pages/practice/RitualsScreen.dart';
+import 'package:bhakti_bhoomi/pages/panchang/PanchangScreen.dart';
+import 'package:bhakti_bhoomi/pages/panchang/FestivalsScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
 import 'package:bhakti_bhoomi/routing/routes/aartiRoutes.dart';
@@ -154,6 +156,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         GoRoute(name: BBR.Routing.journey.name, path: BBR.Routing.journey.path, builder: (context, state) => const JourneyScreen()),
         GoRoute(name: BBR.Routing.deities.name, path: BBR.Routing.deities.path, builder: (context, state) => const DeitiesScreen()),
         GoRoute(name: BBR.Routing.rituals.name, path: BBR.Routing.rituals.path, builder: (context, state) => const RitualsScreen()),
+        GoRoute(name: BBR.Routing.panchang.name, path: BBR.Routing.panchang.path, builder: (context, state) => const PanchangScreen()),
+        GoRoute(name: BBR.Routing.festivals.name, path: BBR.Routing.festivals.path, builder: (context, state) => const FestivalsScreen()),
         // Bottom-nav shell: the five primary destinations. Detail screens are
         // pushed on the root navigator so they cover the bottom bar.
         StatefulShellRoute.indexedStack(
