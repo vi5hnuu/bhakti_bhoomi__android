@@ -2,25 +2,23 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/guruGranthSahib/guru_granth_sahib_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/index_tile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class GuruGranthSahibInfoScreen extends StatefulWidget {
   final String title;
-
   const GuruGranthSahibInfoScreen({super.key, required this.title});
 
   @override
-  State<GuruGranthSahibInfoScreen> createState() =>
-      _BhagvadGeetaChaptersScreenState();
+  State<GuruGranthSahibInfoScreen> createState() => _GuruGranthSahibInfoScreenState();
 }
 
-class _BhagvadGeetaChaptersScreenState
-    extends State<GuruGranthSahibInfoScreen> {
+class _GuruGranthSahibInfoScreenState extends State<GuruGranthSahibInfoScreen> {
   final CancelToken cancelToken = CancelToken();
 
   @override
@@ -33,55 +31,39 @@ class _BhagvadGeetaChaptersScreenState
   Widget build(BuildContext context) {
     return BlocBuilder<GuruGranthSahibBloc, GuruGranthSahibState>(
       buildWhen: (previous, current) => previous != current,
-      builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Guru Granth Sahib',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "Kalam",
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold)),
-          backgroundColor: Theme.of(context).primaryColor,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        body: state.getInfo() != null
-            ? RefreshIndicator(
-                onRefresh: () async => initGuruGranthSahibInfo(),
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: state.getInfo()!.ragasInfo.length,
-                  itemBuilder: (context, index) {
-                    final e = state.getInfo()!.ragasInfo[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: RoundedListTile(
-                        itemNo: e.ragaNo,
-                        text: "(${e.totalParts} part/s) ${e.name}",
-                        onTap: () => GoRouter.of(context).pushNamed(
-                            Routing.guruGranthSahibRagaParts.name,
-                            pathParameters: {"ragaNo": e.ragaNo.toString()}),
-                      ),
-                    );
-                  },
-                ),
-              )
-            : state.isError(forr: Httpstates.GURU_GRANTH_SAHIB_INFO)
-                ? Center(
-                    child: RetryAgain(
-                        onRetry: initGuruGranthSahibInfo,
-                        error: state.getError(
-                            forr: Httpstates.GURU_GRANTH_SAHIB_INFO)!.message))
-                : Center(
-                    child: SpinKitThreeBounce(
-                        color: Theme.of(context).primaryColor)),
-      ),
+      builder: (context, state) {
+        final info = state.getInfo();
+        return AppScaffold(
+          title: 'Guru Granth Sahib',
+          subtitle: 'ਗੁਰੂ ਗ੍ਰੰਥ ਸਾਹਿਬ · ਰਾਗ',
+          body: info != null
+              ? RefreshIndicator(
+                  onRefresh: () async => initGuruGranthSahibInfo(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: info.ragasInfo.length,
+                    itemBuilder: (context, index) {
+                      final e = info.ragasInfo[index];
+                      return IndexTile(
+                        number: '${e.ragaNo}',
+                        title: e.name,
+                        meta: '${e.totalParts} part${e.totalParts == 1 ? '' : 's'}',
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibRagaParts.name, pathParameters: {"ragaNo": e.ragaNo.toString()}),
+                      );
+                    },
+                  ),
+                )
+              : state.isError(forr: Httpstates.GURU_GRANTH_SAHIB_INFO)
+                  ? RetryAgain(onRetry: initGuruGranthSahibInfo, error: state.getError(forr: Httpstates.GURU_GRANTH_SAHIB_INFO)!.message)
+                  : const AppLoader(),
+        );
+      },
     );
   }
 
   initGuruGranthSahibInfo() {
-    BlocProvider.of<GuruGranthSahibBloc>(context)
-        .add(FetchGuruGranthSahibInfo(cancelToken: cancelToken));
+    BlocProvider.of<GuruGranthSahibBloc>(context).add(FetchGuruGranthSahibInfo(cancelToken: cancelToken));
   }
 
   @override

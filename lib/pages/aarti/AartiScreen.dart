@@ -1,10 +1,15 @@
 import 'package:bhakti_bhoomi/state/aarti/aarti_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_card.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/section_label.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class AartiScreen extends StatefulWidget {
   final String title;
@@ -29,52 +34,55 @@ class _AartiScreenState extends State<AartiScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AartiBloc, AartiState>(
       builder: (context, state) {
-        return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                state.aartis[widget.aartiId] == null || state.hasHttpState(forr: Httpstates.AARTIS) ? 'Aarti' : state.aartis[widget.aartiId]!.title,
-                style: const TextStyle(color: Colors.white,
-                    fontFamily: "Kalam",
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              backgroundColor: Theme
-                  .of(context)
-                  .primaryColor,
-              iconTheme: const IconThemeData(color: Colors.white),
-            ),
-            body: state.getAarti(widget.aartiId)!=null ? ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: state.aartis[widget.aartiId]!.verses.length,
-              itemBuilder: (context, index) =>
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: state
-                          .getAarti(widget.aartiId)!
-                          .verses[index]
-                          .map((verse) =>
-                          Text(
-                            verse,
-                            style: const TextStyle(fontFamily: 'NotoSansDevanagari',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700),
-                          ))
-                          .toList(),
-                    ),
-                  ),
-            ):
-            (Center(child: state.isError(forr: Httpstates.AARTIS) ? RetryAgain(onRetry: initAarti, error: state.getError(forr: Httpstates.AARTIS)!.message) : SpinKitThreeBounce(color: Theme.of(context).primaryColor))));
+        final aarti = state.getAarti(widget.aartiId);
+        return AppScaffold(
+          title: 'Aarti',
+          subtitle: aarti?.title ?? 'आरती',
+          body: aarti != null
+              ? ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                  itemCount: aarti.verses.length,
+                  itemBuilder: (context, index) {
+                    final lines = aarti.verses[index];
+                    final isRefrain = index == 0;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: AppCard(
+                        color: isRefrain ? AppColors.surface : AppColors.page,
+                        borderColor: isRefrain ? AppColors.gold : AppColors.surfaceAlt,
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                        child: Column(
+                          children: [
+                            if (isRefrain) ...[const SectionLabel('टेक · refrain'), const SizedBox(height: 10)],
+                            ...lines.map((verse) => Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  child: Text(
+                                    verse,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: AppScript.familyFor(verse),
+                                      fontSize: 18,
+                                      height: 1.6,
+                                      color: AppColors.ink,
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : state.isError(forr: Httpstates.AARTIS)
+                  ? RetryAgain(onRetry: initAarti, error: state.getError(forr: Httpstates.AARTIS)!.message)
+                  : const AppLoader(),
+        );
       },
     );
   }
 
   initAarti() {
-    BlocProvider.of<AartiBloc>(context).add(
-        FetchAartiEvent(aartiId: widget.aartiId, cancelToken: cancelToken));
+    BlocProvider.of<AartiBloc>(context).add(FetchAartiEvent(aartiId: widget.aartiId, cancelToken: cancelToken));
   }
 
   @override

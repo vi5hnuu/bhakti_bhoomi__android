@@ -1,10 +1,14 @@
 import 'package:bhakti_bhoomi/state/chalisa/chalisa_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_card.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChalisaScreen extends StatefulWidget {
   final String title;
@@ -19,7 +23,7 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
   CancelToken token = CancelToken();
 
   @override
-  initState() {
+  void initState() {
     initChalisa();
     super.initState();
   }
@@ -30,46 +34,54 @@ class _ChalisaScreenState extends State<ChalisaScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         final chalisa = state.getChalisaById(chalisaId: widget.chalisaId);
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              state.hasHttpState(forr: Httpstates.CHALISA_BY_ID) || state.allChalisa[widget.chalisaId] == null ? 'Chalisa' : state.allChalisa[widget.chalisaId]!.title,
-              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          body: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
-              child: chalisa != null
-                  ? Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: chalisa.translations['hi']!['data']!
-                          .map((verseGroup) => Padding(
-                                padding: const EdgeInsets.only(bottom: 32),
-                                child: Column(
-                                  children: [
-                                    Text(verseGroup.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'NotoSansDevanagari')),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    ...verseGroup.verses.map((verse) => Text(verse, style: const TextStyle(fontSize: 18)))
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    )
-                  : state.isError(forr: Httpstates.CHALISA_BY_ID)
-                      ? Center(child: RetryAgain(onRetry: initChalisa,error: state.getError(forr: Httpstates.CHALISA_BY_ID)!.message))
-                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))),
+        final loaded = !state.hasHttpState(forr: Httpstates.CHALISA_BY_ID) && state.allChalisa[widget.chalisaId] != null;
+        return AppScaffold(
+          title: 'Chalisa',
+          subtitle: loaded ? state.allChalisa[widget.chalisaId]!.title : 'चालीसा',
+          body: chalisa != null
+              ? ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                  children: chalisa.translations['hi']!['data']!
+                      .map((verseGroup) => Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: AppCard(
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    verseGroup.title.toUpperCase(),
+                                    style: AppTypography.sectionLabel,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ...verseGroup.verses.map((verse) => Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 2),
+                                        child: Text(
+                                          verse,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontFamily: AppScript.familyFor(verse),
+                                            fontSize: 18,
+                                            height: 1.6,
+                                            color: AppColors.ink,
+                                          ),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                )
+              : state.isError(forr: Httpstates.CHALISA_BY_ID)
+                  ? RetryAgain(onRetry: initChalisa, error: state.getError(forr: Httpstates.CHALISA_BY_ID)!.message)
+                  : const AppLoader(),
         );
       },
     );
   }
 
-  initChalisa(){
+  initChalisa() {
     BlocProvider.of<ChalisaBloc>(context).add(FetchChalisaById(id: widget.chalisaId, cancelToken: token));
   }
 
