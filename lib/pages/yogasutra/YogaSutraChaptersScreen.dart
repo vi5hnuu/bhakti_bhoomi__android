@@ -2,11 +2,12 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/index_tile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class YogaSutraChaptersScreen extends StatefulWidget {
@@ -31,43 +32,40 @@ class _YogaSutraChaptersScreenState extends State<YogaSutraChaptersScreen> {
     return BlocBuilder<YogaSutraBloc, YogaSutraState>(
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
-        final yogaSutraInfo = state.yogaSutraInfo;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'YogaSutra',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          body: yogaSutraInfo != null
+        final info = state.yogaSutraInfo;
+        return AppScaffold(
+          title: 'Yoga Sutra',
+          subtitle: 'योगसूत्र',
+          body: info != null
               ? RefreshIndicator(
                   onRefresh: () async => initYogaSutraInfo(),
                   child: ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: yogaSutraInfo.totalSutra.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
-                      child: RoundedListTile(
-                        itemNo: index + 1,
-                        onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': '${index + 1}'}),
-                        text: "chapter",
-                      ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: info.totalSutra.length,
+                    itemBuilder: (context, index) => IndexTile(
+                      number: '${index + 1}',
+                      title: 'Chapter ${index + 1}',
+                      subtitle: 'पाद ${index + 1}',
+                      onTap: () => GoRouter.of(context).pushNamed(Routing.yogaSutra.name, pathParameters: {'chapterNo': '${index + 1}'}),
                     ),
                   ),
                 )
               : state.isError(forr: Httpstates.YOGASUTRA_INFO)
-                  ? Center(
-                      child: RetryAgain(onRetry: initYogaSutraInfo,error: state.getError(forr: Httpstates.YOGASUTRA_INFO)!.message),
-                    )
-                  : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
+                  ? RetryAgain(onRetry: initYogaSutraInfo, error: state.getError(forr: Httpstates.YOGASUTRA_INFO)!.message)
+                  : const AppLoader(),
         );
       },
     );
   }
 
-  initYogaSutraInfo(){
+  initYogaSutraInfo() {
     BlocProvider.of<YogaSutraBloc>(context).add(FetchYogasutraInfo(cancelToken: token));
+  }
+
+  @override
+  void dispose() {
+    token.cancel("cancelled");
+    super.dispose();
   }
 }

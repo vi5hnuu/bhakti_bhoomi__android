@@ -2,10 +2,12 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/chanakyaNeeti/chanakya_neeti_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/index_tile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class ChanakyaNeetiChaptersScreen extends StatefulWidget {
@@ -31,57 +33,39 @@ class _ChanakyaNeetiChaptersScreenState extends State<ChanakyaNeetiChaptersScree
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         final chaptersInfo = state.allChaptersInfo;
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Chanakya Neeti',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          body: chaptersInfo != null ? RefreshIndicator(
-                onRefresh: () async => initChanakyaNeetiChaptersInfo(),
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: chaptersInfo.length,
-                  itemBuilder: (context, index) {
-                    final chapterInfo = chaptersInfo[index];
-                    return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 5),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Theme.of(context).primaryColor,
-                          leading: const Icon(Icons.menu_rounded,
-                              color: Colors.white),
-                          title: Text('Chapter ${chapterInfo.chapterNo}',
-                              style: const TextStyle(
-                                  fontSize: 24, color: Colors.white)),
-                          subtitle: Text(
-                              'Contains ${chapterInfo.versesCount} Verses',
-                              style: TextStyle(color: Colors.white)),
-                          onTap: () => GoRouter.of(context).pushNamed(
-                              Routing.chanakyaNitiChapterShlok.name,
-                              pathParameters: {
-                                'chapterNo': '${chapterInfo.chapterNo}'
-                              }),
-                        ));
-                  }),
-              )
+        return AppScaffold(
+          title: 'Chanakya Neeti',
+          subtitle: 'चाणक्य नीति',
+          body: chaptersInfo != null
+              ? RefreshIndicator(
+                  onRefresh: () async => initChanakyaNeetiChaptersInfo(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: chaptersInfo.length,
+                    itemBuilder: (context, index) {
+                      final chapterInfo = chaptersInfo[index];
+                      return IndexTile(
+                        number: '${chapterInfo.chapterNo}',
+                        title: 'Chapter ${chapterInfo.chapterNo}',
+                        meta: '${chapterInfo.versesCount} verses',
+                        onTap: () => GoRouter.of(context).pushNamed(
+                          Routing.chanakyaNitiChapterShlok.name,
+                          pathParameters: {'chapterNo': '${chapterInfo.chapterNo}'},
+                        ),
+                      );
+                    },
+                  ),
+                )
               : state.isError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)
-                  ? Center(child: RetryAgain(onRetry: initChanakyaNeetiChaptersInfo,error: state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!.message))
-                  : Center(
-                      child: SpinKitThreeBounce(
-                      color: Theme.of(context).primaryColor,
-                    )),
+                  ? RetryAgain(onRetry: initChanakyaNeetiChaptersInfo, error: state.getError(forr: Httpstates.CHANAKYA_NEETI_CHAPTERS_INFO)!.message)
+                  : const AppLoader(),
         );
       },
     );
   }
 
-  initChanakyaNeetiChaptersInfo(){
+  initChanakyaNeetiChaptersInfo() {
     BlocProvider.of<ChanakyaNeetiBloc>(context).add(FetchChanakyaNeetiChaptersInfo(cancelToken: token));
   }
 
