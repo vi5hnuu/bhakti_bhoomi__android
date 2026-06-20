@@ -2,15 +2,17 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/index_tile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class MahabharatBookInfoScreen extends StatefulWidget {
   final String title;
-  MahabharatBookInfoScreen({super.key, required this.title});
+  const MahabharatBookInfoScreen({super.key, required this.title});
 
   @override
   State<MahabharatBookInfoScreen> createState() => _MahabharatBookInfoScreenState();
@@ -28,45 +30,41 @@ class _MahabharatBookInfoScreenState extends State<MahabharatBookInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MahabharatBloc, MahabharatState>(
-        buildWhen: (previous, current) =>previous != current,
-        builder: (context, state) => Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  'Mahabharat',
-                  style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                backgroundColor: Theme.of(context).primaryColor,
-                iconTheme: const IconThemeData(color: Colors.white),
-              ),
-              body: state.allBooksInfo != null
-                  ? RefreshIndicator(
-                      onRefresh: () async => initMahabharataInfo(),
-                      child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: state.allBooksInfo!.length,
-                        itemBuilder: (context, index) {
-                          final bookInfo = state.allBooksInfo![index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                              tileColor: Theme.of(context).primaryColor,
-                              leading: const Icon(Icons.menu_rounded, color: Colors.white),
-                              title: Text('Book ${bookInfo.bookNo}', style: const TextStyle(fontSize: 24, color: Colors.white)),
-                              subtitle: Text('Contains ${bookInfo.info.values.reduce((tShloks, shloks) => tShloks + shloks)} Shloks', style: const TextStyle(color: Colors.white)),
-                              onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos.name, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : state.isError(forr: Httpstates.MAHABHARATA_INFO)
-                      ? Center(child: RetryAgain(onRetry: initMahabharataInfo,error: state.getError(forr: Httpstates.MAHABHARATA_INFO)!.message))
-                      : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor))
-            ));
+      buildWhen: (previous, current) => previous != current,
+      builder: (context, state) {
+        final books = state.allBooksInfo;
+        return AppScaffold(
+          title: 'Mahabharat',
+          subtitle: 'महाभारत · पर्व',
+          body: books != null
+              ? RefreshIndicator(
+                  onRefresh: () async => initMahabharataInfo(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: books.length,
+                    itemBuilder: (context, index) {
+                      final bookInfo = books[index];
+                      final totalShloks = bookInfo.info.values.fold<int>(0, (t, s) => t + s);
+                      return IndexTile(
+                        number: '${bookInfo.bookNo}',
+                        title: 'Book ${bookInfo.bookNo}',
+                        subtitle: 'पर्व ${bookInfo.bookNo}',
+                        meta: '$totalShloks shloks',
+                        onTap: () => GoRouter.of(context).pushNamed(Routing.mahabharatBookChaptersInfos.name, pathParameters: {'bookNo': '${bookInfo.bookNo}'}),
+                      );
+                    },
+                  ),
+                )
+              : state.isError(forr: Httpstates.MAHABHARATA_INFO)
+                  ? RetryAgain(onRetry: initMahabharataInfo, error: state.getError(forr: Httpstates.MAHABHARATA_INFO)!.message)
+                  : const AppLoader(),
+        );
+      },
+    );
   }
 
-  initMahabharataInfo(){
+  initMahabharataInfo() {
     BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent(cancelToken: token));
   }
 

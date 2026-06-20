@@ -2,11 +2,13 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/RoundedListTile.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/index_tile.dart';
+import 'package:bhakti_bhoomi/widgets/common/section_label.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class RamcharitmanasInfoScreen extends StatefulWidget {
@@ -32,121 +34,50 @@ class _RamcharitmanasInfoScreenState extends State<RamcharitmanasInfoScreen> {
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         final info = state.info;
-        return Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                'Ramcharitmanas',
-                style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              backgroundColor: Theme.of(context).primaryColor,
-              iconTheme: const IconThemeData(color: Colors.white),
-            ),
-            body: info != null
-                ? RefreshIndicator(
-                    onRefresh: () async => initRamcharitmanasInfo(),
-                    child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          flex: 5,
-                          fit: FlexFit.tight,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Material(
-                                color: Theme.of(context).primaryColor,
-                                elevation: 8,
-                                shadowColor: Colors.black,
-                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                child: const Text(
-                                  "-: Kands :-",
-                                  style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Expanded(
-                                child: Material(
-                                  child: ListView.builder(
-                                    itemCount: state.getAllKands().length,
-                                    padding: const EdgeInsets.all(8),
-                                    itemBuilder: (context, index) {
-                                      final kand = state.getAllKands()[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                        child: RoundedListTile(
-                                          text: kand,
-                                          itemNo: index + 1,
-                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses.name, pathParameters: {"kand": kand}),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+        return AppScaffold(
+          title: 'Ramcharitmanas',
+          subtitle: 'रामचरितमानस · ७ काण्ड',
+          body: info != null
+              ? RefreshIndicator(
+                  onRefresh: () async => initRamcharitmanasInfo(),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(20, 8, 20, 10),
+                        child: SectionLabel('KANDS · काण्ड'),
+                      ),
+                      for (int i = 0; i < state.getAllKands().length; i++)
+                        IndexTile(
+                          number: '${i + 1}',
+                          title: state.getAllKands()[i],
+                          subtitle: 'काण्ड',
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasKandVerses.name, pathParameters: {"kand": state.getAllKands()[i]}),
                         ),
-                        const SizedBox(height: 7),
-                        Flexible(
-                          flex: 5,
-                          fit: FlexFit.tight,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Material(
-                                color: Theme.of(context).primaryColor,
-                                elevation: 8,
-                                shadowColor: Colors.black,
-                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                child: const Text(
-                                  "-: Mangalacharan :-",
-                                  style: TextStyle(fontFamily: 'permanentMarker', fontSize: 32, color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Expanded(
-                                child: Material(
-                                  child: ListView.builder(
-                                    itemCount: state.getAllKands().length,
-                                    padding: const EdgeInsets.all(8),
-                                    itemBuilder: (context, index) {
-                                      final kand = state.getAllKands()[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                        child: RoundedListTile(
-                                          text: '$kand Mangalacharan',
-                                          itemNo: index + 1,
-                                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan.name, pathParameters: {"kand": kand}),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(20, 24, 20, 10),
+                        child: SectionLabel('MANGALACHARAN · मंगलाचरण'),
+                      ),
+                      for (int i = 0; i < state.getAllKands().length; i++)
+                        IndexTile(
+                          number: '${i + 1}',
+                          title: '${state.getAllKands()[i]} Mangalacharan',
+                          subtitle: 'मंगलाचरण',
+                          onTap: () => GoRouter.of(context).pushNamed(Routing.ramcharitmanasMangalaCharan.name, pathParameters: {"kand": state.getAllKands()[i]}),
                         ),
-                      ],
-                    ),
-                  ))
-                : state.isError(forr: Httpstates.RAMCHARITMANAS_INFO)
-                    ? Center(child: RetryAgain(onRetry: initRamcharitmanasInfo,error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!.message))
-                    : Center(
-                        child: SpinKitThreeBounce(color: Theme.of(context).primaryColor),
-                      ));
+                    ],
+                  ),
+                )
+              : state.isError(forr: Httpstates.RAMCHARITMANAS_INFO)
+                  ? RetryAgain(onRetry: initRamcharitmanasInfo, error: state.getError(forr: Httpstates.RAMCHARITMANAS_INFO)!.message)
+                  : const AppLoader(),
+        );
       },
     );
   }
 
-  initRamcharitmanasInfo(){
+  initRamcharitmanasInfo() {
     BlocProvider.of<RamcharitmanasBloc>(context).add(FetchRamcharitmanasInfo(cancelToken: cancelToken));
   }
 
