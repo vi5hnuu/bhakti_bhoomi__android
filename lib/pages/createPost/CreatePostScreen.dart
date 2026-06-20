@@ -1,6 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bhakti_bhoomi/models/post/Post.dart' as post_models;
-import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/primary_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -36,19 +38,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-              color: Colors.white,
-              fontFamily: "Kalam",
-              fontSize: 32,
-              fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+    return AppScaffold(
+      title: 'Create Post',
+      subtitle: 'admin',
       body: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,13 +66,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ) ,
               itemCount: post.content.length, onReorder: _onReorder)),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(child: CustomElevatedButton(onPressed: () {},backgroundColor: Colors.red, child: const Text("Cancel",style: TextStyle(color: Colors.white))), flex: 3),
-              const SizedBox(width: 7),
-              Expanded(child: CustomElevatedButton(onPressed: () {},backgroundColor: Colors.green, child: const Text("Create",style: TextStyle(color: Colors.white))),flex: 7,)
-            ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textMuted,
+                      side: const BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                    ),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(flex: 7, child: PrimaryButton(label: 'Create', onPressed: () {})),
+              ],
+            ),
           )
         ],
       ),

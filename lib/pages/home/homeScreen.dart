@@ -1,265 +1,156 @@
-import 'package:bhakti_bhoomi/constants/Constants.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
-import 'package:bhakti_bhoomi/widgets/DailyVerseCard.dart';
-import 'package:bhakti_bhoomi/singletons/SecureStorage.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:bhakti_bhoomi/state/httpStates.dart';
-import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
+import 'package:bhakti_bhoomi/widgets/DailyVerseCard.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_card.dart';
+import 'package:bhakti_bhoomi/widgets/common/section_label.dart';
+import 'package:bhakti_bhoomi/widgets/common/text_medallion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   final String title;
   const Home({super.key, required this.title});
 
   @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  bool isHinduAudioOnly=false;
-
-  @override
-  void initState() {
-    //isHinduOnlyAudioSwitch from secure storage
-    SecureStorage().storage.read(key: Constants.STORAGE_HINDU_AUDIO).then((value) => {
-      if(value!=null) setState(()=>isHinduAudioOnly=bool.parse(value))
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Spiritual Shakti',
-              style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            centerTitle: true,
-            elevation: 1,
-            shadowColor: Colors.grey,
-            backgroundColor: Theme.of(context).primaryColor,
-            actions: [
-              if (state.userInfo != null && state.userInfo!.profileMeta?.secure_url != null)
-                GestureDetector(
-                  onTap: () => GoRouter.of(context).pushNamed(Routing.profile.name),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(state.userInfo!.profileMeta!.secure_url),
-                    ),
-                  ),
-                )
-              else if (state.userInfo == null)
-                TextButton(
-                  onPressed: () => GoRouter.of(context).pushNamed(Routing.login.name),
-                  child: const Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                )
-            ],
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          drawerScrimColor: Colors.white.withOpacity(0.7),
-          drawerEdgeDragWidth: 64,
-          drawer: Drawer(
-              backgroundColor: Colors.white,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                      decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-                      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 5, left: 5, right: 5, bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            foregroundImage: (state.userInfo?.profileMeta?.secure_url != null) ? CachedNetworkImageProvider(state.userInfo!.profileMeta!.secure_url) : null,
-                            child: state.isLoading(forr: Httpstates.USER_INFO)
-                                ? SpinKitPulse(
-                                    color: Theme.of(context).primaryColor,
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(height: 12),
-                          if (state.userInfo != null)
-                            Text(
-                              '${state.userInfo!.firstName} ${state.userInfo!.lastName}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
-                        ],
-                      )),
-                  if (state.userInfo == null) ...[
-                    ListTile(
-                      title: const Text("Login", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-                      splashColor: Theme.of(context).primaryColor,
-                      leading: Icon(Icons.login, color: Theme.of(context).primaryColor, size: 24),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
-                      onTap: () {
-                        Navigator.pop(context);
-                        GoRouter.of(context).pushNamed(Routing.login.name);
-                      },
-                    ),
-                    ListTile(
-                      title: const Text("Sign Up", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-                      splashColor: Theme.of(context).primaryColor,
-                      leading: Icon(Icons.person_add_outlined, color: Theme.of(context).primaryColor, size: 24),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
-                      onTap: () {
-                        Navigator.pop(context);
-                        GoRouter.of(context).pushNamed(Routing.register.name);
-                      },
-                    ),
-                  ],
-                  if (state.isAdmin) ListTile(
-                    title: const Text("Create Post",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
-                    splashColor: Theme.of(context).primaryColor,
-                    leading: Icon(Icons.post_add, color: Theme.of(context).primaryColor,size: 24),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
-                    onTap: () => GoRouter.of(context).pushNamed(Routing.createPost.name),
-                  ),
-                  if (state.userInfo != null) ListTile(
-                    title: const Text("Bookmarks", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-                    splashColor: Theme.of(context).primaryColor,
-                    leading: Icon(Icons.bookmark_outline, color: Theme.of(context).primaryColor, size: 24),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
-                    onTap: () {
-                      Navigator.pop(context);
-                      GoRouter.of(context).pushNamed(Routing.bookmarks.name);
-                    },
-                  ),
-                  if (state.userInfo != null) ListTile(
-                    title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-                    splashColor: Theme.of(context).primaryColor,
-                    leading: Icon(Icons.person_outline, color: Theme.of(context).primaryColor, size: 24),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 16),
-                    onTap: () {
-                      Navigator.pop(context);
-                      GoRouter.of(context).pushNamed(Routing.profile.name);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text("About Us",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18)),
-                    splashColor: Theme.of(context).primaryColor,
-                    leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor,size: 24),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor,size: 16),
-                    onTap: () => GoRouter.of(context).pushNamed(Routing.aboutUs.name),
-                  ),
-                  if (state.userInfo != null) ListTile(
-                    title: const Text("Logout", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Colors.red)),
-                    splashColor: Colors.red.shade100,
-                    leading: const Icon(Icons.logout, color: Colors.red, size: 24),
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.read<AuthBloc>().add(const LogoutEvent());
-                    },
-                  )
-                ],
-              )),
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    final date = DateFormat('EEE, d MMMM').format(DateTime.now());
+    return Scaffold(
+      backgroundColor: AppColors.page,
+      body: SafeArea(
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            final firstName = state.userInfo?.firstName;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
               children: [
-                Stack(
-                  alignment: Alignment.center,
-                  fit: StackFit.loose,
-                  children: [
-                    Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/hindu.webp",height: 50,fit: BoxFit.fitHeight)),
-                    Align(alignment: Alignment.centerRight, child: Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: IconButton(
-                          onPressed: () => setState(() {
-                                isHinduAudioOnly = !isHinduAudioOnly;
-                                SecureStorage().storage.write(
-                                    key: Constants.STORAGE_HINDU_AUDIO,
-                                    value: isHinduAudioOnly.toString());
-                              }),
-                          icon: Icon(isHinduAudioOnly
-                              ? Icons.music_note_sharp
-                              : Icons.music_off)),
-                    ))
-                  ],
-                ),
+                Text(date, style: AppTypography.textTheme.bodySmall),
+                const SizedBox(height: 2),
+                Text(firstName != null ? 'नमस्ते, $firstName' : 'नमस्ते',
+                    style: TextStyle(fontFamily: AppFonts.devanagari, fontSize: 30, color: AppColors.ink)),
+                const SizedBox(height: 18),
                 const DailyVerseCard(),
-                if(!isHinduAudioOnly) GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-                  ItemCard(imageProvider: const AssetImage("assets/home/aarti.webp"),title: "aarti", onPressed: () => GoRouter.of(context).pushNamed(Routing.aartiInfo.name),),
-                  ItemCard(imageProvider:const AssetImage("assets/home/brahmasutra.webp"),onPressed: () => {context.pushNamed(Routing.brahmasutraChaptersInfo.name)}, title: "brahmasutra"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/chalisa.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.chalisaInfo.name)}, title: "chalisa"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/chanakyaneeti.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.chanakyaNitiChapters.name)}, title: "chanakyaneeti"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/mahabharat.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mahabharatBookInfos.name)}, title: "mahabharat"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/mantra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraInfo.name)}, title: "mantra"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/ramcharitmanas.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.ramcharitmanasInfo.name)}, title: "ramcharitmanas"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/rigved.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.rigvedaMandalasInfo.name)}, title: "rigveda"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/valmikiramayan.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.valmikiRamayanKandsInfo.name)}, title: "valmiikiramayan"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/bhagvadgeeta.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.bhagvadGeetaChapters.name)}, title: "bhagvadgeeta"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/yogasutra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.yogaSutraChapters.name)}, title: "yoga-sutra"),
-                  ItemCard(imageProvider:const AssetImage("assets/home/vratkatha.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.vratKathaInfo.name)}, title: "Vrat Katha's"),
-                ]),
-                if(isHinduAudioOnly) GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-                  ItemCard(imageProvider:const AssetImage("assets/home/audio/mantra.webp"),onPressed: () => {GoRouter.of(context).pushNamed(Routing.mantraAudioInfo.name)}, title: "Mantra 🎵"),
-                ]),
-                Padding(padding: const EdgeInsets.all(15),child: Image.asset("assets/header/sikh.webp",height: 50,fit: BoxFit.fitHeight)),
-                GridView.count(physics: const NeverScrollableScrollPhysics(),shrinkWrap: true,crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, padding: const EdgeInsets.all(15), childAspectRatio: 1, scrollDirection: Axis.vertical, children: <Widget>[
-                  ItemCard(imageProvider:const AssetImage("assets/home/gurugranthsahib.webp"),title: "Guru Granth Sahib", onPressed: () => GoRouter.of(context).pushNamed(Routing.guruGranthSahibInfo.name),),
-                ]),
+                const SizedBox(height: 16),
+                _StreakCard(),
+                const SizedBox(height: 22),
+                const SectionLabel('PRACTICE · साधना'),
+                const SizedBox(height: 12),
+                _QuickActions(),
+                const SizedBox(height: 22),
+                const SectionLabel('CONTINUE'),
+                const SizedBox(height: 12),
+                AppCard(
+                  onTap: () => context.goNamed(Routing.library.name),
+                  child: Row(
+                    children: [
+                      const TextMedallion(glyph: 'गी'),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Explore the Library', style: AppTypography.textTheme.titleMedium),
+                            Text('सभी ग्रंथ · all sacred texts',
+                                style: TextStyle(fontFamily: AppFonts.devanagari, fontSize: 13, color: AppColors.textMuted)),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right_rounded, color: AppColors.textFaint),
+                    ],
+                  ),
+                ),
               ],
-            )
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-}
-
-class ItemCard extends StatelessWidget {
-  final String title;
-  final GestureTapCallback onPressed;
-  final ImageProvider? imageProvider;
-
-  const ItemCard({
-    super.key,
-    required this.title,
-    this.imageProvider,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(7),
-      decoration: BoxDecoration(
-        image: imageProvider==null ? null :  DecorationImage(
-            image: imageProvider!,
-            onError: (exception, stackTrace) => const Icon(Icons.image_not_supported_outlined),
-            fit: BoxFit.cover,
-            repeat: ImageRepeat.noRepeat,
-            filterQuality: FilterQuality.high
+            );
+          },
         ),
       ),
-      child: InkWell(
-        splashFactory: InkRipple.splashFactory,
-        splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
-        overlayColor: WidgetStateProperty.all(Theme.of(context).primaryColor.withOpacity(0.1)),
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(12.5),
-        child: imageProvider!=null ? null : Center(child: Text(title, style: const TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold))),
+    );
+  }
+}
+
+class _StreakCard extends StatelessWidget {
+  // Placeholder visual; wired to local streak tracking in Phase 4 (Your Journey).
+  static const _litDays = 6;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('$_litDays-day streak', style: AppTypography.textTheme.titleMedium),
+                Text('दीप जलाए रखें · keep the lamp lit', style: AppTypography.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              for (int i = 0; i < 7; i++)
+                Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Container(
+                    width: 9,
+                    height: 9,
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: i < _litDays ? AppColors.gold : AppColors.surfaceAlt),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              const Icon(Icons.local_fire_department_rounded, color: AppColors.gold, size: 22),
+            ],
+          ),
+        ],
       ),
     );
   }
+}
+
+class _QuickActions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final actions = [
+      (_QA(Icons.radio_button_checked, 'Japa', () => context.goNamed(Routing.practice.name))),
+      (_QA(Icons.music_note_rounded, 'Aarti', () => context.pushNamed(Routing.aartiInfo.name))),
+      (_QA(Icons.menu_book_rounded, 'Read', () => context.goNamed(Routing.library.name))),
+      (_QA(Icons.self_improvement, 'Meditate', () => context.goNamed(Routing.practice.name))),
+    ];
+    return Row(
+      children: [
+        for (final a in actions)
+          Expanded(
+            child: GestureDetector(
+              onTap: a.onTap,
+              child: Column(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.surfaceAlt),
+                    ),
+                    child: Icon(a.icon, color: AppColors.terracotta),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(a.label, style: AppTypography.textTheme.bodySmall),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _QA {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  _QA(this.icon, this.label, this.onTap);
 }

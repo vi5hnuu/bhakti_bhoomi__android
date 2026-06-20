@@ -1,11 +1,15 @@
 import 'package:bhakti_bhoomi/models/bhagvadGeeta/BhagvadGeetaShlokModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/services/apis/DailyVerseApi.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
+/// Design #02 — "Verse of the Day": an ink card with a gold label, the verse
+/// in its native script, an English gloss and Read/Share actions.
 class DailyVerseCard extends StatefulWidget {
   const DailyVerseCard({super.key});
 
@@ -24,20 +28,14 @@ class _DailyVerseCardState extends State<DailyVerseCard> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
     return FutureBuilder<Map<String, dynamic>>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-            height: 120,
-            decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: primaryColor.withOpacity(0.15)),
-            ),
-            child: Center(child: SpinKitThreeBounce(color: primaryColor, size: 20)),
+            height: 150,
+            decoration: BoxDecoration(color: AppColors.darkSurface, borderRadius: BorderRadius.circular(22)),
+            child: const Center(child: SpinKitThreeBounce(color: AppColors.gold, size: 20)),
           );
         }
         if (!snapshot.hasData || snapshot.data?['success'] != true) {
@@ -48,119 +46,83 @@ class _DailyVerseCardState extends State<DailyVerseCard> {
         final reference = snapshot.data!['reference'] as String;
         final englishTranslation = _pickEnglishTranslation(verse.translationsBy);
 
+        void openReader() => GoRouter.of(context).pushNamed(
+              Routing.bhagvadGeetaChapterShloks.name,
+              pathParameters: {'chapterNo': '${verse.chapter}'},
+            );
+
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              colors: [primaryColor.withOpacity(0.85), primaryColor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+          decoration: BoxDecoration(color: AppColors.darkSurface, borderRadius: BorderRadius.circular(22)),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('VERSE OF THE DAY', style: AppTypography.sectionLabel.copyWith(color: AppColors.gold)),
+                  const Spacer(),
+                  Text(reference, style: const TextStyle(color: AppColors.textFaint, fontSize: 12)),
+                ],
               ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () => GoRouter.of(context).pushNamed(
-                Routing.bhagvadGeetaChapterShloks.name,
-                pathParameters: {'chapterNo': '${verse.chapter}'},
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.auto_awesome, color: Colors.white70, size: 16),
-                        const SizedBox(width: 6),
-                        const Text(
-                          "Verse of the Day",
-                          style: TextStyle(color: Colors.white70, fontSize: 12, letterSpacing: 1.2),
-                        ),
-                        const Spacer(),
-                        Text(
-                          reference,
-                          style: const TextStyle(color: Colors.white70, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      verse.shlok,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'NotoSansDevanagari',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-                    if (englishTranslation != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        englishTranslation,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            final shareText = '${verse.shlok}\n\n${englishTranslation ?? ''}\n\n— Bhagavad Gita, $reference\n\nRead on Bhakti Bhoomi'.trim();
-                            Share.share(shareText);
-                          },
-                          icon: const Icon(Icons.share_outlined, color: Colors.white70, size: 16),
-                          label: const Text('Share', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            minimumSize: Size.zero,
-                          ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () => GoRouter.of(context).pushNamed(
-                            Routing.bhagvadGeetaChapterShloks.name,
-                            pathParameters: {'chapterNo': '${verse.chapter}'},
-                          ),
-                          icon: const Icon(Icons.menu_book_outlined, color: Colors.white70, size: 16),
-                          label: const Text('Read', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            minimumSize: Size.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              const SizedBox(height: 14),
+              Text(
+                verse.shlok,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: AppScript.familyFor(verse.shlok),
+                  color: AppColors.onAccent,
+                  fontSize: 18,
+                  height: 1.6,
                 ),
               ),
-            ),
+              if (englishTranslation != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  '"$englishTranslation"',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.textFaint, fontSize: 13, fontStyle: FontStyle.italic, height: 1.5),
+                ),
+              ],
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: openReader,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.gold,
+                        foregroundColor: AppColors.ink,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                      ),
+                      child: const Text('Read & reflect', style: TextStyle(fontFamily: AppFonts.sans, fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Material(
+                    color: AppColors.darkSurfaceRing,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        final shareText = '${verse.shlok}\n\n${englishTranslation ?? ''}\n\n— Bhagavad Gita, $reference\n\nRead on Bhakti Bhoomi'.trim();
+                        Share.share(shareText);
+                      },
+                      child: const SizedBox(width: 46, height: 46, child: Icon(Icons.share_outlined, color: AppColors.gold, size: 20)),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  /// Picks the first available English translation from any author.
   String? _pickEnglishTranslation(Map<String, Map<String, String>> translationsBy) {
     for (final authorTranslations in translationsBy.values) {
       final en = authorTranslations['en'];

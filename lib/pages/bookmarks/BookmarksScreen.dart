@@ -1,9 +1,14 @@
 import 'package:bhakti_bhoomi/models/bookmark/BookmarkModel.dart';
 import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_card.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/section_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class BookmarksScreen extends StatefulWidget {
@@ -22,36 +27,19 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Bookmarks',
-          style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+    return AppScaffold(
+      title: 'Bookmarks',
+      subtitle: 'बुकमार्क',
       body: BlocBuilder<BookmarkBloc, BookmarkState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor));
-          }
+          if (state.isLoading) return const AppLoader();
           if (state.bookmarks.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.bookmark_border, size: 72, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
-                  Text('No bookmarks yet', style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
-                  const SizedBox(height: 8),
-                  Text('Save verses while reading to find them here.', style: TextStyle(fontSize: 13, color: Colors.grey.shade400), textAlign: TextAlign.center),
-                ],
-              ),
+            return const EmptyState(
+              icon: Icons.bookmark_border_rounded,
+              message: 'No bookmarks yet.\nSave verses while reading to find them here.',
             );
           }
 
-          // Group by contentType
           final Map<String, List<BookmarkModel>> grouped = {};
           for (final b in state.bookmarks) {
             grouped.putIfAbsent(b.contentType, () => []).add(b);
@@ -60,26 +48,16 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
           return RefreshIndicator(
             onRefresh: () async => context.read<BookmarkBloc>().add(const FetchBookmarksEvent()),
             child: ListView(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
               children: grouped.entries.map((entry) {
-                final label = _label(entry.key);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: [
-                          Icon(Icons.auto_stories, size: 18, color: Theme.of(context).primaryColor),
-                          const SizedBox(width: 8),
-                          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Theme.of(context).primaryColor)),
-                          const SizedBox(width: 8),
-                          Text('(${entry.value.length})', style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                        ],
-                      ),
+                      padding: const EdgeInsets.fromLTRB(0, 18, 0, 10),
+                      child: SectionLabel('${_label(entry.key)} · ${entry.value.length}'),
                     ),
                     ...entry.value.map((b) => _BookmarkTile(bookmark: b)),
-                    const Divider(),
                   ],
                 );
               }).toList(),
@@ -117,30 +95,26 @@ class _BookmarkTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final description = _humanReadable(bookmark.contentType, bookmark.contentId);
     final canNavigate = _canNavigate(bookmark.contentType);
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(0.2)),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: AppCard(
         onTap: canNavigate ? () => _navigate(context, bookmark) : null,
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-          child: Icon(Icons.bookmark, color: Theme.of(context).primaryColor, size: 20),
-        ),
-        title: Text(description, style: const TextStyle(fontSize: 14)),
-        subtitle: bookmark.addedAt != null
-            ? Text(_formatDate(bookmark.addedAt!), style: const TextStyle(fontSize: 11, color: Colors.grey))
-            : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
           children: [
-            if (canNavigate)
-              Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey.shade400),
+            const Icon(Icons.bookmark_rounded, color: AppColors.gold, size: 22),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(description, style: AppTypography.textTheme.titleSmall),
+                  if (bookmark.addedAt != null) Text(_formatDate(bookmark.addedAt!), style: AppTypography.textTheme.bodySmall),
+                ],
+              ),
+            ),
             IconButton(
-              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+              icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
               onPressed: () => context.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bookmark.id)),
             ),
           ],
@@ -154,59 +128,50 @@ class _BookmarkTile extends StatelessWidget {
     try {
       switch (contentType) {
         case 'bhagavad_geeta':
-          // format: chapterNo_X-shlokNoY  (no underscore before shlok number)
           final parts = contentId.split('-');
           final chapter = parts[0].split('_')[1];
           final shlok = parts[1].replaceAll('shlokNo', '');
           return 'Chapter $chapter · Shlok $shlok';
         case 'chanakya_neeti':
-          // format: chapterNo_X-verseNo_Y
           final parts = contentId.split('-');
           final chapter = parts[0].split('_')[1];
           final verse = parts[1].split('_')[1];
           return 'Chapter $chapter · Verse $verse';
         case 'mahabharat':
-          // format: bookNo_X-chapterNo_Y-shlokNo_Z
           final parts = contentId.split('-');
           final book = parts[0].split('_')[1];
           final chapter = parts[1].split('_')[1];
           final shlok = parts[2].split('_')[1];
           return 'Book $book · Chapter $chapter · Shlok $shlok';
         case 'ramayan':
-          // format: kanda_X-sargaNo_Y-shlokNo_Z-lang_W  (kanda may have spaces)
           final kandaMatch = RegExp(r'kanda_(.+?)-sargaNo_(\d+)-shlokNo_(\d+)').firstMatch(contentId);
           if (kandaMatch != null) {
             return '${kandaMatch.group(1)} · Sarga ${kandaMatch.group(2)} · Shlok ${kandaMatch.group(3)}';
           }
           return contentId;
         case 'ramcharitmanas':
-          // format: kand_X-verseNo_Y-lang_W  (kand may have spaces)
           final kandMatch = RegExp(r'kand_(.+?)-verseNo_(\d+)').firstMatch(contentId);
           if (kandMatch != null) {
             return '${kandMatch.group(1)} · Verse ${kandMatch.group(2)}';
           }
           return contentId;
         case 'rigveda':
-          // format: mandalaNo_X-suktaNo_Y
           final parts = contentId.split('-');
           final mandala = parts[0].split('_')[1];
           final sukta = parts[1].split('_')[1];
           return 'Mandala $mandala · Sukta $sukta';
         case 'brahmasutra':
-          // format: chapterNo_X-quaterNo_Y-sutraNo_Z-lang_W
           final parts = contentId.split('-');
           final chapter = parts[0].split('_')[1];
           final quater = parts[1].split('_')[1];
           final sutra = parts[2].split('_')[1];
           return 'Chapter $chapter · Quater $quater · Sutra $sutra';
         case 'yoga_sutra':
-          // format: chapterNo_X-sutraNo_Y-lang_W
           final parts = contentId.split('-');
           final chapter = parts[0].split('_')[1];
           final sutra = parts[1].split('_')[1];
           return 'Chapter $chapter · Sutra $sutra';
         case 'guru_granth_sahib':
-          // format: raga_X-part_Y
           final parts = contentId.split('-');
           final raga = parts[0].split('_')[1];
           final part = parts[1].split('_')[1];
