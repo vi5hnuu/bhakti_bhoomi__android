@@ -2,9 +2,11 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
-import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
-import 'package:bhakti_bhoomi/widgets/CustomInputField.dart';
-import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/field_label.dart';
+import 'package:bhakti_bhoomi/widgets/common/primary_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +21,7 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   final CancelToken cancelToken = CancelToken();
-  final formKey = GlobalKey<FormState>(debugLabel: 'loginForm');
+  final formKey = GlobalKey<FormState>(debugLabel: 'verifyForm');
   final TextEditingController emailCntrl = TextEditingController();
 
   @override
@@ -28,63 +30,74 @@ class _VerifyScreenState extends State<VerifyScreen> {
       listenWhen: (previous, current) => previous != current,
       listener: (ctx, state) {
         if (state.success) {
-          NotificationService.showSnackbar(text: state.message ?? "verified successfully", color: Colors.green);
+          NotificationService.showSnackbar(text: state.message ?? "Verification email sent", color: Colors.green);
           context.goNamed(Routing.login.name);
         }
         if (state.isError(forr: Httpstates.REVERIFY)) {
-          NotificationService.showSnackbar(text: state.message ?? "verification failed", color: Colors.red);
+          NotificationService.showSnackbar(text: state.message ?? "Verification failed", color: Colors.red);
         }
       },
-      builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Verify',
-            style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          backgroundColor: Theme.of(context).primaryColor,
-          elevation: 10,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Center(
+      builder: (context, state) {
+        final loading = state.isLoading(forr: Httpstates.REVERIFY);
+        return AppScaffold(
+          title: 'Verify email',
+          subtitle: 'ईमेल सत्यापन',
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             child: Form(
               key: formKey,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  CustomInputField(
+                  Center(
+                    child: CircleAvatar(
+                      radius: 36,
+                      backgroundColor: AppColors.surface,
+                      child: const Icon(Icons.mark_email_unread_outlined, size: 34, color: AppColors.terracotta),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Enter your email to resend a verification link.',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 24),
+                  const FieldLabel('Email'),
+                  TextFormField(
                     controller: emailCntrl,
-                    labelText: 'Email',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter email";
-                      }
-                      return null;
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(hintText: 'name@gmail.com'),
+                    validator: (v) => (v == null || v.isEmpty) ? 'Please enter email' : null,
+                  ),
+                  const SizedBox(height: 22),
+                  PrimaryButton(
+                    label: 'Send verification email',
+                    loading: loading,
+                    onPressed: () {
+                      if (!formKey.currentState!.validate()) return;
+                      BlocProvider.of<AuthBloc>(context).add(ReVerifyEvent(email: emailCntrl.value.text, cancelToken: cancelToken));
                     },
                   ),
-                  const SizedBox(height: 18),
-                  CustomElevatedButton(
-                      onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => BlocProvider.of<AuthBloc>(context).add(ReVerifyEvent(email: this.emailCntrl.value.text, cancelToken: cancelToken)),
-                      child: const Text(
-                        "send verification email",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  const SizedBox(height: 12),
-                  CustomTextButton(onPressed: state.isLoading(forr: Httpstates.REVERIFY) ? null : () => context.goNamed(Routing.login.name), child: const Text('login instead')),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: TextButton(
+                      onPressed: loading ? null : () => context.goNamed(Routing.login.name),
+                      child: const Text('Back to sign in'),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   @override
   void dispose() {
-    cancelToken.cancel("login cancelled");
+    cancelToken.cancel("verify cancelled");
     super.dispose();
   }
 }

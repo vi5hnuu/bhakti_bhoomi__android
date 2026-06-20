@@ -4,17 +4,17 @@ import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
-import 'package:bhakti_bhoomi/widgets/CustomElevatedButton.dart';
-import 'package:bhakti_bhoomi/widgets/CustomTextButton.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:bhakti_bhoomi/theme/app_typography.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/field_label.dart';
+import 'package:bhakti_bhoomi/widgets/common/primary_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../widgets/CameraIconButton.dart';
-import '../../widgets/CustomInputField.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,227 +31,195 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final _defaultCoverImagePath = "assets/images/ram_poster_sm.jpg";
   final _defaultProfileImagePath = "assets/images/ram_dp_sm.jpg";
-  late final ImageProvider defaultCoverImage;
-  late final ImageProvider defaultProfileImage;
   final TextEditingController firstNameCntrl = TextEditingController();
   final TextEditingController lastNameCntrl = TextEditingController();
   final TextEditingController usernameControllerCntrl = TextEditingController();
   final TextEditingController emailCntrl = TextEditingController();
   final TextEditingController passwordCntrl = TextEditingController();
   final CancelToken cancelToken = CancelToken();
+  bool _obscure = true;
 
-  @override
-  void initState() {
-    defaultCoverImage = AssetImage(_defaultCoverImagePath);
-    defaultProfileImage = AssetImage(_defaultProfileImagePath);
+  Future<void> _pickProfile() async {
+    final picked = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (!mounted || picked == null) return;
+    setState(() => profileImage = picked);
+  }
 
-    super.initState();
+  Future<void> _pickCover() async {
+    final picked = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (!mounted || picked == null) return;
+    setState(() => coverImage = picked);
+  }
+
+  Future<void> _submit() async {
+    if (formKey.currentState?.validate() == false) return;
+    BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
+        profilePic: (profileImage != null
+            ? await MultipartFile.fromFile(profileImage!.path)
+            : await _getDefaultImage(assetPath: _defaultProfileImagePath, filename: 'profile.png')),
+        posterPic: (coverImage != null
+            ? await MultipartFile.fromFile(coverImage!.path)
+            : await _getDefaultImage(assetPath: _defaultCoverImagePath, filename: 'cover.png')),
+        firstName: firstNameCntrl.text,
+        lastName: lastNameCntrl.text,
+        username: usernameControllerCntrl.text,
+        email: emailCntrl.text,
+        password: passwordCntrl.text,
+        cancelToken: cancelToken));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
-        listener: (ctx, state) {
-          if (state.success) {
-            NotificationService.showSnackbar(text: state.message ?? "registered successfully");
-            GoRouter.of(context).goNamed(Routing.login.name);
-          }
-        },
-        builder: (context, state) => Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  'Registration',
-                  style: TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                centerTitle: true,
-                elevation: 10,
-                backgroundColor: Theme.of(context).primaryColor,
-              ),
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(18.5),
-                  child: Form(
-                    key: formKey,
+      listener: (ctx, state) {
+        if (state.success) {
+          NotificationService.showSnackbar(text: state.message ?? "Registered successfully");
+          GoRouter.of(context).goNamed(Routing.login.name);
+        }
+      },
+      builder: (context, state) {
+        final loading = state.isLoading(forr: Httpstates.REGISTER);
+        return AppScaffold(
+          title: 'Create account',
+          subtitle: 'खाता बनाएँ',
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+            child: Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Profile photo picker
+                  Center(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        Stack(
-                          alignment: Alignment.bottomCenter,
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 4.5),
-                              padding: const EdgeInsets.all(5.5),
-                              constraints: const BoxConstraints(maxHeight: 150, minHeight: 150, minWidth: double.infinity),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  image: DecorationImage(
-                                    image: (coverImage != null ? FileImage(File(coverImage!.path)) : defaultCoverImage) as ImageProvider,
-                                    fit: BoxFit.fitWidth,
-                                    alignment: Alignment.topCenter,
-                                    repeat: ImageRepeat.noRepeat,
-                                  )),
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: CameraIconButton(onPressed: () async {
-                                  var posterImage = await imagePicker.pickImage(source: ImageSource.gallery);
-                                  setState(() {
-                                    if (!mounted) return;
-                                    coverImage = posterImage;
-                                  });
-                                }),
+                        GestureDetector(
+                          onTap: _pickProfile,
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                width: 104,
+                                height: 104,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.surface,
+                                  border: Border.all(color: AppColors.gold, width: 2),
+                                  image: profileImage != null
+                                      ? DecorationImage(image: FileImage(File(profileImage!.path)), fit: BoxFit.cover)
+                                      : null,
+                                ),
+                                child: profileImage == null
+                                    ? const Icon(Icons.person_outline_rounded, size: 40, color: AppColors.goldDeep)
+                                    : null,
                               ),
-                            ),
-                            Positioned(
-                                top: 98.5,
-                                child: Card(
-                                  shape: const CircleBorder(side: BorderSide(color: Colors.black26)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: CircleAvatar(
-                                      radius: 45.6,
-                                      backgroundImage: profileImage != null ? FileImage(File(profileImage!.path)) : defaultProfileImage as ImageProvider,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: CameraIconButton(onPressed: () async {
-                                          var profileImage = await imagePicker.pickImage(source: ImageSource.gallery);
-                                          setState(() {
-                                            if (!mounted) return;
-                                            this.profileImage = profileImage;
-                                          });
-                                        }),
-                                      ),
-                                    ),
-                                  ),
-                                ))
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 65,
-                        ),
-                        CustomInputField(
-                            controller: firstNameCntrl,
-                            hintText: "vishnu",
-                            labelText: "First Name",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter first name';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        CustomInputField(
-                            controller: lastNameCntrl,
-                            hintText: "kumar",
-                            labelText: "Last Name",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter last name';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        CustomInputField(
-                            controller: usernameControllerCntrl,
-                            hintText: "vi5hnu",
-                            labelText: "Username",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter username';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        CustomInputField(
-                            controller: emailCntrl,
-                            hintText: "xyz@gmail.com",
-                            labelText: "Email",
-                            suffixIcon: const Icon(Icons.email_outlined),
-                            validator: (value) {
-                              if (value == null || !value.contains("@gmail.com")) {
-                                return 'Please enter valid email id';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        CustomInputField(
-                            controller: passwordCntrl,
-                            obscureText: true,
-                            hintText: "as4c45a65s",
-                            labelText: "password",
-                            suffixIcon: const Icon(Icons.password),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter valid password';
-                              }
-                              return null;
-                            }),
-                        const SizedBox(
-                          height: 18,
-                        ),
-                        CustomElevatedButton(
-                            onPressed: state.isLoading(forr: Httpstates.REGISTER)
-                                ? null
-                                : () async {
-                                    if (formKey.currentState?.validate() == false) {
-                                      return;
-                                    }
-
-                                    BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
-                                        profilePic: (this.profileImage != null
-                                            ? await MultipartFile.fromFile(this.profileImage!.path)
-                                            : await _getDefaultProfileImage(assetPath: _defaultProfileImagePath)) as MultipartFile,
-                                        posterPic: (this.coverImage != null ? await MultipartFile.fromFile(this.coverImage!.path) : await _getDefaultCoverImage(assetPath: _defaultCoverImagePath))
-                                            as MultipartFile,
-                                        firstName: firstNameCntrl.text,
-                                        lastName: lastNameCntrl.text,
-                                        username: usernameControllerCntrl.text,
-                                        email: emailCntrl.text,
-                                        password: passwordCntrl.text,
-                                        cancelToken: cancelToken));
-                                  },
-                            child: const Text(
-                              'Register',
-                              style: TextStyle(color: Colors.white, fontSize: 18),
-                            )),
-                        if (state.isError(forr: Httpstates.REGISTER))
-                          Text(
-                            state.getError(forr: Httpstates.REGISTER)!.message,
-                            textAlign: TextAlign.center,
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.terracotta),
+                                child: const Icon(Icons.add, size: 16, color: AppColors.onAccent),
+                              ),
+                            ],
                           ),
-                        const SizedBox(height: 12),
-                        CustomTextButton(
-                            onPressed: state.isLoading(forr: Httpstates.REGISTER)
-                                ? null
-                                : () {
-                                    GoRouter.of(context).goNamed(Routing.login.name);
-                                  },
-                            child: const Text('Sign-in instead')),
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Add a profile photo', style: AppTypography.textTheme.bodySmall),
+                        TextButton(
+                          onPressed: _pickCover,
+                          child: Text(coverImage == null ? 'Add a cover photo (optional)' : 'Cover photo added ✓'),
+                        ),
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const FieldLabel('First name'),
+                            TextFormField(
+                              controller: firstNameCntrl,
+                              decoration: const InputDecoration(hintText: 'Aarav'),
+                              validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const FieldLabel('Last name'),
+                            TextFormField(
+                              controller: lastNameCntrl,
+                              decoration: const InputDecoration(hintText: 'Sharma'),
+                              validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const FieldLabel('Username'),
+                  TextFormField(
+                    controller: usernameControllerCntrl,
+                    decoration: const InputDecoration(hintText: 'aarav_s'),
+                    validator: (v) => (v == null || v.isEmpty) ? 'Please enter username' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  const FieldLabel('Email'),
+                  TextFormField(
+                    controller: emailCntrl,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(hintText: 'name@gmail.com'),
+                    validator: (v) => (v == null || !v.contains("@gmail.com")) ? 'Please enter a valid Gmail address' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  const FieldLabel('Password'),
+                  TextFormField(
+                    controller: passwordCntrl,
+                    obscureText: _obscure,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      hintText: '••••••••',
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: AppColors.textFaint),
+                        onPressed: () => setState(() => _obscure = !_obscure),
+                      ),
+                    ),
+                    validator: (v) => (v == null || v.isEmpty) ? 'Please enter a password' : null,
+                  ),
+                  const SizedBox(height: 22),
+                  PrimaryButton(label: 'Create account', loading: loading, onPressed: _submit),
+                  if (state.isError(forr: Httpstates.REGISTER))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(state.getError(forr: Httpstates.REGISTER)!.message,
+                          textAlign: TextAlign.center, style: const TextStyle(color: AppColors.error)),
+                    ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: TextButton(
+                      onPressed: loading ? null : () => context.goNamed(Routing.login.name),
+                      child: const Text('Already have an account? Sign in'),
+                    ),
+                  ),
+                ],
               ),
-            ));
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  Future<MultipartFile> _getDefaultCoverImage({required String assetPath}) async {
+  Future<MultipartFile> _getDefaultImage({required String assetPath, required String filename}) async {
     final bytes = await rootBundle.load(assetPath);
-    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'cover.png');
-  }
-
-  Future<MultipartFile> _getDefaultProfileImage({required String assetPath}) async {
-    final bytes = await rootBundle.load(assetPath);
-    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: 'profile.png');
+    return MultipartFile.fromBytes(bytes.buffer.asUint8List(), filename: filename);
   }
 
   @override
