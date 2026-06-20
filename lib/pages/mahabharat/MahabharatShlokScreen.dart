@@ -1,18 +1,14 @@
-import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
-import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/mahabharat/mahabharat_bloc.dart';
-import 'package:bhakti_bhoomi/utils/auth_guard.dart';
-import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/gold_progress.dart';
+import 'package:bhakti_bhoomi/widgets/common/verse_page.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:share_plus/share_plus.dart';
 
 class MahabharatShlokScreen extends StatefulWidget {
   final String title;
@@ -25,14 +21,14 @@ class MahabharatShlokScreen extends StatefulWidget {
 }
 
 class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
-  final pageStorageKey = const PageStorageKey('mahabharat_shlok_screen');
   final PageController _controller = PageController(initialPage: 0);
-  int currentPage = 0;
   CancelToken? token;
-  double fontSize = 16;
+  int currentPage = 0;
+  double fontSize = 20;
 
   @override
-  initState() {
+  void initState() {
+    BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent());
     loadCurrentShlok();
     super.initState();
   }
@@ -40,104 +36,68 @@ class _MahabharatShlokScreenState extends State<MahabharatShlokScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MahabharatBloc, MahabharatState>(
-      builder: (context, state) => Scaffold(
-          appBar: AppBar(
-            title: Text('Mahabharat | Book No - ${widget.bookNo} | Chapter No ${widget.chapterNo}', style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold)),
-            backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: const IconThemeData(color: Colors.white),
-            actions: [
-              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
-              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(3),
-              child: LinearProgressIndicator(
-                value: state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo) > 0
-                    ? (currentPage + 1) / state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo)
-                    : 0,
-                backgroundColor: Colors.white24,
-                color: Colors.white,
+      builder: (context, state) {
+        // totalVerses() throws if the book info is not loaded — guard first.
+        if (state.allBooksInfo == null) {
+          if (state.isError(forr: Httpstates.MAHABHARATA_INFO)) {
+            return AppScaffold(
+              title: widget.title,
+              subtitle: 'पर्व ${widget.bookNo} · अध्याय ${widget.chapterNo}',
+              body: RetryAgain(
+                onRetry: () => BlocProvider.of<MahabharatBloc>(context).add(FetchMahabharatInfoEvent()),
+                error: state.getError(forr: Httpstates.MAHABHARATA_INFO)?.message ?? 'Could not load',
               ),
-            ),
+            );
+          }
+          return AppScaffold(title: widget.title, subtitle: 'पर्व ${widget.bookNo} · अध्याय ${widget.chapterNo}', body: const AppLoader());
+        }
+
+        final total = state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo);
+        return AppScaffold(
+          title: 'Mahabharat · ${widget.bookNo}.${widget.chapterNo}',
+          subtitle: 'महाभारत',
+          actions: [
+            IconButton(onPressed: fontSize <= 14 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+            IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+          ],
+          bottom: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+            child: GoldLinearProgress(value: total > 0 ? (currentPage + 1) / total : 0),
           ),
           body: PageView.builder(
-            key: pageStorageKey,
-            pageSnapping: true,
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.totalVerses(bookNo: widget.bookNo, chapterNo: widget.chapterNo),
-            itemBuilder: (context, index) {
-              final shlok = state.getShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
-              return Center(
-                child: shlok != null
-                    ? Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        padding: const EdgeInsets.all(25),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Text(shlok.text, style: TextStyle(fontSize: fontSize))],
-                            ),
-                            Positioned(
-                              bottom: 45,
-                              right: 15,
-                              child: BlocBuilder<LikeBloc, LikeState>(
-                                builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
-                                builder: (ctx, bookmarkState) {
-                                  final contentId = MahabharatState.commentForId(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
-                                  final bookmarked = bookmarkState.isBookmarked(contentId);
-                                  return EngageActions(
-                                    isBookmarked: bookmarked,
-                                    isLiked: likeState.isLiked(contentId),
-                                    onBookmark: () => requireAuth(context, () {
-                                      if (bookmarked) {
-                                        final bid = bookmarkState.bookmarkIdFor(contentId);
-                                        if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
-                                      } else {
-                                        ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'mahabharat'));
-                                      }
-                                    }),
-                                    onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
-                                      ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
-                                    }),
-                                    onShare: () async {
-                                      final result = await Share.share("${shlok.text}\n\n— Mahabharat Book ${widget.bookNo}, Chapter ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
-                                      if (result.status == ShareResultStatus.success) {
-                                        NotificationService.showSnackbar(text: "Shlok shared successfully", color: Colors.green);
-                                      }
-                                    },
-                                    onComment: () => onComment(context: context, commentFormId: contentId),
-                                  );
-                                },
-                              )),
-                            ),
-                          ],
-                        ),
-                      )
-                    : state.isError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)
-                        ? Center(child: RetryAgain(onRetry: loadCurrentShlok,error: state.getError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)!.message))
-                        : Center(child: SpinKitThreeBounce(color: Theme.of(context).primaryColor)),
-              );
-            },
-            dragStartBehavior: DragStartBehavior.down,
+            itemCount: total,
             onPageChanged: (pageNo) => setState(() {
-              if (!mounted) return;
-              currentPage=pageNo;
+              currentPage = pageNo;
               loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: pageNo + 1);
             }),
-          )),
+            itemBuilder: (context, index) {
+              final shlok = state.getShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
+              if (shlok == null) {
+                if (state.isError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)) {
+                  return RetryAgain(onRetry: loadCurrentShlok, error: state.getError(forr: Httpstates.MAHABHARATA_SHLOK_BY_SHLOKNO)!.message);
+                }
+                return const AppLoader();
+              }
+              final contentId = MahabharatState.commentForId(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: index + 1);
+              return VersePage(
+                verseLabel: 'श्लोक ${index + 1} / $total',
+                text: shlok.text,
+                fontSize: fontSize,
+                contentId: contentId,
+                shareText: "${shlok.text}\n\n— Mahabharat Book ${widget.bookNo}, Chapter ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi",
+                contentType: 'mahabharat',
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
-  loadCurrentShlok(){
-    loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: currentPage+1);
-  }
+  loadCurrentShlok() => loadShlok(bookNo: widget.bookNo, chapterNo: widget.chapterNo, shlokNo: currentPage + 1);
 
   void loadShlok({required int bookNo, required int chapterNo, required int shlokNo}) {
     token?.cancel("cancelled");

@@ -1,20 +1,15 @@
-import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
-import 'package:bhakti_bhoomi/state/bookmark/bookmark_bloc.dart';
-import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
-import 'package:bhakti_bhoomi/state/ramcharitmanas/ramcharitmanas_bloc.dart';
+import 'package:bhakti_bhoomi/state/like/like_bloc.dart';
 import 'package:bhakti_bhoomi/state/yogaSutra/yoga_sutra_bloc.dart';
-import 'package:bhakti_bhoomi/utils/auth_guard.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:bhakti_bhoomi/widgets/CustomDropDownMenu.dart';
-import 'package:bhakti_bhoomi/widgets/EngageActions.dart';
 import 'package:bhakti_bhoomi/widgets/RetryAgain.dart';
-import 'package:bhakti_bhoomi/widgets/comment/showCommentModelBottomSheet.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_loader.dart';
+import 'package:bhakti_bhoomi/widgets/common/app_scaffold.dart';
+import 'package:bhakti_bhoomi/widgets/common/gold_progress.dart';
+import 'package:bhakti_bhoomi/widgets/common/language_dropdown.dart';
+import 'package:bhakti_bhoomi/widgets/common/verse_page.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class YogaSutraScreen extends StatefulWidget {
   final String title;
@@ -26,15 +21,15 @@ class YogaSutraScreen extends StatefulWidget {
 }
 
 class _YogaSutraScreenState extends State<YogaSutraScreen> {
-  final pageStorageKey = const PageStorageKey('ramcharitmanas-kand-verses');
   final PageController _controller = PageController(initialPage: 0);
-  int currentPage = 0;
-  String? lang;
   CancelToken? token;
-  double fontSize = 16;
+  int currentPage = 0;
+  double fontSize = 20;
+  String? lang;
 
   @override
-  initState() {
+  void initState() {
+    BlocProvider.of<YogaSutraBloc>(context).add(const FetchYogasutraInfo());
     loadCurrentSutra();
     super.initState();
   }
@@ -42,124 +37,79 @@ class _YogaSutraScreenState extends State<YogaSutraScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<YogaSutraBloc, YogaSutraState>(
-      buildWhen: (previous, current) => previous != current,
-      builder: (context, state) => Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'YogaSutra | chapter No ${widget.chapterNo}',
-              style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            iconTheme: const IconThemeData(color: Colors.white),
-            actions: [
-              IconButton(onPressed: fontSize <= 12 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
-              IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
-            ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(3),
-              child: LinearProgressIndicator(
-                value: state.yogaSutraInfo!.totalSutra.length > 0
-                    ? (currentPage + 1) / state.yogaSutraInfo!.totalSutra.length
-                    : 0,
-                backgroundColor: Colors.white24,
-                color: Colors.white,
+      builder: (context, state) {
+        final info = state.yogaSutraInfo;
+        if (info == null) {
+          if (state.isError(forr: Httpstates.YOGASUTRA_INFO)) {
+            return AppScaffold(
+              title: widget.title,
+              subtitle: 'अध्याय ${widget.chapterNo}',
+              body: RetryAgain(
+                onRetry: () => BlocProvider.of<YogaSutraBloc>(context).add(const FetchYogasutraInfo()),
+                error: state.getError(forr: Httpstates.YOGASUTRA_INFO)?.message ?? 'Could not load',
               ),
-            ),
+            );
+          }
+          return AppScaffold(title: widget.title, subtitle: 'अध्याय ${widget.chapterNo}', body: const AppLoader());
+        }
+
+        final total = info.totalSutra.length;
+        final languages = info.translationLanguages;
+        return AppScaffold(
+          title: 'Yoga Sutra · Ch ${widget.chapterNo}',
+          subtitle: 'योगसूत्र',
+          actions: [
+            IconButton(onPressed: fontSize <= 14 ? null : () => setState(() => fontSize -= 1), icon: const Icon(Icons.text_decrease)),
+            IconButton(onPressed: fontSize >= 32 ? null : () => setState(() => fontSize += 1), icon: const Icon(Icons.text_increase)),
+          ],
+          bottom: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+            child: GoldLinearProgress(value: total > 0 ? (currentPage + 1) / total : 0),
           ),
           body: PageView.builder(
-            key: pageStorageKey,
-            pageSnapping: true,
             controller: _controller,
             physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.fast),
             scrollDirection: Axis.vertical,
-            itemCount: state.yogaSutraInfo!.totalSutra.length,
+            itemCount: total,
+            onPageChanged: (pageNo) => setState(() {
+              currentPage = pageNo;
+              _loadSutra(chapterNo: widget.chapterNo, sutraNo: pageNo + 1, lang: lang);
+            }),
             itemBuilder: (context, index) {
               final sutra = state.getSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: lang);
-              return Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: sutra != null
-                        ? Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  CustomDropDownMenu(
-                                    dropdownMenuEntries: state.yogaSutraInfo!.translationLanguages.entries.map((e) => DropdownMenuEntry(value: e.value, label: e.key)).toList(),
-                                    initialSelection: lang ?? RamcharitmanasState.defaultLang,
-                                    onSelected: (value) => setState(() {
-                                      if (!mounted) return;
-                                      lang = value;
-                                      _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
-                                    }),
-                                    label: 'select language',
-                                  ),
-                                  Expanded(
-                                      child: Center(
-                                          child: Text(
-                                    sutra.sutra.values.first,
-                                    style: TextStyle(fontFamily: 'NotoSansDevanagari', fontWeight: FontWeight.bold, height: 2, fontSize: fontSize),
-                                  )))
-                                ],
-                              ),
-                              Positioned(
-                                  bottom: 45,
-                                  right: 15,
-                                  child: BlocBuilder<LikeBloc, LikeState>(
-                                    builder: (ctx2, likeState) => BlocBuilder<BookmarkBloc, BookmarkState>(
-                                    builder: (ctx, bookmarkState) {
-                                      final contentId = YogaSutraState.commentForId(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: lang ?? YogaSutraState.defaultLanguage);
-                                      final bookmarked = bookmarkState.isBookmarked(contentId);
-                                      return EngageActions(
-                                        isBookmarked: bookmarked,
-                                        isLiked: likeState.isLiked(contentId),
-                                        onBookmark: () => requireAuth(context, () {
-                                          if (bookmarked) {
-                                            final bid = bookmarkState.bookmarkIdFor(contentId);
-                                            if (bid != null) ctx.read<BookmarkBloc>().add(RemoveBookmarkEvent(bookmarkId: bid));
-                                          } else {
-                                            ctx.read<BookmarkBloc>().add(AddBookmarkEvent(contentId: contentId, contentType: 'yoga_sutra'));
-                                          }
-                                        }),
-                                        onLike: likeState.isPending(contentId) ? null : () => requireAuth(context, () {
-                                          ctx2.read<LikeBloc>().add(ToggleLikeEvent(contentId: contentId));
-                                        }),
-                                        onShare: () async {
-                                          final result = await Share.share("${sutra.sutra.values.first}\n\n— Yoga Sutra ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi");
-                                          if (result.status == ShareResultStatus.success) {
-                                            NotificationService.showSnackbar(text: "Sutra shared successfully", color: Colors.green);
-                                          }
-                                        },
-                                        onComment: () => onComment(context: context, commentFormId: contentId),
-                                      );
-                                    },
-                                  ))),
-                            ],
-                          )
-                        : state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)
-                            ? Center(
-                                child: RetryAgain(onRetry: loadCurrentSutra, error: state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!.message),
-                              )
-                            : Center(
-                                child: SpinKitThreeBounce(
-                                color: Theme.of(context).primaryColor,
-                              ))),
+              if (sutra == null) {
+                if (state.isError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)) {
+                  return RetryAgain(onRetry: loadCurrentSutra, error: state.getError(forr: Httpstates.YOGASUTRA_BY_CHAPTERNO_SUTRANO)!.message);
+                }
+                return const AppLoader();
+              }
+              final contentId = YogaSutraState.commentForId(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: lang ?? YogaSutraState.defaultLanguage);
+              return VersePage(
+                header: languages.isEmpty
+                    ? null
+                    : LanguageDropdown(
+                        languages: languages,
+                        value: lang ?? YogaSutraState.defaultLanguage,
+                        onChanged: (value) => setState(() {
+                          lang = value;
+                          _loadSutra(chapterNo: widget.chapterNo, sutraNo: index + 1, lang: value);
+                        }),
+                      ),
+                verseLabel: 'सूत्र ${index + 1} / $total',
+                text: sutra.sutra.values.first,
+                fontSize: fontSize,
+                contentId: contentId,
+                shareText: "${sutra.sutra.values.first}\n\n— Yoga Sutra ${widget.chapterNo}:${index + 1}\n\nRead on Bhakti Bhoomi",
+                contentType: 'yoga_sutra',
               );
             },
-            dragStartBehavior: DragStartBehavior.down,
-            onPageChanged: (pageNo) => setState(() {
-                currentPage=pageNo;
-                _loadSutra(chapterNo: widget.chapterNo, sutraNo: pageNo + 1, lang: lang);
-              },
-            ),
-          )),
+          ),
+        );
+      },
     );
   }
 
-  void loadCurrentSutra() {
-    _loadSutra(chapterNo: widget.chapterNo, sutraNo: currentPage+1, lang: lang);
-  }
+  void loadCurrentSutra() => _loadSutra(chapterNo: widget.chapterNo, sutraNo: currentPage + 1, lang: lang);
 
   void _loadSutra({required int chapterNo, required int sutraNo, String? lang}) {
     token?.cancel("cancelled");

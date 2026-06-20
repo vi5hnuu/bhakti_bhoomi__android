@@ -25,6 +25,10 @@ class VersePage extends StatelessWidget {
   /// the main verse in a muted style.
   final String? secondary;
 
+  /// Optional widget shown above the verse (e.g. a translation-language
+  /// selector).
+  final Widget? header;
+
   const VersePage({
     super.key,
     required this.verseLabel,
@@ -34,6 +38,7 @@ class VersePage extends StatelessWidget {
     required this.shareText,
     required this.contentType,
     this.secondary,
+    this.header,
   });
 
   @override
@@ -48,6 +53,7 @@ class VersePage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (header != null) ...[header!, const SizedBox(height: 18)],
                     if (verseLabel.isNotEmpty) ...[
                       Text(verseLabel, style: AppTypography.sectionLabel),
                       const SizedBox(height: 20),
