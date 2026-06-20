@@ -21,6 +21,11 @@ class Routing {
   static final Route community = Route(name:"community",path:"/community");
   static final Route profileTab = Route(name:"profile-tab",path:"/profile");
   static final Route welcome = Route(name:"welcome",path:"/welcome");
+  // Practice features (local)
+  static final Route japa = Route(name:"japa",path:"/practice/japa");
+  static final Route journey = Route(name:"journey",path:"/practice/journey");
+  static final Route deities = Route(name:"deities",path:"/practice/deities");
+  static final Route rituals = Route(name:"rituals",path:"/practice/rituals");
   static final Route login = Route(name:"login",path:"login",baseUrl: "/auth");
 
   static final Route forgotPassword = Route(name:"forgot-password",path:"forgot-password",baseUrl: "/auth");

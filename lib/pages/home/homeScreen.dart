@@ -1,4 +1,5 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/services/practice/practice_store.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
 import 'package:bhakti_bhoomi/theme/app_colors.dart';
 import 'package:bhakti_bhoomi/theme/app_typography.dart';
@@ -71,20 +72,32 @@ class Home extends StatelessWidget {
   }
 }
 
-class _StreakCard extends StatelessWidget {
-  // Placeholder visual; wired to local streak tracking in Phase 4 (Your Journey).
-  static const _litDays = 6;
+class _StreakCard extends StatefulWidget {
+  @override
+  State<_StreakCard> createState() => _StreakCardState();
+}
+
+class _StreakCardState extends State<_StreakCard> {
+  int _streak = 0;
+
+  @override
+  void initState() {
+    PracticeStore.instance.streak().then((v) => mounted ? setState(() => _streak = v) : null);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final litDays = _streak.clamp(0, 7);
     return AppCard(
+      onTap: () => context.pushNamed(Routing.journey.name),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$_litDays-day streak', style: AppTypography.textTheme.titleMedium),
+                Text('$_streak-day streak', style: AppTypography.textTheme.titleMedium),
                 Text('दीप जलाए रखें · keep the lamp lit', style: AppTypography.textTheme.bodySmall),
               ],
             ),
@@ -97,7 +110,7 @@ class _StreakCard extends StatelessWidget {
                   child: Container(
                     width: 9,
                     height: 9,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: i < _litDays ? AppColors.gold : AppColors.surfaceAlt),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: i < litDays ? AppColors.gold : AppColors.surfaceAlt),
                   ),
                 ),
               const SizedBox(width: 8),
@@ -114,7 +127,7 @@ class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = [
-      (_QA(Icons.radio_button_checked, 'Japa', () => context.goNamed(Routing.practice.name))),
+      (_QA(Icons.radio_button_checked, 'Japa', () => context.pushNamed(Routing.japa.name))),
       (_QA(Icons.music_note_rounded, 'Aarti', () => context.pushNamed(Routing.aartiInfo.name))),
       (_QA(Icons.menu_book_rounded, 'Read', () => context.goNamed(Routing.library.name))),
       (_QA(Icons.self_improvement, 'Meditate', () => context.goNamed(Routing.practice.name))),

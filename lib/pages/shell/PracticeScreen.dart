@@ -1,21 +1,23 @@
+import 'package:bhakti_bhoomi/routing/routes.dart';
 import 'package:bhakti_bhoomi/theme/app_colors.dart';
 import 'package:bhakti_bhoomi/theme/app_typography.dart';
 import 'package:bhakti_bhoomi/widgets/common/app_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-/// Practice hub — entry point for Japa Mala, Aarti player, Meditate and
-/// Panchang. The individual practices are wired in later phases; the cards
-/// are present so the navigation structure matches the design.
+/// Practice hub — entry point for Japa Mala, Aarti, Your Journey, Deities and
+/// Daily Rituals (all local features).
 class PracticeScreen extends StatelessWidget {
   const PracticeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final practices = [
-      (_P(Icons.radio_button_checked, 'Japa Mala', 'जप · 108 count', AppColors.terracotta)),
-      (_P(Icons.music_note_rounded, 'Aarti', 'आरती · sing along', AppColors.gold)),
-      (_P(Icons.self_improvement, 'Meditate', 'ध्यान · quiet timer', AppColors.goldDeep)),
-      (_P(Icons.calendar_month_rounded, 'Panchang', 'पंचांग · today', AppColors.textMuted)),
+      _P(Icons.radio_button_checked, 'Japa Mala', 'जप · 108 count', AppColors.terracotta, () => context.pushNamed(Routing.japa.name)),
+      _P(Icons.music_note_rounded, 'Aarti', 'आरती · sing along', AppColors.gold, () => context.pushNamed(Routing.aartiInfo.name)),
+      _P(Icons.timeline_rounded, 'Your Journey', 'साधना · streak & stats', AppColors.goldDeep, () => context.pushNamed(Routing.journey.name)),
+      _P(Icons.brightness_7_rounded, 'Deities', 'देवी–देवता', const Color(0xFFB57A8C), () => context.pushNamed(Routing.deities.name)),
+      _P(Icons.notifications_active_rounded, 'Daily Rituals', 'नित्य कर्म · reminders', AppColors.textMuted, () => context.pushNamed(Routing.rituals.name)),
     ];
     return Scaffold(
       backgroundColor: AppColors.page,
@@ -29,9 +31,7 @@ class PracticeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             for (final p in practices) ...[
               AppCard(
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${p.title} — coming together')),
-                ),
+                onTap: p.onTap,
                 child: Row(
                   children: [
                     CircleAvatar(radius: 24, backgroundColor: p.tint.withValues(alpha: 0.15), child: Icon(p.icon, color: p.tint)),
@@ -64,5 +64,6 @@ class _P {
   final String title;
   final String subtitle;
   final Color tint;
-  _P(this.icon, this.title, this.subtitle, this.tint);
+  final VoidCallback onTap;
+  _P(this.icon, this.title, this.subtitle, this.tint, this.onTap);
 }
