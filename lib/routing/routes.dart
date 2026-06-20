@@ -15,6 +15,12 @@ class Routing {
   static final Route verify = Route(name:"verify",path:"verify",baseUrl: "/auth");
 
   static final Route home = Route(name:"home",path:"/home");
+  // Bottom-nav shell tabs
+  static final Route library = Route(name:"library",path:"/library");
+  static final Route practice = Route(name:"practice",path:"/practice");
+  static final Route community = Route(name:"community",path:"/community");
+  static final Route profileTab = Route(name:"profile-tab",path:"/profile");
+  static final Route welcome = Route(name:"welcome",path:"/welcome");
   static final Route login = Route(name:"login",path:"login",baseUrl: "/auth");
 
   static final Route forgotPassword = Route(name:"forgot-password",path:"forgot-password",baseUrl: "/auth");

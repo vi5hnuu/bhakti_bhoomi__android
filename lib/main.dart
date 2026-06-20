@@ -3,6 +3,12 @@ import 'package:bhakti_bhoomi/pages/about-us/AboutUsScreen.dart';
 import 'package:bhakti_bhoomi/pages/bookmarks/BookmarksScreen.dart';
 import 'package:bhakti_bhoomi/pages/createPost/CreatePostScreen.dart';
 import 'package:bhakti_bhoomi/pages/home/homeScreen.dart';
+import 'package:bhakti_bhoomi/pages/library/LibraryScreen.dart';
+import 'package:bhakti_bhoomi/pages/shell/MainShell.dart';
+import 'package:bhakti_bhoomi/pages/shell/PracticeScreen.dart';
+import 'package:bhakti_bhoomi/pages/shell/CommunityScreen.dart';
+import 'package:bhakti_bhoomi/pages/shell/ProfileTabScreen.dart';
+import 'package:bhakti_bhoomi/pages/welcome/WelcomeScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
 import 'package:bhakti_bhoomi/routing/routes/aartiRoutes.dart';
@@ -58,6 +64,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bhakti_bhoomi/theme/app_theme.dart';
 
 final parentNavKey=GlobalKey<NavigatorState>();
 
@@ -134,9 +141,51 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
         ),
         GoRoute(
-          name: BBR.Routing.home.name,
-          path: BBR.Routing.home.path,
-          builder: (context, state) => const Home(title: 'Spirtual Shakti'),
+          name: BBR.Routing.welcome.name,
+          path: BBR.Routing.welcome.path,
+          builder: (context, state) => const WelcomeScreen(),
+        ),
+        // Bottom-nav shell: the five primary destinations. Detail screens are
+        // pushed on the root navigator so they cover the bottom bar.
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: BBR.Routing.home.name,
+                path: BBR.Routing.home.path,
+                builder: (context, state) => const Home(title: 'Bhakti Bhoomi'),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: BBR.Routing.library.name,
+                path: BBR.Routing.library.path,
+                builder: (context, state) => const LibraryScreen(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: BBR.Routing.practice.name,
+                path: BBR.Routing.practice.path,
+                builder: (context, state) => const PracticeScreen(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: BBR.Routing.community.name,
+                path: BBR.Routing.community.path,
+                builder: (context, state) => const CommunityScreen(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: BBR.Routing.profileTab.name,
+                path: BBR.Routing.profileTab.path,
+                builder: (context, state) => const ProfileTabScreen(),
+              ),
+            ]),
+          ],
         ),
         GoRoute(
           name: BBR.Routing.bookmarks.name,
@@ -222,10 +271,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               scaffoldMessengerKey: NotificationService.messengerKey,
               title: 'Spirtual Shakti',
               debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
-                useMaterial3: true,
-              ),
+              theme: AppTheme.light,
               routerConfig: router,
             ),
             // Positioned(

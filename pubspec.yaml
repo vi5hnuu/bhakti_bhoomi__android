@@ -103,6 +103,30 @@ flutter:
       - family: permanentMarker
         fonts:
           - asset: assets/fonts/PermanentMarker_Regular.ttf
+      # --- Redesign fonts ---
+      - family: Marcellus
+        fonts:
+          - asset: assets/fonts/Marcellus-Regular.ttf
+      - family: Mukta
+        fonts:
+          - asset: assets/fonts/Mukta-Light.ttf
+            weight: 300
+          - asset: assets/fonts/Mukta-Regular.ttf
+            weight: 400
+          - asset: assets/fonts/Mukta-Medium.ttf
+            weight: 500
+          - asset: assets/fonts/Mukta-SemiBold.ttf
+            weight: 600
+          - asset: assets/fonts/Mukta-Bold.ttf
+            weight: 700
+      - family: TiroDevanagariSanskrit
+        fonts:
+          - asset: assets/fonts/TiroDevanagariSanskrit-Regular.ttf
+          - asset: assets/fonts/TiroDevanagariSanskrit-Italic.ttf
+            style: italic
+      - family: NotoSerifGurmukhi
+        fonts:
+          - asset: assets/fonts/NotoSerifGurmukhi.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
