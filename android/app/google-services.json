@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "1049067408156",
+    "project_id": "bhaktibhoomi",
+    "storage_bucket": "bhaktibhoomi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049067408156:android:66f5f02ee8f750878888d9",
+        "android_client_info": {
+          "package_name": "com.vi5hnu.bhakti_bhoomi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049067408156-6kh5bt7ik7q4ij71ptht4521h9qs629r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vi5hnu.bhakti_bhoomi",
+            "certificate_hash": "df4d66e35dc514967fe5c52c31c47be41d78d742"
+          }
+        },
+        {
+          "client_id": "1049067408156-f3k4j08fopvcl267de13gm3dm85ldl8o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vi5hnu.bhakti_bhoomi",
+            "certificate_hash": "a098a33bfa2b70cc054b139d1ea0222367ab2b14"
+          }
+        },
+        {
+          "client_id": "1049067408156-k85lq5m1c14k8tkll6ivj40iejntot0d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vi5hnu.bhakti_bhoomi",
+            "certificate_hash": "3f8cda2898d2056d7038284c60ee560517ed428c"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7f1UFehpNOU7QUYTwX69Yl5GR3YI9HuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049067408156-a59q0e108ub1mvkr7ttfl5avoe4ddilm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

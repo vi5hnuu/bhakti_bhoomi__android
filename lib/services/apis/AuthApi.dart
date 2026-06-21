@@ -9,6 +9,8 @@ class AuthApi {
   static final AuthApi _instance = AuthApi._();
 
   static const String _loginUrl = "${ApiConstants.baseUrl}/users/login"; //POST
+  static const String _googleLoginUrl = "${ApiConstants.baseUrl}/users/login/google"; //POST
+  static const String _fcmTokenUrl = "${ApiConstants.baseUrl}/users/fcm-token"; //POST
   static const String _registerUrl = "${ApiConstants.baseUrl}/users/register"; //POST
   // static const String _verifyUrl = "${ApiConstants.baseUrl}/users/verify"; //GET (done on email itself)
   static const String _reVerifyUrl = "${ApiConstants.baseUrl}/users/re-verify"; //GET
@@ -41,6 +43,16 @@ class AuthApi {
         }),
         cancelToken: cancelToken);
     return res.data;
+  }
+
+  Future<Map<String, dynamic>> googleLogin({required String idToken, CancelToken? cancelToken}) async {
+    var res = await DioSingleton().dio.post(_googleLoginUrl, data: jsonEncode({"idToken": idToken}), cancelToken: cancelToken);
+    return res.data;
+  }
+
+  /// Registers the device's FCM token with the logged-in user (best-effort).
+  Future<void> registerFcmToken({required String token, CancelToken? cancelToken}) async {
+    await DioSingleton().dio.post(_fcmTokenUrl, data: jsonEncode({"token": token}), cancelToken: cancelToken);
   }
 
   Future<Map<String, dynamic>> register(

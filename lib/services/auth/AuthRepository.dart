@@ -57,6 +57,12 @@ class AuthRepository implements AuthService {
   }
 
   @override
+  Future<ApiResponse<UserInfo>> googleLogin({required String idToken, CancelToken? cancelToken}) async {
+    var res = await _authApi.googleLogin(idToken: idToken, cancelToken: cancelToken);
+    return ApiResponse<UserInfo>(success: res['success'], message: res['message'], data: UserInfo.fromJson(res['data']));
+  }
+
+  @override
   Future<ApiResponse> logout({CancelToken? cancelToken}) async {
     var res = await _authApi.logout(cancelToken: cancelToken);
     return ApiResponse(success: res['success'], message: res['message']);

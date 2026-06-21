@@ -7,6 +7,7 @@ import '../../models/UserRole.dart';
 
 abstract class AuthService {
   Future<ApiResponse<UserInfo>> login({required String usernameEmail, required String password, CancelToken? cancelToken});
+  Future<ApiResponse<UserInfo>> googleLogin({required String idToken, CancelToken? cancelToken});
   Future<ApiResponse> register(
       {required String firstName,
       required String lastName,

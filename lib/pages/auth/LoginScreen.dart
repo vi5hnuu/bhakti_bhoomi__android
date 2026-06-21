@@ -1,6 +1,9 @@
 import 'package:bhakti_bhoomi/routing/routes.dart';
+import 'package:bhakti_bhoomi/singletons/FcmService.dart';
+import 'package:bhakti_bhoomi/singletons/GoogleSignInService.dart';
 import 'package:bhakti_bhoomi/singletons/NotificationService.dart';
 import 'package:bhakti_bhoomi/state/auth/auth_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bhakti_bhoomi/state/httpStates.dart';
 import 'package:bhakti_bhoomi/theme/app_colors.dart';
 import 'package:bhakti_bhoomi/theme/app_typography.dart';
@@ -37,6 +40,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<void> _googleSignIn(AuthState state) async {
+    if (state.anyLoading(forr: [Httpstates.CUSTOM_LOGIN, Httpstates.GOOGLE_LOGIN])) return;
+    try {
+      final idToken = await GoogleSignInService.instance.signInGetIdToken();
+      if (idToken == null || !mounted) return; // cancelled
+      context.read<AuthBloc>().add(GoogleLoginEvent(idToken: idToken, cancelToken: cancelToken));
+    } catch (_) {
+      NotificationService.showSnackbar(text: 'Google sign-in failed. Please try again.', color: Colors.red);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
@@ -45,8 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state.isError(forr: Httpstates.CUSTOM_LOGIN)) {
           NotificationService.showSnackbar(text: state.getError(forr: Httpstates.CUSTOM_LOGIN)!.message, color: Colors.red);
         }
+        if (state.isError(forr: Httpstates.GOOGLE_LOGIN)) {
+          NotificationService.showSnackbar(text: state.getError(forr: Httpstates.GOOGLE_LOGIN)!.message, color: Colors.red);
+        }
         if (state.isAuthenticated) {
           NotificationService.showSnackbar(text: state.message ?? "Logged in successfully", color: Colors.green);
+          FcmService.instance.syncToken(); // register device for push now that we're signed in
           context.goNamed(Routing.home.name);
         }
       },
@@ -115,6 +133,34 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   PrimaryButton(label: 'Log in', loading: loading, onPressed: () => _submit(state)),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider(color: AppColors.surfaceAlt)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('or', style: AppTypography.textTheme.bodySmall),
+                      ),
+                      const Expanded(child: Divider(color: AppColors.surfaceAlt)),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: state.isLoading(forr: Httpstates.GOOGLE_LOGIN) ? null : () => _googleSignIn(state),
+                      icon: state.isLoading(forr: Httpstates.GOOGLE_LOGIN)
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const FaIcon(FontAwesomeIcons.google, size: 18, color: AppColors.terracotta),
+                      label: const Text('Continue with Google'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.ink,
+                        side: const BorderSide(color: AppColors.border),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -13,6 +13,12 @@ class LoginEvent extends AuthEvent {
   const LoginEvent({required this.usernameEmail, required this.password, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
 }
 
+class GoogleLoginEvent extends AuthEvent {
+  final String idToken;
+
+  const GoogleLoginEvent({required this.idToken, CancelToken? cancelToken}) : super(cancelToken: cancelToken);
+}
+
 class TryAuthenticatingEvent extends AuthEvent {
   const TryAuthenticatingEvent({CancelToken? token});
 }

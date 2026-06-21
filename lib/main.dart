@@ -73,12 +73,19 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bhakti_bhoomi/theme/app_theme.dart';
 import 'package:bhakti_bhoomi/theme/app_colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:bhakti_bhoomi/singletons/FcmService.dart';
 
 final parentNavKey=GlobalKey<NavigatorState>();
 
 void main() async{
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  // Firebase + push notifications (reads android/app/google-services.json).
+  try {
+    await Firebase.initializeApp();
+    FcmService.instance.init(); // fire-and-forget: permission, token, handlers
+  } catch (_) {/* Firebase not configured on this platform — continue */}
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

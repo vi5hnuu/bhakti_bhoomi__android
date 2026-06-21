@@ -43,6 +43,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
+    on<GoogleLoginEvent>((event, emit) async {
+      emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.GOOGLE_LOGIN, const HttpState.loading())));
+      try {
+        ApiResponse<UserInfo> res = await authRepository.googleLogin(idToken: event.idToken, cancelToken: event.cancelToken);
+        emit(AuthState(success: res.success, userInfo: res.data, message: res.message, httpStates: state.httpStates.clone()..remove(Httpstates.GOOGLE_LOGIN)));
+      } on DioException catch (e) {
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.GOOGLE_LOGIN, HttpState.error(error: Utils.handleDioException(e)))));
+      } catch (e) {
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(Httpstates.GOOGLE_LOGIN, HttpState.error(error: ErrorModel(message: e.toString())))));
+      }
+    });
+
     on<TryAuthenticatingEvent>((event, emit) async {
       emit(AuthState().copyWith(httpStates:  state.httpStates.clone()..put(Httpstates.TRY_AUTH,const HttpState.loading())));
       try {
