@@ -83,9 +83,6 @@ void main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  // Edge-to-edge (forced on Android 15+); the cream Scaffold shows behind the
-  // transparent status bar. Icon brightness is set by an AnnotatedRegion below.
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MyApp());
 }
 
@@ -285,6 +282,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // Cream backstop behind everything (incl. behind the system bars).
+            Container(color: AppColors.page),
             MaterialApp.router(
               key: parentNavKey,
               scaffoldMessengerKey: NotificationService.messengerKey,
