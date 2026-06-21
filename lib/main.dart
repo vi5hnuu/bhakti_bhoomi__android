@@ -83,16 +83,9 @@ void main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  // Draw edge-to-edge with a transparent status bar so the cream theme shows
-  // through (dark icons on the light background).
+  // Edge-to-edge (forced on Android 15+); the cream Scaffold shows behind the
+  // transparent status bar. Icon brightness is set by an AnnotatedRegion below.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    statusBarBrightness: Brightness.light,
-    systemNavigationBarColor: AppColors.page,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
   runApp(const MyApp());
 }
 
@@ -299,6 +292,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               debugShowCheckedModeBanner: false,
               theme: AppTheme.light,
               routerConfig: router,
+              // Enforce cream system bars with dark icons on every frame/screen
+              // (edge-to-edge on Android 15+: the cream Scaffold shows behind the
+              // transparent status bar).
+              builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+                value: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                  systemNavigationBarColor: AppColors.page,
+                  systemNavigationBarIconBrightness: Brightness.dark,
+                ),
+                child: child!,
+              ),
             ),
             // Positioned(
             //   left: position.dx,
