@@ -42,32 +42,37 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Column(
+              // Full width so centered children actually center on screen.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Spacer(flex: 3),
                 // ॐ within faint concentric rings
-                SizedBox(
-                  width: 220,
-                  height: 220,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      _ring(220),
-                      _ring(160),
-                      Text(
-                        'ॐ',
-                        style: TextStyle(
-                          fontFamily: AppFonts.devanagari,
-                          fontSize: 92,
-                          color: AppColors.gold,
-                          height: 1.0,
+                Center(
+                  child: SizedBox(
+                    width: 220,
+                    height: 220,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        _ring(220),
+                        _ring(160),
+                        Text(
+                          'ॐ',
+                          style: TextStyle(
+                            fontFamily: AppFonts.devanagari,
+                            fontSize: 92,
+                            color: AppColors.gold,
+                            height: 1.0,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'नमस्ते',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: AppFonts.devanagari,
                     fontSize: 28,
@@ -75,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
                 const Spacer(flex: 2),
-                Text('Bhakti Bhoomi', style: AppTypography.textTheme.displayMedium),
+                Text('Bhakti Bhoomi', textAlign: TextAlign.center, style: AppTypography.textTheme.displayMedium),
                 const SizedBox(height: 12),
                 Text(
                   'Sacred texts, daily rituals & quiet practice —\ngathered in one calm place.',
@@ -93,10 +98,12 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
                 const Spacer(flex: 2),
-                const SizedBox(
-                  width: 26,
-                  height: 26,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold),
+                const Center(
+                  child: SizedBox(
+                    width: 26,
+                    height: 26,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold),
+                  ),
                 ),
                 const Spacer(flex: 1),
               ],
