@@ -19,6 +19,7 @@ class PracticeScreen extends StatelessWidget {
       _P(Icons.brightness_7_rounded, 'Deities', 'देवी–देवता', const Color(0xFFB57A8C), () => context.pushNamed(Routing.deities.name)),
       _P(Icons.calendar_month_rounded, 'Panchang', 'पंचांग · today', AppColors.terracotta, () => context.pushNamed(Routing.panchang.name)),
       _P(Icons.celebration_rounded, 'Festivals', 'पर्व · the year', AppColors.gold, () => context.pushNamed(Routing.festivals.name)),
+      _P(Icons.temple_hindu_rounded, 'Temples', 'मंदिर · darshan', AppColors.goldDeep, () => context.pushNamed(Routing.temples.name)),
       _P(Icons.notifications_active_rounded, 'Daily Rituals', 'नित्य कर्म · reminders', AppColors.textMuted, () => context.pushNamed(Routing.rituals.name)),
     ];
     return Scaffold(

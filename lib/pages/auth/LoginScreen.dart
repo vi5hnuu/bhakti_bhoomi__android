@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         if (state.isAuthenticated) {
           NotificationService.showSnackbar(text: state.message ?? "Logged in successfully", color: Colors.green);
-          context.replaceNamed(Routing.home.name);
+          context.goNamed(Routing.home.name);
         }
       },
       builder: (context, state) {

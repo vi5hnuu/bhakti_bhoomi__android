@@ -122,9 +122,9 @@ class _SplashScreenState extends State<SplashScreen> {
     if (state.isLoading(forr: Httpstates.TRY_AUTH) || timer?.isActive == true) {
       return;
     } else if (state.isError(forr: Httpstates.TRY_AUTH) || (!state.isAuthenticated && timer?.isActive == false)) {
-      GoRouter.of(context).replaceNamed(Routing.home.name);
+      GoRouter.of(context).goNamed(Routing.home.name);
     } else if (state.isAuthenticated && timer?.isActive != true) {
-      GoRouter.of(context).replaceNamed(Routing.home.name);
+      GoRouter.of(context).goNamed(Routing.home.name);
     }
   }
 

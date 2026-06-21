@@ -15,6 +15,7 @@ import 'package:bhakti_bhoomi/pages/practice/DeitiesScreen.dart';
 import 'package:bhakti_bhoomi/pages/practice/RitualsScreen.dart';
 import 'package:bhakti_bhoomi/pages/panchang/PanchangScreen.dart';
 import 'package:bhakti_bhoomi/pages/panchang/FestivalsScreen.dart';
+import 'package:bhakti_bhoomi/pages/temples/TemplesScreen.dart';
 import 'package:bhakti_bhoomi/pages/splash/Splash.dart';
 import 'package:bhakti_bhoomi/Routing/routes.dart' as BBR;
 import 'package:bhakti_bhoomi/routing/routes/aartiRoutes.dart';
@@ -71,6 +72,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bhakti_bhoomi/theme/app_theme.dart';
+import 'package:bhakti_bhoomi/theme/app_colors.dart';
 
 final parentNavKey=GlobalKey<NavigatorState>();
 
@@ -81,6 +83,16 @@ void main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  // Draw edge-to-edge with a transparent status bar so the cream theme shows
+  // through (dark icons on the light background).
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light,
+    systemNavigationBarColor: AppColors.page,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  ));
   runApp(const MyApp());
 }
 
@@ -158,6 +170,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         GoRoute(name: BBR.Routing.rituals.name, path: BBR.Routing.rituals.path, builder: (context, state) => const RitualsScreen()),
         GoRoute(name: BBR.Routing.panchang.name, path: BBR.Routing.panchang.path, builder: (context, state) => const PanchangScreen()),
         GoRoute(name: BBR.Routing.festivals.name, path: BBR.Routing.festivals.path, builder: (context, state) => const FestivalsScreen()),
+        GoRoute(name: BBR.Routing.temples.name, path: BBR.Routing.temples.path, builder: (context, state) => const TemplesScreen()),
         // Bottom-nav shell: the five primary destinations. Detail screens are
         // pushed on the root navigator so they cover the bottom bar.
         StatefulShellRoute.indexedStack(
